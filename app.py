@@ -39,7 +39,7 @@ if st.session_state.light_theme:
         /* Form Containers */
         div[data-testid="stForm"] { background-color: #F8F9FB !important; border: 1px solid #D3D6DF !important; border-radius: 0.5rem; }
         
-        /* Input Elements (fixing the negative look) */
+        /* Input Elements */
         div[data-baseweb="select"] > div { background-color: #FFFFFF !important; color: #31333F !important; border: 1px solid #D3D6DF !important; }
         .stTextArea textarea { background-color: #FFFFFF !important; color: #31333F !important; border: 1px solid #D3D6DF !important; }
         .stTextInput input { background-color: #FFFFFF !important; color: #31333F !important; border: 1px solid #D3D6DF !important; }
@@ -179,9 +179,17 @@ def add_review_to_db(target_name, category, review_text):
     conn.commit()
     conn.close()
 
-def get_reviews_from_db(target_name):
+def get_reviews_from_db(target_name, sort_by="Most Upvoted"):
     conn = sqlite3.connect(DB_NAME)
-    df = pd.read_sql_query("SELECT id, review_text, upvotes, tags FROM reviews WHERE target_name=? ORDER BY upvotes DESC", conn, params=(target_name,))
+    
+    # Apply sorting logic
+    if sort_by == "Newest":
+        order_clause = "ORDER BY id DESC"
+    else:
+        order_clause = "ORDER BY upvotes DESC, id DESC"
+        
+    query = f"SELECT id, review_text, upvotes, tags FROM reviews WHERE target_name=? {order_clause}"
+    df = pd.read_sql_query(query, conn, params=(target_name,))
     conn.close()
     return df.to_dict('records')
 
@@ -342,10 +350,11 @@ def generate_smart_summary(sentiment_score, category):
 
 # --- 4. THE FRONTEND INTERFACE ---
 
-# Sidebar Search Bar
+# Sidebar Search & Filters
 st.sidebar.divider()
-st.sidebar.header("🔍 Global Search")
+st.sidebar.header("🔍 Global Search & Filters")
 search_query = st.sidebar.text_input("Filter reviews by keyword (e.g., 'hostel', 'strict'):")
+sort_option = st.sidebar.selectbox("Sort Reviews By:", ["Most Upvoted", "Newest"])
 st.sidebar.divider()
 
 st.title("⚡ KTU Insight Engine 2.0")
@@ -373,7 +382,7 @@ with tab1:
 
     with col2:
         if selected_college:
-            reviews = get_reviews_from_db(selected_college)
+            reviews = get_reviews_from_db(selected_college, sort_by=sort_option)
             overall_sent = get_overall_sentiment(reviews, selected_college)
 
             # Top Row Analytics
@@ -440,7 +449,7 @@ with tab2:
                     st.rerun()
 
     with c_right:
-        course_reviews = get_reviews_from_db(course_target_name)
+        course_reviews = get_reviews_from_db(course_target_name, sort_by=sort_option)
         c_overall = get_overall_sentiment(course_reviews, course_target_name)
         c_metrics = analyze_course_aspects(course_reviews)
         
