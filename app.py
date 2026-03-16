@@ -19,7 +19,6 @@ if 'light_theme' not in st.session_state:
     st.session_state.light_theme = False
 
 # 🔥 BRAND LOGO INJECTION 🔥
-# You can replace this URL with your own local file path, e.g., st.sidebar.image("my_logo.png", width=60)
 st.sidebar.image("https://cdn-icons-png.flaticon.com/512/1162/1162803.png", width=55)
 st.sidebar.markdown("## KTU Insight")
 st.sidebar.divider()
@@ -35,9 +34,9 @@ if theme_toggle != st.session_state.light_theme:
 if st.session_state.light_theme:
     st.markdown("""
     <style>
-        /* Beautiful Aurora Light Theme */
-        .stApp { background-color: #FDFDFD !important; color: #374151 !important; font-family: 'Inter', sans-serif; }
-        [data-testid="stSidebar"] { background-color: #FAFAFB !important; border-right: 1px solid #F3F4F6 !important; }
+        /* Beautiful Aurora Light Theme - Elegant Pearl Background */
+        .stApp { background-color: #FAF9FF !important; color: #374151 !important; font-family: 'Inter', sans-serif; }
+        [data-testid="stSidebar"] { background-color: #FFFFFF !important; border-right: 1px solid #F3F4F6 !important; }
         
         h1, h2, h3, h4, h5, h6, p, label, .stMarkdown { color: #374151 !important; }
         
@@ -65,8 +64,8 @@ if st.session_state.light_theme:
         }
         
         /* Soft Inputs */
-        div[data-baseweb="select"] > div { background-color: #FCFDFD !important; color: #374151 !important; border: 1px solid #F3F4F6 !important; border-radius: 0.75rem; }
-        .stTextArea textarea, .stTextInput input { background-color: #FCFDFD !important; color: #374151 !important; border: 1px solid #F3F4F6 !important; border-radius: 0.75rem; }
+        div[data-baseweb="select"] > div { background-color: #FFFFFF !important; color: #374151 !important; border: 1px solid #F3F4F6 !important; border-radius: 0.75rem; }
+        .stTextArea textarea, .stTextInput input { background-color: #FFFFFF !important; color: #374151 !important; border: 1px solid #F3F4F6 !important; border-radius: 0.75rem; }
         .stTextArea textarea:focus, .stTextInput input:focus { border-color: #E879F9 !important; box-shadow: 0 0 0 1px #E879F9 !important; }
         
         /* BEAUTIFUL SUBMIT BUTTON */
@@ -122,19 +121,18 @@ if st.session_state.light_theme:
     
     # BEAUTIFUL LIGHT MODE CHARTS
     chart_text_color = "#4B5563"           
-    gauge_bar = "#A855F7"                  # Beautiful Amethyst Purple
+    gauge_bar = "#A855F7"                  
     gauge_bg = "rgba(0,0,0,0)"             
     
-    # Ultra-soft ethereal background zones
-    step_red = "#FFE4E6"                   # Soft Rose Water
-    step_yellow = "#FFEDD5"                # Soft Peach
-    step_green = "#D1FAE5"                 # Mint Mist
+    step_red = "#FFE4E6"                   
+    step_yellow = "#FFEDD5"                
+    step_green = "#D1FAE5"                 
     
-    radar_fill = "rgba(168, 85, 247, 0.12)" # Soft Amethyst wash
+    radar_fill = "rgba(168, 85, 247, 0.12)" 
     radar_line = "#A855F7"
     radar_bg = "rgba(255, 255, 255, 0.9)"  
-    radar_grid = "#F3F4F6"                 # Whisper light grid
-    wc_cmap = "RdPu"                       # Red-Purple stunning colormap for words
+    radar_grid = "#F3F4F6"                 
+    wc_cmap = "RdPu"                       
 else:
     st.markdown("""
     <style>
@@ -142,7 +140,6 @@ else:
         .stApp { background-color: #0B0F19 !important; color: #F3F4F6 !important; font-family: 'Inter', sans-serif; }
         [data-testid="stSidebar"] { background-color: #111827 !important; border-right: 1px solid #1F2937 !important; }
         
-        /* Removed 'span' and '!important' font overrides here to protect Streamlit Material Icons */
         h1, h2, h3, h4, h5, h6, p, label, .stMarkdown { color: #F3F4F6 !important; }
         
         /* 🔥 AWESOME HERO BANNER (DARK) 🔥 */
@@ -227,9 +224,11 @@ else:
     chart_text_color = "#E5E7EB"           
     gauge_bar = "#10B981"                  
     gauge_bg = "rgba(0,0,0,0)"             
+    
     step_red = "rgba(239, 68, 68, 0.1)"    
     step_yellow = "rgba(245, 158, 11, 0.1)"
     step_green = "rgba(16, 185, 129, 0.1)" 
+    
     radar_fill = "rgba(16, 185, 129, 0.15)" 
     radar_line = "#10B981"
     radar_bg = "rgba(17, 24, 39, 0.8)"       
@@ -246,13 +245,6 @@ def load_lottieurl(url: str):
     except: return None
 
 lottie_ai = load_lottieurl("https://assets5.lottiefiles.com/packages/lf20_1m1of8zi.json")
-
-# --- DATA CONVERSION HELPER ---
-@st.cache_data
-def convert_df_to_csv(df_records):
-    if not df_records:
-        return pd.DataFrame().to_csv(index=False).encode('utf-8')
-    return pd.DataFrame(df_records).drop(columns=['id'], errors='ignore').to_csv(index=False).encode('utf-8')
 
 # --- 1. DATA HIERARCHY ---
 standard_departments = {
@@ -562,17 +554,10 @@ with tab1:
             # Apply Search Filter
             matched_reviews = [r for r in reviews if search_query.lower() in r['review_text'].lower()] if search_query else reviews
             
-            # Subheader & Download Button Row
-            col_head1, col_head2 = st.columns([3, 1])
-            with col_head1:
-                if search_query:
-                    st.subheader(f"🔍 Search Results ({len(matched_reviews)})")
-                else:
-                    st.subheader(f"📖 Student Discussions ({len(matched_reviews)})")
-            with col_head2:
-                if matched_reviews:
-                    csv_data = convert_df_to_csv(matched_reviews)
-                    st.download_button("📥 Download Data", data=csv_data, file_name=f"college_reviews.csv", mime="text/csv", use_container_width=True)
+            if search_query:
+                st.subheader(f"🔍 Search Results ({len(matched_reviews)})")
+            else:
+                st.subheader(f"📖 Student Discussions ({len(matched_reviews)})")
             
             if not matched_reviews and search_query:
                 st.warning(f"No reviews found containing '{search_query}'.")
@@ -640,17 +625,10 @@ with tab2:
         # Apply Search Filter
         matched_course_reviews = [r for r in course_reviews if search_query.lower() in r['review_text'].lower()] if search_query else course_reviews
         
-        # Subheader & Download Button Row
-        col_head3, col_head4 = st.columns([3, 1])
-        with col_head3:
-            if search_query:
-                st.subheader(f"🔍 Search Results ({len(matched_course_reviews)})")
-            else:
-                st.subheader(f"📖 Course Feedback ({len(matched_course_reviews)})")
-        with col_head4:
-            if matched_course_reviews:
-                csv_data_course = convert_df_to_csv(matched_course_reviews)
-                st.download_button("📥 Download Data", data=csv_data_course, file_name=f"course_reviews.csv", mime="text/csv", use_container_width=True)
+        if search_query:
+            st.subheader(f"🔍 Search Results ({len(matched_course_reviews)})")
+        else:
+            st.subheader(f"📖 Course Feedback ({len(matched_course_reviews)})")
 
         if not matched_course_reviews and search_query:
             st.warning(f"No reviews found containing '{search_query}'.")
