@@ -35,6 +35,20 @@ if st.session_state.light_theme:
         
         h1, h2, h3, h4, h5, h6, p, span, label, .stMarkdown { color: #1F2937 !important; font-family: 'Inter', sans-serif !important; }
         
+        /* 🔥 AWESOME HERO BANNER (LIGHT) 🔥 */
+        .hero-container {
+            background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
+            color: #FFFFFF !important;
+            padding: 3rem 2rem;
+            border-radius: 1.5rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            margin-top: -2rem;
+            box-shadow: 0 20px 25px -5px rgba(79, 70, 229, 0.15), 0 10px 10px -5px rgba(79, 70, 229, 0.1);
+        }
+        .hero-title { font-size: 3.5rem; font-weight: 900; margin: 0; line-height: 1.2; letter-spacing: -0.03em; color: #FFFFFF !important; }
+        .hero-subtitle { font-size: 1.25rem; font-weight: 500; margin-top: 0.75rem; color: #FDF2F8 !important; opacity: 0.95; }
+        
         /* Elegant Form Container */
         div[data-testid="stForm"] { 
             background-color: #FFFFFF !important; 
@@ -100,15 +114,12 @@ if st.session_state.light_theme:
     """, unsafe_allow_html=True)
     
     # ELEGANT LIGHT MODE CHARTS
-    chart_text_color = "#4B5563"           # Soft Slate Gray
-    gauge_bar = "#6366F1"                  # Soft, rich Indigo
+    chart_text_color = "#4B5563"           
+    gauge_bar = "#6366F1"                  
     gauge_bg = "rgba(0,0,0,0)"             
-    
-    # Ultra-soft pastel background zones for the gauge
-    step_red = "#FEE2E2"                   # Soft Rose
-    step_yellow = "#FEF3C7"                # Pale Amber
-    step_green = "#D1FAE5"                 # Mint Green
-    
+    step_red = "#FEE2E2"                   
+    step_yellow = "#FEF3C7"                
+    step_green = "#D1FAE5"                 
     radar_fill = "rgba(99, 102, 241, 0.15)" 
     radar_line = "#6366F1"
     radar_bg = "rgba(255, 255, 255, 0.8)"  
@@ -122,6 +133,20 @@ else:
         [data-testid="stSidebar"] { background-color: #111827 !important; border-right: 1px solid #1F2937 !important; }
         
         h1, h2, h3, h4, h5, h6, p, span, label, .stMarkdown { color: #F3F4F6 !important; font-family: 'Inter', sans-serif !important; }
+        
+        /* 🔥 AWESOME HERO BANNER (DARK) 🔥 */
+        .hero-container {
+            background: linear-gradient(135deg, #022C22 0%, #0B0F19 50%, #111827 100%);
+            padding: 3rem 2rem;
+            border-radius: 1.5rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            margin-top: -2rem;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            box-shadow: 0 0 40px -10px rgba(16, 185, 129, 0.15), inset 0 0 20px -5px rgba(16, 185, 129, 0.1);
+        }
+        .hero-title { font-size: 3.5rem; font-weight: 900; margin: 0; line-height: 1.2; letter-spacing: -0.03em; color: #FFFFFF !important; }
+        .hero-subtitle { font-size: 1.25rem; font-weight: 500; margin-top: 0.75rem; color: #34D399 !important; }
         
         /* Premium Form Container */
         div[data-testid="stForm"] { 
@@ -139,7 +164,7 @@ else:
         /* BEAUTIFUL SUBMIT BUTTON */
         div[data-testid="stForm"] button { 
             background: linear-gradient(135deg, #2DD4BF 0%, #10B981 100%) !important; 
-            color: #022C22 !important; /* Deep forest green text for contrast */
+            color: #022C22 !important; 
             border: none !important;
             border-radius: 0.5rem !important;
             font-weight: 700 !important;
@@ -188,18 +213,15 @@ else:
     """, unsafe_allow_html=True)
     
     # PREMIUM DARK MODE CHARTS
-    chart_text_color = "#E5E7EB"           # Light Silver
-    gauge_bar = "#10B981"                  # Neon Emerald
+    chart_text_color = "#E5E7EB"           
+    gauge_bar = "#10B981"                  
     gauge_bg = "rgba(0,0,0,0)"             
-    
-    # Sleek dark pastel background zones for the gauge
     step_red = "rgba(239, 68, 68, 0.1)"    
     step_yellow = "rgba(245, 158, 11, 0.1)"
     step_green = "rgba(16, 185, 129, 0.1)" 
-    
     radar_fill = "rgba(16, 185, 129, 0.15)" 
     radar_line = "#10B981"
-    radar_bg = "rgba(17, 24, 39, 0.8)"     # Slate-900 tint  
+    radar_bg = "rgba(17, 24, 39, 0.8)"       
     radar_grid = "#374151"                 
     wc_cmap = "viridis"            
 
@@ -217,7 +239,6 @@ lottie_ai = load_lottieurl("https://assets5.lottiefiles.com/packages/lf20_1m1of8
 # --- DATA CONVERSION HELPER ---
 @st.cache_data
 def convert_df_to_csv(df_records):
-    # Converts a list of dicts to a CSV byte string
     if not df_records:
         return pd.DataFrame().to_csv(index=False).encode('utf-8')
     return pd.DataFrame(df_records).drop(columns=['id'], errors='ignore').to_csv(index=False).encode('utf-8')
@@ -414,7 +435,6 @@ def analyze_course_aspects(reviews_df):
     return metrics
 
 def plot_gauge(score, title):
-    # ELEGANT GAUGE DESIGN: Ultra-thin bar, elegant font, pastel steps, no heavy borders
     fig = go.Figure(go.Indicator(
         mode = "gauge+number",
         value = score * 100,
@@ -422,9 +442,9 @@ def plot_gauge(score, title):
         number = {'suffix': "/100", 'font': {'color': chart_text_color, 'size': 36, 'family': "sans-serif"}},
         gauge = {
             'axis': {'range': [None, 100], 'tickcolor': "#9CA3AF", 'tickwidth': 1, 'ticklen': 4},
-            'bar': {'color': gauge_bar, 'thickness': 0.15}, # Ultra sleek thin bar
+            'bar': {'color': gauge_bar, 'thickness': 0.15}, 
             'bgcolor': "rgba(0,0,0,0)",
-            'borderwidth': 0, # Removed the clunky black border
+            'borderwidth': 0, 
             'steps': [
                 {'range': [0, 40], 'color': step_red},
                 {'range': [40, 70], 'color': step_yellow},
@@ -483,9 +503,13 @@ search_query = st.sidebar.text_input("Filter reviews by keyword (e.g., 'hostel',
 sort_option = st.sidebar.selectbox("Sort Reviews By:", ["Most Upvoted", "Newest"])
 st.sidebar.divider()
 
-st.title("⚡ KTU Insight Engine 2.0")
-st.caption("Powered by Natural Language Processing & Sentiment Analytics")
-st.divider()
+# 🔥 CUSTOM HERO BANNER INJECTION 🔥
+st.markdown("""
+    <div class="hero-container">
+        <div class="hero-title">⚡ KTU Insight Engine 2.0</div>
+        <div class="hero-subtitle">Powered by Natural Language Processing & Sentiment Analytics</div>
+    </div>
+""", unsafe_allow_html=True)
 
 tab1, tab2 = st.tabs(["🏢 College Analytics", "📚 Course Analytics"])
 
