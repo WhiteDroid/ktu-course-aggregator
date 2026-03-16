@@ -11,14 +11,17 @@ from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 from streamlit_lottie import st_lottie
 import re
-import html # 🛡️ Native HTML escaping for XSS protection
+import html 
 
 # --- UI CONFIGURATION ---
 st.set_page_config(page_title="KTU Insight Engine", page_icon="⚡", layout="wide")
 
-# --- ANTI-SPAM SESSION STATE SETUP ---
+# --- ANTI-SPAM & THEME STATE SETUP ---
 if 'light_theme' not in st.session_state:
     st.session_state.light_theme = False
+# Start at 3, so the very first switch to light mode triggers Index 0 (Innocent)
+if 'theme_cycle_idx' not in st.session_state:
+    st.session_state.theme_cycle_idx = 3 
 if 'upvoted_reviews' not in st.session_state:
     st.session_state.upvoted_reviews = set() 
 if 'last_submit_time' not in st.session_state:
@@ -32,72 +35,140 @@ st.sidebar.divider()
 st.sidebar.markdown("### 🌗 Appearance")
 theme_toggle = st.sidebar.toggle("Switch to Light Mode", value=st.session_state.light_theme)
 
+# 🔥 SHAPE-SHIFTING THEME ENGINE 🔥
 if theme_toggle != st.session_state.light_theme:
+    if theme_toggle == True:
+        # If switching FROM Dark TO Light, rotate the persona!
+        st.session_state.theme_cycle_idx = (st.session_state.theme_cycle_idx + 1) % 4
     st.session_state.light_theme = theme_toggle
     st.rerun()
 
 # Apply CSS overrides and set sophisticated chart color variables
 if st.session_state.light_theme:
-    st.markdown("""
+    idx = st.session_state.theme_cycle_idx
+    
+    if idx == 0:
+        # 🌸 1. INNOCENT YOUNG GIRL (Cotton Candy & Peach)
+        t = {
+            "app_bg": "#FFF8F9", "sidebar_bg": "#FFFFFF", "text": "#5D4E52",
+            "hero_grad": "linear-gradient(135deg, #FFA9D1 0%, #FFB6C1 50%, #FFDAC1 100%)",
+            "hero_shadow": "0 15px 30px -5px rgba(255, 182, 193, 0.3)", "hero_border": "#FFD1DC",
+            "hero_txt_shadow": "0 2px 10px rgba(0,0,0,0.05)", "subtitle": "#FFF0F5",
+            "form_bg": "#FFFFFF", "form_border": "#FFE4E1",
+            "inp_bg": "#FFF8F9", "inp_border": "#FFD1DC", "focus": "#FFB6C1",
+            "btn_grad": "linear-gradient(135deg, #FFA9D1 0%, #FFB6C1 100%)",
+            "btn_shadow": "rgba(255, 182, 193, 0.3)", "btn_h_shadow": "rgba(255, 182, 193, 0.5)",
+            "card_bg": "#FFFFFF", "card_border": "#FFE4E1", "card_h_border": "#FFD1DC", "card_h_shadow": "0 12px 20px -3px rgba(255, 182, 193, 0.2)",
+            "pill_bg": "#FFF0F5", "pill_txt": "#FF69B4", "pill_border": "#FFD1DC",
+            "gauge_bar": "#FF69B4", "radar_fill": "rgba(255, 105, 180, 0.15)", "wc_cmap": "spring",
+            "c_red": "rgba(255, 182, 193, 0.1)", "c_yel": "rgba(255, 182, 193, 0.2)", "c_grn": "rgba(255, 182, 193, 0.3)",
+            "comp_colors": ["#FF69B4", "#FFA9D1", "#FFDAC1"]
+        }
+    elif idx == 1:
+        # 🍷 2. ELEGANT YOUNG LADY (Blush & Silk)
+        t = {
+            "app_bg": "#FCF9F9", "sidebar_bg": "#FFFFFF", "text": "#4A4040",
+            "hero_grad": "linear-gradient(135deg, #DCA7B8 0%, #D49BAA 50%, #CE8E9E 100%)",
+            "hero_shadow": "0 15px 30px -5px rgba(212, 155, 170, 0.25)", "hero_border": "#E6BCCD",
+            "hero_txt_shadow": "0 2px 10px rgba(0,0,0,0.1)", "subtitle": "#FFF0F2",
+            "form_bg": "#FFFFFF", "form_border": "#F5EBEB",
+            "inp_bg": "#FCF9F9", "inp_border": "#EAD8DC", "focus": "#D49BAA",
+            "btn_grad": "linear-gradient(135deg, #DCA7B8 0%, #CE8E9E 100%)",
+            "btn_shadow": "rgba(212, 155, 170, 0.3)", "btn_h_shadow": "rgba(212, 155, 170, 0.4)",
+            "card_bg": "#FFFFFF", "card_border": "#F5EBEB", "card_h_border": "#EAD8DC", "card_h_shadow": "0 12px 20px -3px rgba(212, 155, 170, 0.1)",
+            "pill_bg": "#FDF4F6", "pill_txt": "#9A7480", "pill_border": "#F5EBEB",
+            "gauge_bar": "#D49BAA", "radar_fill": "rgba(212, 155, 170, 0.15)", "wc_cmap": "PuRd",
+            "c_red": "rgba(226, 176, 192, 0.1)", "c_yel": "rgba(226, 176, 192, 0.2)", "c_grn": "rgba(226, 176, 192, 0.3)",
+            "comp_colors": ["#D49BAA", "#A39BA8", "#E3B5A4"]
+        }
+    elif idx == 2:
+        # 💋 3. HOT & SEXY LADY (Crimson & Ruby)
+        t = {
+            "app_bg": "#FFF5F7", "sidebar_bg": "#FFFFFF", "text": "#4A1525",
+            "hero_grad": "linear-gradient(135deg, #FF0055 0%, #D50032 50%, #8A0030 100%)",
+            "hero_shadow": "0 15px 30px -5px rgba(213, 0, 50, 0.3)", "hero_border": "#FFB3C6",
+            "hero_txt_shadow": "0 2px 10px rgba(0,0,0,0.1)", "subtitle": "#FFD1DC",
+            "form_bg": "#FFFFFF", "form_border": "#FFE4E8",
+            "inp_bg": "#FFF5F7", "inp_border": "#FFCCD5", "focus": "#D50032",
+            "btn_grad": "linear-gradient(135deg, #FF0055 0%, #D50032 100%)",
+            "btn_shadow": "rgba(213, 0, 50, 0.3)", "btn_h_shadow": "rgba(213, 0, 50, 0.5)",
+            "card_bg": "#FFFFFF", "card_border": "#FFE4E8", "card_h_border": "#FFCCD5", "card_h_shadow": "0 12px 20px -3px rgba(213, 0, 50, 0.15)",
+            "pill_bg": "#FFF0F3", "pill_txt": "#D50032", "pill_border": "#FFE4E8",
+            "gauge_bar": "#D50032", "radar_fill": "rgba(213, 0, 50, 0.15)", "wc_cmap": "Reds",
+            "c_red": "rgba(213, 0, 50, 0.05)", "c_yel": "rgba(213, 0, 50, 0.15)", "c_grn": "rgba(213, 0, 50, 0.25)",
+            "comp_colors": ["#D50032", "#FF0055", "#8A0030"]
+        }
+    else:
+        # 👑 4. SEXY GODDESS (Velvet & Gold)
+        t = {
+            "app_bg": "#FFF7F8", "sidebar_bg": "#FFFFFF", "text": "#3A101E",
+            "hero_grad": "linear-gradient(135deg, #C70039 0%, #900C3F 50%, #581845 100%)",
+            "hero_shadow": "0 15px 30px -5px rgba(144, 12, 63, 0.35)", "hero_border": "#FFC300",
+            "hero_txt_shadow": "0 2px 10px rgba(0,0,0,0.1)", "subtitle": "#FFC300",
+            "form_bg": "#FFFFFF", "form_border": "#FADADD",
+            "inp_bg": "#FFF7F8", "inp_border": "#F5C6CB", "focus": "#C70039",
+            "btn_grad": "linear-gradient(135deg, #C70039 0%, #900C3F 100%)",
+            "btn_shadow": "rgba(199, 0, 57, 0.3)", "btn_h_shadow": "rgba(144, 12, 63, 0.5)",
+            "card_bg": "#FFFFFF", "card_border": "#FADADD", "card_h_border": "#FFC300", "card_h_shadow": "0 12px 20px -3px rgba(144, 12, 63, 0.15)",
+            "pill_bg": "#FFF0F3", "pill_txt": "#900C3F", "pill_border": "#FFC300",
+            "gauge_bar": "#C70039", "radar_fill": "rgba(199, 0, 57, 0.15)", "wc_cmap": "inferno",
+            "c_red": "rgba(199, 0, 57, 0.05)", "c_yel": "rgba(199, 0, 57, 0.15)", "c_grn": "rgba(199, 0, 57, 0.25)",
+            "comp_colors": ["#C70039", "#FFC300", "#900C3F"]
+        }
+
+    # Injecting Dynamic CSS
+    st.markdown(f"""
     <style>
-        /* 🔥 Velvet & Gold Goddess Light Theme 🔥 */
-        .stApp { background-color: #FFF7F8 !important; color: #3A101E !important; font-family: 'Inter', sans-serif; }
-        [data-testid="stSidebar"] { background-color: #FFFFFF !important; border-right: 1px solid #FADADD !important; }
-        h1, h2, h3, h4, h5, h6, p, label, .stMarkdown { color: #3A101E !important; }
+        .stApp {{ background-color: {t['app_bg']} !important; color: {t['text']} !important; font-family: 'Inter', sans-serif; }}
+        [data-testid="stSidebar"] {{ background-color: {t['sidebar_bg']} !important; border-right: 1px solid {t['card_border']} !important; }}
+        h1, h2, h3, h4, h5, h6, p, label, .stMarkdown {{ color: {t['text']} !important; }}
         
-        /* 💋 SULTRY CRIMSON & GOLD HERO BANNER 💋 */
-        .hero-container {
-            background: linear-gradient(135deg, #C70039 0%, #900C3F 50%, #581845 100%);
-            color: #FFFFFF !important;
-            padding: 3.5rem 2rem;
-            border-radius: 1rem; 
-            text-align: center;
-            margin-bottom: 2.5rem;
-            margin-top: -2rem;
-            box-shadow: 0 15px 30px -5px rgba(144, 12, 63, 0.35);
-            border: 1px solid #FFC300;
-        }
-        .hero-title { font-size: 3.5rem; font-weight: 800; margin: 0; line-height: 1.2; letter-spacing: -0.01em; color: #FFFFFF !important; font-family: 'Georgia', serif; }
-        .hero-subtitle { font-size: 1.15rem; font-weight: 500; margin-top: 1rem; color: #FFC300 !important; letter-spacing: 0.05em; text-transform: uppercase; }
+        .hero-container {{
+            background: {t['hero_grad']}; color: #FFFFFF !important; padding: 3.5rem 2rem; border-radius: 1rem; 
+            text-align: center; margin-bottom: 2.5rem; margin-top: -2rem; box-shadow: {t['hero_shadow']}; border: 1px solid {t['hero_border']};
+        }}
+        .hero-title {{ font-size: 3.5rem; font-weight: 800; margin: 0; line-height: 1.2; letter-spacing: -0.01em; color: #FFFFFF !important; font-family: 'Georgia', serif; text-shadow: {t['hero_txt_shadow']};}}
+        .hero-subtitle {{ font-size: 1.15rem; font-weight: 500; margin-top: 1rem; color: {t['subtitle']} !important; letter-spacing: 0.05em; text-transform: uppercase; }}
         
-        div[data-testid="stForm"] { background-color: #FFFFFF !important; border: 1px solid #FADADD !important; border-radius: 0.75rem; box-shadow: 0 4px 15px -2px rgba(144, 12, 63, 0.05); padding: 2.5rem !important; }
+        div[data-testid="stForm"] {{ background-color: {t['form_bg']} !important; border: 1px solid {t['form_border']} !important; border-radius: 0.75rem; box-shadow: 0 4px 15px -2px rgba(0, 0, 0, 0.03); padding: 2.5rem !important; }}
         
-        div[data-baseweb="select"] > div { background-color: #FFF7F8 !important; color: #3A101E !important; border: 1px solid #F5C6CB !important; border-radius: 0.5rem; }
-        .stTextArea textarea, .stTextInput input { background-color: #FFF7F8 !important; color: #3A101E !important; border: 1px solid #F5C6CB !important; border-radius: 0.5rem; }
-        .stTextArea textarea:focus, .stTextInput input:focus { border-color: #C70039 !important; box-shadow: 0 0 0 1px #C70039 !important; }
+        div[data-baseweb="select"] > div {{ background-color: {t['inp_bg']} !important; color: {t['text']} !important; border: 1px solid {t['inp_border']} !important; border-radius: 0.5rem; }}
+        .stTextArea textarea, .stTextInput input {{ background-color: {t['inp_bg']} !important; color: {t['text']} !important; border: 1px solid {t['inp_border']} !important; border-radius: 0.5rem; }}
+        .stTextArea textarea:focus, .stTextInput input:focus {{ border-color: {t['focus']} !important; box-shadow: 0 0 0 1px {t['focus']} !important; }}
         
-        /* FIERCE VELVET SUBMIT BUTTON */
-        div[data-testid="stForm"] button { 
-            background: linear-gradient(135deg, #C70039 0%, #900C3F 100%) !important; 
-            color: #FFFFFF !important; border: none !important; border-radius: 0.5rem !important; font-weight: 600 !important; letter-spacing: 0.02em !important; padding: 0.6rem 2.5rem !important; box-shadow: 0 4px 10px -1px rgba(199, 0, 57, 0.3) !important; transition: all 0.3s ease !important;
-        }
-        div[data-testid="stForm"] button:hover { transform: translateY(-2px); box-shadow: 0 8px 15px -2px rgba(144, 12, 63, 0.5) !important; }
+        div[data-testid="stForm"] button {{ 
+            background: {t['btn_grad']} !important; color: #FFFFFF !important; border: none !important; border-radius: 0.5rem !important; font-weight: 600 !important; letter-spacing: 0.02em !important; padding: 0.6rem 2.5rem !important; box-shadow: 0 4px 10px -1px {t['btn_shadow']} !important; transition: all 0.3s ease !important;
+        }}
+        div[data-testid="stForm"] button:hover {{ transform: translateY(-2px); box-shadow: 0 8px 15px -2px {t['btn_h_shadow']} !important; }}
         
-        button[kind="secondary"] { background-color: #FFFFFF !important; color: #900C3F !important; border: 1px solid #F5C6CB !important; border-radius: 2rem !important; font-weight: 500 !important;}
-        button[kind="secondary"]:hover { border-color: #C70039 !important; color: #C70039 !important; background-color: #FFF0F3 !important; }
+        button[kind="secondary"] {{ background-color: #FFFFFF !important; color: {t['pill_txt']} !important; border: 1px solid {t['inp_border']} !important; border-radius: 2rem !important; font-weight: 500 !important;}}
+        button[kind="secondary"]:hover {{ border-color: {t['focus']} !important; color: {t['focus']} !important; background-color: {t['pill_bg']} !important; }}
         
-        [data-testid="stVerticalBlockBorderWrapper"] {
-            border-radius: 0.75rem !important; border: 1px solid #FADADD !important; background-color: #FFFFFF !important; transition: all 0.3s ease !important; box-shadow: 0 2px 10px -1px rgba(0,0,0,0.02) !important; padding: 0.8rem !important;
-        }
-        [data-testid="stVerticalBlockBorderWrapper"]:hover { border-color: #FFC300 !important; box-shadow: 0 12px 20px -3px rgba(144, 12, 63, 0.15) !important; transform: translateY(-2px); }
+        [data-testid="stVerticalBlockBorderWrapper"] {{
+            border-radius: 0.75rem !important; border: 1px solid {t['card_border']} !important; background-color: {t['card_bg']} !important; transition: all 0.3s ease !important; box-shadow: 0 2px 10px -1px rgba(0,0,0,0.02) !important; padding: 0.8rem !important;
+        }}
+        [data-testid="stVerticalBlockBorderWrapper"]:hover {{ border-color: {t['card_h_border']} !important; box-shadow: {t['card_h_shadow']} !important; transform: translateY(-2px); }}
         
-        .tag-pill { background-color: #FFF0F3; color: #900C3F; padding: 0.25rem 0.8rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; display: inline-block; margin-right: 0.5rem; border: 1px solid #FFC300; letter-spacing: 0.03em; }
+        .tag-pill {{ background-color: {t['pill_bg']}; color: {t['pill_txt']}; padding: 0.25rem 0.8rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; display: inline-block; margin-right: 0.5rem; border: 1px solid {t['pill_border']}; letter-spacing: 0.03em; }}
     </style>
     """, unsafe_allow_html=True)
     
-    chart_text_color = "#3A101E"           
-    gauge_bar = "#C70039"                  
+    # Assigning chart variables from the active dictionary
+    chart_text_color = t['text']           
+    gauge_bar = t['gauge_bar']                  
     gauge_bg = "rgba(0,0,0,0)"             
-    step_red = "rgba(199, 0, 57, 0.05)"               
-    step_yellow = "rgba(199, 0, 57, 0.15)"              
-    step_green = "rgba(199, 0, 57, 0.25)"                  
-    radar_fill = "rgba(199, 0, 57, 0.15)" 
-    radar_line = "#C70039"
+    step_red = t['c_red']               
+    step_yellow = t['c_yel']              
+    step_green = t['c_grn']                  
+    radar_fill = t['radar_fill'] 
+    radar_line = t['gauge_bar']
     radar_bg = "rgba(255, 255, 255, 0.95)"  
-    radar_grid = "#FADADD"                 
-    wc_cmap = "inferno"                       
-    comp_colors = ["#C70039", "#FFC300", "#900C3F"] 
+    radar_grid = t['card_border']                 
+    wc_cmap = t['wc_cmap']                       
+    comp_colors = t['comp_colors']
+    
 else:
+    # --- DARK MODE ALWAYS REMAINS IDENTICAL ---
     st.markdown("""
     <style>
         /* Premium Midnight & Neon Emerald Dark Theme */
@@ -403,7 +474,7 @@ def plot_gauge(score, title):
         title = {'text': title, 'font': {'size': 16, 'color': chart_text_color}},
         number = {'suffix': "/100", 'font': {'color': chart_text_color, 'size': 36, 'family': "sans-serif"}},
         gauge = {
-            'axis': {'range': [None, 100], 'tickcolor': "#FADADD", 'tickwidth': 1, 'ticklen': 4},
+            'axis': {'range': [None, 100], 'tickcolor': radar_grid, 'tickwidth': 1, 'ticklen': 4},
             'bar': {'color': gauge_bar, 'thickness': 0.15}, 
             'bgcolor': "rgba(0,0,0,0)",
             'borderwidth': 0, 
