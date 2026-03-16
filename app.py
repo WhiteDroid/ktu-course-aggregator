@@ -11,7 +11,7 @@ from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 from streamlit_lottie import st_lottie
 import re
-import html # 🛡️ NEW: Native HTML escaping for XSS protection
+import html # 🛡️ Native HTML escaping for XSS protection
 
 # --- UI CONFIGURATION ---
 st.set_page_config(page_title="KTU Insight Engine", page_icon="⚡", layout="wide")
@@ -40,61 +40,63 @@ if theme_toggle != st.session_state.light_theme:
 if st.session_state.light_theme:
     st.markdown("""
     <style>
-        /* Blush & Silk Light Theme - Elegant, Feminine, & Graceful */
-        .stApp { background-color: #FCF9F9 !important; color: #4A4040 !important; font-family: 'Inter', sans-serif; }
-        [data-testid="stSidebar"] { background-color: #FFFFFF !important; border-right: 1px solid #F5EBEB !important; }
-        h1, h2, h3, h4, h5, h6, p, label, .stMarkdown { color: #4A4040 !important; }
+        /* Bold, Passionate, & Alluring Light Theme */
+        .stApp { background-color: #FFF5F7 !important; color: #4A1525 !important; font-family: 'Inter', sans-serif; }
+        [data-testid="stSidebar"] { background-color: #FFFFFF !important; border-right: 1px solid #FFE4E8 !important; }
+        h1, h2, h3, h4, h5, h6, p, label, .stMarkdown { color: #4A1525 !important; }
         
+        /* 🔥 SCORCHING CRIMSON HERO BANNER 🔥 */
         .hero-container {
-            background: linear-gradient(135deg, #DCA7B8 0%, #D49BAA 50%, #CE8E9E 100%);
+            background: linear-gradient(135deg, #FF0055 0%, #D50032 50%, #8A0030 100%);
             color: #FFFFFF !important;
             padding: 3.5rem 2rem;
             border-radius: 1rem; 
             text-align: center;
             margin-bottom: 2.5rem;
             margin-top: -2rem;
-            box-shadow: 0 15px 30px -5px rgba(212, 155, 170, 0.25);
-            border: 1px solid #E6BCCD;
+            box-shadow: 0 15px 30px -5px rgba(213, 0, 50, 0.3);
+            border: 1px solid #FFB3C6;
         }
         .hero-title { font-size: 3.5rem; font-weight: 800; margin: 0; line-height: 1.2; letter-spacing: -0.01em; color: #FFFFFF !important; font-family: 'Georgia', serif; }
-        .hero-subtitle { font-size: 1.15rem; font-weight: 500; margin-top: 1rem; color: #FFF0F2 !important; letter-spacing: 0.05em; text-transform: uppercase; }
+        .hero-subtitle { font-size: 1.15rem; font-weight: 500; margin-top: 1rem; color: #FFD1DC !important; letter-spacing: 0.05em; text-transform: uppercase; }
         
-        div[data-testid="stForm"] { background-color: #FFFFFF !important; border: 1px solid #F5EBEB !important; border-radius: 0.75rem; box-shadow: 0 4px 15px -2px rgba(0, 0, 0, 0.03); padding: 2.5rem !important; }
+        div[data-testid="stForm"] { background-color: #FFFFFF !important; border: 1px solid #FFE4E8 !important; border-radius: 0.75rem; box-shadow: 0 4px 15px -2px rgba(213, 0, 50, 0.05); padding: 2.5rem !important; }
         
-        div[data-baseweb="select"] > div { background-color: #FCF9F9 !important; color: #4A4040 !important; border: 1px solid #EAD8DC !important; border-radius: 0.5rem; }
-        .stTextArea textarea, .stTextInput input { background-color: #FCF9F9 !important; color: #4A4040 !important; border: 1px solid #EAD8DC !important; border-radius: 0.5rem; }
-        .stTextArea textarea:focus, .stTextInput input:focus { border-color: #D49BAA !important; box-shadow: 0 0 0 1px #D49BAA !important; }
+        div[data-baseweb="select"] > div { background-color: #FFF5F7 !important; color: #4A1525 !important; border: 1px solid #FFCCD5 !important; border-radius: 0.5rem; }
+        .stTextArea textarea, .stTextInput input { background-color: #FFF5F7 !important; color: #4A1525 !important; border: 1px solid #FFCCD5 !important; border-radius: 0.5rem; }
+        .stTextArea textarea:focus, .stTextInput input:focus { border-color: #D50032 !important; box-shadow: 0 0 0 1px #D50032 !important; }
         
+        /* FIERCE RED SUBMIT BUTTON */
         div[data-testid="stForm"] button { 
-            background: linear-gradient(135deg, #DCA7B8 0%, #CE8E9E 100%) !important; 
-            color: #FFFFFF !important; border: none !important; border-radius: 0.5rem !important; font-weight: 600 !important; letter-spacing: 0.02em !important; padding: 0.6rem 2.5rem !important; box-shadow: 0 4px 10px -1px rgba(212, 155, 170, 0.3) !important; transition: all 0.3s ease !important;
+            background: linear-gradient(135deg, #FF0055 0%, #D50032 100%) !important; 
+            color: #FFFFFF !important; border: none !important; border-radius: 0.5rem !important; font-weight: 600 !important; letter-spacing: 0.02em !important; padding: 0.6rem 2.5rem !important; box-shadow: 0 4px 10px -1px rgba(213, 0, 50, 0.3) !important; transition: all 0.3s ease !important;
         }
-        div[data-testid="stForm"] button:hover { transform: translateY(-2px); box-shadow: 0 8px 15px -2px rgba(212, 155, 170, 0.4) !important; }
+        div[data-testid="stForm"] button:hover { transform: translateY(-2px); box-shadow: 0 8px 15px -2px rgba(213, 0, 50, 0.5) !important; }
         
-        button[kind="secondary"] { background-color: #FFFFFF !important; color: #9A7480 !important; border: 1px solid #EAD8DC !important; border-radius: 2rem !important; font-weight: 500 !important;}
-        button[kind="secondary"]:hover { border-color: #D49BAA !important; color: #D49BAA !important; background-color: #FDF4F6 !important; }
+        button[kind="secondary"] { background-color: #FFFFFF !important; color: #D50032 !important; border: 1px solid #FFCCD5 !important; border-radius: 2rem !important; font-weight: 500 !important;}
+        button[kind="secondary"]:hover { border-color: #FF0055 !important; color: #FF0055 !important; background-color: #FFF0F3 !important; }
         
         [data-testid="stVerticalBlockBorderWrapper"] {
-            border-radius: 0.75rem !important; border: 1px solid #F5EBEB !important; background-color: #FFFFFF !important; transition: all 0.3s ease !important; box-shadow: 0 2px 10px -1px rgba(0,0,0,0.02) !important; padding: 0.8rem !important;
+            border-radius: 0.75rem !important; border: 1px solid #FFE4E8 !important; background-color: #FFFFFF !important; transition: all 0.3s ease !important; box-shadow: 0 2px 10px -1px rgba(0,0,0,0.02) !important; padding: 0.8rem !important;
         }
-        [data-testid="stVerticalBlockBorderWrapper"]:hover { border-color: #EAD8DC !important; box-shadow: 0 12px 20px -3px rgba(212, 155, 170, 0.1) !important; transform: translateY(-2px); }
+        [data-testid="stVerticalBlockBorderWrapper"]:hover { border-color: #FFCCD5 !important; box-shadow: 0 12px 20px -3px rgba(213, 0, 50, 0.15) !important; transform: translateY(-2px); }
         
-        .tag-pill { background-color: #FDF4F6; color: #9A7480; padding: 0.25rem 0.8rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; display: inline-block; margin-right: 0.5rem; border: 1px solid #F5EBEB; letter-spacing: 0.03em; }
+        .tag-pill { background-color: #FFF0F3; color: #D50032; padding: 0.25rem 0.8rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; display: inline-block; margin-right: 0.5rem; border: 1px solid #FFE4E8; letter-spacing: 0.03em; }
     </style>
     """, unsafe_allow_html=True)
     
-    chart_text_color = "#6B5E62"           
-    gauge_bar = "#D49BAA"                  
+    chart_text_color = "#4A1525"           
+    gauge_bar = "#D50032"                  
     gauge_bg = "rgba(0,0,0,0)"             
-    step_red = "rgba(226, 176, 192, 0.1)"               
-    step_yellow = "rgba(226, 176, 192, 0.2)"              
-    step_green = "rgba(226, 176, 192, 0.3)"                  
-    radar_fill = "rgba(212, 155, 170, 0.15)" 
-    radar_line = "#D49BAA"
+    step_red = "rgba(213, 0, 50, 0.05)"               
+    step_yellow = "rgba(213, 0, 50, 0.15)"              
+    step_green = "rgba(213, 0, 50, 0.25)"                  
+    radar_fill = "rgba(213, 0, 50, 0.15)" 
+    radar_line = "#D50032"
     radar_bg = "rgba(255, 255, 255, 0.95)"  
-    radar_grid = "#F5EBEB"                 
-    wc_cmap = "PuRd"                       
-    comp_colors = ["#D49BAA", "#A39BA8", "#E3B5A4"] 
+    radar_grid = "#FFE4E8"                 
+    wc_cmap = "Reds"                       
+    comp_colors = ["#D50032", "#FF0055", "#8A0030"] 
 else:
     st.markdown("""
     <style>
@@ -242,33 +244,26 @@ def extract_tags(text, category):
 def check_spam(text, target_name):
     text = text.strip()
     
-    # 1. Payload Limit & Buffer Protection
     if len(text) < 10:
         return True, "Review too short. Please provide a detailed review."
     if len(text) > 800:
         return True, "Review too long. Please keep it under 800 characters."
         
-    # 2. XSS & HTML Injection Pre-Check
     if re.search(r'<[^>]*>', text):
         return True, "Security Alert: HTML formatting and scripts are not allowed."
         
-    # 3. Phishing & Link Spam Protection
     if re.search(r'(http:\/\/|https:\/\/|www\.|[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?)', text):
         return True, "Spam Alert: Links and URLs are strictly prohibited."
         
-    # 4. Keyboard Mashing / Gibberish Bot Check
     if re.search(r'(.)\1{5,}', text) or len(set(text)) < 4:
         return True, "Review rejected: Invalid or repeating characters detected."
         
-    # 5. Toxicity / Profanity Filter
     profanity_list = ["fuck", "shit", "bitch", "asshole", "cunt", "slut", "dick", "pussy", "bastard"]
     if any(bad_word in text.lower() for bad_word in profanity_list):
         return True, "Review rejected: Please keep the language professional and respectful."
         
-    # 6. Duplicate Entry Protection (Database Query)
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
-    # SQLi protection applied natively via parameterized query (?)
     c.execute("SELECT COUNT(*) FROM reviews WHERE target_name=? AND review_text=?", (target_name, text))
     is_duplicate = c.fetchone()[0] > 0
     conn.close()
@@ -528,7 +523,6 @@ with tab1:
         st.markdown("---")
         st.subheader("✍️ Add Review")
         with st.form(key="form_college"):
-            # Added max_chars to prevent buffer overflow attacks
             new_review = st.text_area("Share your experience...", max_chars=800)
             submit_col = st.form_submit_button("Submit Review")
             
@@ -574,7 +568,7 @@ with tab1:
             
             for r in matched_reviews[:10]: 
                 with st.container(border=True):
-                    # 🛡️ XSS PROTECTION: HTML Escape the user's raw text before displaying
+                    # 🛡️ XSS PROTECTION: HTML Escape
                     safe_text = html.escape(r['review_text'])
                     st.markdown(f"<p style='font-size: 1.05rem; font-style: italic; margin-bottom: 0.8rem; color: {chart_text_color};'>\"{safe_text}\"</p>", unsafe_allow_html=True)
                     
