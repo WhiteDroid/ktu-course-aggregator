@@ -102,7 +102,6 @@ if st.session_state.light_theme:
     </style>
     """, unsafe_allow_html=True)
     
-    # Assigning chart variables from the active dictionary
     chart_text_color = t['text']           
     gauge_bar = t['gauge_bar']                  
     gauge_bg = "rgba(0,0,0,0)"             
