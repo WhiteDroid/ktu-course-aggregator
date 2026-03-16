@@ -40,10 +40,8 @@ theme_toggle = st.sidebar.toggle("Switch to Light Mode", value=st.session_state.
 # 🔥 DUAL SHAPE-SHIFTING THEME ENGINE 🔥
 if theme_toggle != st.session_state.light_theme:
     if theme_toggle == True:
-        # Switched to Light: Rotate Light Persona
         st.session_state.theme_cycle_idx = (st.session_state.theme_cycle_idx + 1) % 4
     else:
-        # Switched to Dark: Rotate Dark Persona
         st.session_state.dark_theme_cycle_idx = (st.session_state.dark_theme_cycle_idx + 1) % 4
         
     st.session_state.light_theme = theme_toggle
@@ -65,56 +63,29 @@ if st.session_state.light_theme:
         # 👑 4. SEXY GODDESS (Velvet & Gold)
         t = {"app_bg": "#FFF7F8", "sidebar_bg": "#FFFFFF", "text": "#3A101E", "hero_grad": "linear-gradient(135deg, #C70039 0%, #900C3F 50%, #581845 100%)", "hero_shadow": "0 15px 30px -5px rgba(144, 12, 63, 0.35)", "hero_border": "#FFC300", "hero_txt_shadow": "0 2px 10px rgba(0,0,0,0.1)", "subtitle": "#FFC300", "form_bg": "#FFFFFF", "form_border": "#FADADD", "inp_bg": "#FFF7F8", "inp_border": "#F5C6CB", "focus": "#C70039", "btn_grad": "linear-gradient(135deg, #C70039 0%, #900C3F 100%)", "btn_shadow": "rgba(199, 0, 57, 0.3)", "btn_h_shadow": "rgba(144, 12, 63, 0.5)", "card_bg": "#FFFFFF", "card_border": "#FADADD", "card_h_border": "#FFC300", "card_h_shadow": "0 12px 20px -3px rgba(144, 12, 63, 0.15)", "pill_bg": "#FFF0F3", "pill_txt": "#900C3F", "pill_border": "#FFC300", "gauge_bar": "#C70039", "radar_fill": "rgba(199, 0, 57, 0.15)", "wc_cmap": "inferno", "c_red": "rgba(199, 0, 57, 0.05)", "c_yel": "rgba(199, 0, 57, 0.15)", "c_grn": "rgba(199, 0, 57, 0.25)", "comp_colors": ["#C70039", "#FFC300", "#900C3F"]}
 
-    # Injecting Dynamic CSS
     st.markdown(f"""
     <style>
         .stApp {{ background-color: {t['app_bg']} !important; color: {t['text']} !important; font-family: 'Inter', sans-serif; }}
         [data-testid="stSidebar"] {{ background-color: {t['sidebar_bg']} !important; border-right: 1px solid {t['card_border']} !important; }}
         h1, h2, h3, h4, h5, h6, p, label, .stMarkdown {{ color: {t['text']} !important; }}
-        
-        .hero-container {{
-            background: {t['hero_grad']}; color: #FFFFFF !important; padding: 3.5rem 2rem; border-radius: 1rem; 
-            text-align: center; margin-bottom: 2.5rem; margin-top: -2rem; box-shadow: {t['hero_shadow']}; border: 1px solid {t['hero_border']};
-        }}
+        .hero-container {{ background: {t['hero_grad']}; color: #FFFFFF !important; padding: 3.5rem 2rem; border-radius: 1rem; text-align: center; margin-bottom: 2.5rem; margin-top: -2rem; box-shadow: {t['hero_shadow']}; border: 1px solid {t['hero_border']}; }}
         .hero-title {{ font-size: 3.5rem; font-weight: 800; margin: 0; line-height: 1.2; letter-spacing: -0.01em; color: #FFFFFF !important; font-family: 'Georgia', serif; text-shadow: {t['hero_txt_shadow']};}}
         .hero-subtitle {{ font-size: 1.15rem; font-weight: 500; margin-top: 1rem; color: {t['subtitle']} !important; letter-spacing: 0.05em; text-transform: uppercase; }}
-        
         div[data-testid="stForm"] {{ background-color: {t['form_bg']} !important; border: 1px solid {t['form_border']} !important; border-radius: 0.75rem; box-shadow: 0 4px 15px -2px rgba(0, 0, 0, 0.03); padding: 2.5rem !important; }}
-        
         div[data-baseweb="select"] > div {{ background-color: {t['inp_bg']} !important; color: {t['text']} !important; border: 1px solid {t['inp_border']} !important; border-radius: 0.5rem; }}
         .stTextArea textarea, .stTextInput input {{ background-color: {t['inp_bg']} !important; color: {t['text']} !important; border: 1px solid {t['inp_border']} !important; border-radius: 0.5rem; }}
         .stTextArea textarea:focus, .stTextInput input:focus {{ border-color: {t['focus']} !important; box-shadow: 0 0 0 1px {t['focus']} !important; }}
-        
-        div[data-testid="stForm"] button {{ 
-            background: {t['btn_grad']} !important; color: #FFFFFF !important; border: none !important; border-radius: 0.5rem !important; font-weight: 600 !important; letter-spacing: 0.02em !important; padding: 0.6rem 2.5rem !important; box-shadow: 0 4px 10px -1px {t['btn_shadow']} !important; transition: all 0.3s ease !important;
-        }}
+        div[data-testid="stForm"] button {{ background: {t['btn_grad']} !important; color: #FFFFFF !important; border: none !important; border-radius: 0.5rem !important; font-weight: 600 !important; letter-spacing: 0.02em !important; padding: 0.6rem 2.5rem !important; box-shadow: 0 4px 10px -1px {t['btn_shadow']} !important; transition: all 0.3s ease !important; }}
         div[data-testid="stForm"] button:hover {{ transform: translateY(-2px); box-shadow: 0 8px 15px -2px {t['btn_h_shadow']} !important; }}
-        
         button[kind="secondary"] {{ background-color: #FFFFFF !important; color: {t['pill_txt']} !important; border: 1px solid {t['inp_border']} !important; border-radius: 2rem !important; font-weight: 500 !important;}}
         button[kind="secondary"]:hover {{ border-color: {t['focus']} !important; color: {t['focus']} !important; background-color: {t['pill_bg']} !important; }}
-        
-        [data-testid="stVerticalBlockBorderWrapper"] {{
-            border-radius: 0.75rem !important; border: 1px solid {t['card_border']} !important; background-color: {t['card_bg']} !important; transition: all 0.3s ease !important; box-shadow: 0 2px 10px -1px rgba(0,0,0,0.02) !important; padding: 0.8rem !important;
-        }}
+        [data-testid="stVerticalBlockBorderWrapper"] {{ border-radius: 0.75rem !important; border: 1px solid {t['card_border']} !important; background-color: {t['card_bg']} !important; transition: all 0.3s ease !important; box-shadow: 0 2px 10px -1px rgba(0,0,0,0.02) !important; padding: 0.8rem !important; }}
         [data-testid="stVerticalBlockBorderWrapper"]:hover {{ border-color: {t['card_h_border']} !important; box-shadow: {t['card_h_shadow']} !important; transform: translateY(-2px); }}
-        
         .tag-pill {{ background-color: {t['pill_bg']}; color: {t['pill_txt']}; padding: 0.25rem 0.8rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; display: inline-block; margin-right: 0.5rem; border: 1px solid {t['pill_border']}; letter-spacing: 0.03em; }}
     </style>
     """, unsafe_allow_html=True)
-    
-    chart_text_color = t['text']           
-    gauge_bar = t['gauge_bar']                  
-    gauge_bg = "rgba(0,0,0,0)"             
-    step_red = t['c_red']               
-    step_yellow = t['c_yel']              
-    step_green = t['c_grn']                  
-    radar_fill = t['radar_fill'] 
-    radar_line = t['gauge_bar']
-    radar_bg = "rgba(255, 255, 255, 0.95)"  
-    radar_grid = t['card_border']                 
-    wc_cmap = t['wc_cmap']                       
-    comp_colors = t['comp_colors']
-    
+    chart_text_color, gauge_bar, gauge_bg, step_red, step_yellow, step_green, radar_fill, radar_line, radar_bg, radar_grid, wc_cmap, comp_colors = t['text'], t['gauge_bar'], "rgba(0,0,0,0)", t['c_red'], t['c_yel'], t['c_grn'], t['radar_fill'], t['gauge_bar'], "rgba(255, 255, 255, 0.95)", t['card_border'], t['wc_cmap'], t['comp_colors']
+
 else:
     d_idx = st.session_state.dark_theme_cycle_idx
     if d_idx == 0:
@@ -164,17 +135,42 @@ def load_lottieurl(url: str):
     except: return None
 lottie_ai = load_lottieurl("https://assets5.lottiefiles.com/packages/lf20_1m1of8zi.json")
 
-# --- 1. DATA HIERARCHY ---
+# --- 1. FULL DATA HIERARCHY RESTORED ---
 standard_departments = {
-      "Artificial Intelligence (AI & DS)": ["AD301: Deep Learning", "AD302: Reinforcement Learning", "AD303: Data Analytics", "AD304: Big Data Technologies", "AD305: Natural Language Processing", "AD307: Computer Vision"],
-      "Computer Science (CSE)": ["CS301: Theory of Computation", "CS302: Design & Analysis of Algorithms", "CS303: Operating Systems", "CS304: Compiler Design", "CS305: Microprocessors", "CS309: Graph Theory"]
+    "Artificial Intelligence (AI & DS)": ["AD301: Deep Learning", "AD302: Reinforcement Learning", "AD303: Data Analytics", "AD304: Big Data Technologies", "AD305: Natural Language Processing", "AD307: Computer Vision"],
+    "Electronics & Communication (ECE)": ["EC301: Digital Signal Processing", "EC302: VLSI Design", "EC303: Applied Electromagnetic Theory", "EC304: Control Systems", "EC305: Microprocessors & Microcontrollers", "EC307: Power Electronics"],
+    "Electrical & Electronics (EEE)": ["EE301: Power Generation", "EE302: Electromagnetics", "EE303: Linear Control Systems", "EE305: Electrical Machines", "EE307: Signals and Systems", "EE309: Microprocessor and Embedded Systems"],
+    "Cybersecurity (CY)": ["CY301: Cryptography & Network Security", "CY302: Ethical Hacking", "CY303: Digital Forensics", "CY304: Malware Analysis", "CY305: Secure Coding Practices", "CY309: Cyber Threat Intelligence"],
+    "Polymer Engineering (PO)": ["PO301: Polymer Chemistry", "PO302: Polymer Processing Technology", "PO303: Rubber Science", "PO304: Plastics Materials", "PO305: Polymer Testing & Characterization", "PO309: Composite Materials"],
+    "Computer Science (CSE)": ["CS301: Theory of Computation", "CS302: Design & Analysis of Algorithms", "CS303: Operating Systems", "CS304: Compiler Design", "CS305: Microprocessors", "CS309: Graph Theory"]
 }
+
 ktu_hierarchy = {
     "University College of Engineering Thodupuzha (UCE)": standard_departments,
     "Model Engineering College (MEC)": standard_departments,
-    "College of Engineering Trivandrum (CET)": standard_departments
+    "College of Engineering Trivandrum (CET)": standard_departments,
+    "TKM College of Engineering, Kollam (TKM)": standard_departments,
+    "Rajiv Gandhi Institute of Technology (RIT), Kottayam": standard_departments,
+    "Government Engineering College, Thrissur (GEC)": standard_departments,
+    "Muthoot Institute of Technology and Science (MITS)": standard_departments,
+    "Rajagiri School of Engineering & Technology (RSET)": standard_departments,
+    "Mar Athanasius College of Engineering (MACE)": standard_departments,
+    "Federal Institute of Science and Technology (FISAT)": standard_departments
 }
 colleges_list = list(ktu_hierarchy.keys())
+
+college_coords = {
+    "University College of Engineering Thodupuzha (UCE)": (9.8450, 76.7450),
+    "Model Engineering College (MEC)": (10.0284, 76.3285),
+    "College of Engineering Trivandrum (CET)": (8.5456, 76.9063),
+    "TKM College of Engineering, Kollam (TKM)": (8.9100, 76.6316),
+    "Rajiv Gandhi Institute of Technology (RIT), Kottayam": (9.5534, 76.6179),
+    "Government Engineering College, Thrissur (GEC)": (10.5540, 76.2230),
+    "Muthoot Institute of Technology and Science (MITS)": (9.9482, 76.3980),
+    "Rajagiri School of Engineering & Technology (RSET)": (10.0102, 76.3653),
+    "Mar Athanasius College of Engineering (MACE)": (10.0543, 76.6186),
+    "Federal Institute of Science and Technology (FISAT)": (10.2312, 76.4087)
+}
 
 # --- 2. DATABASE SETUP, MIGRATION & ANTI-SPAM ---
 DB_NAME = "ktu_reviews.db"
@@ -203,10 +199,11 @@ def extract_tags(text, category):
         if "placement" in text or "job" in text: tags.append("💼 Placements")
         if "faculty" in text or "teacher" in text: tags.append("👨‍🏫 Faculty")
         if "hostel" in text or "food" in text: tags.append("🛏️ Hostel")
+        if "campus" in text or "infrastructure" in text: tags.append("🏛️ Campus")
     else:
-        if "hard" in text or "difficult" in text: tags.append("⚠️ Tough Syllabus")
-        if "easy" in text or "chill" in text: tags.append("✅ Easy Scoring")
-        if "lab" in text or "hands-on" in text: tags.append("🧪 Heavy Labs")
+        if "hard" in text or "difficult" in text or "complex" in text: tags.append("⚠️ Tough Syllabus")
+        if "easy" in text or "chill" in text or "fun" in text: tags.append("✅ Easy Scoring")
+        if "lab" in text or "hands-on" in text or "vm" in text or "experiments" in text: tags.append("🧪 Heavy Labs")
     return ", ".join(tags)
 
 def check_spam(text, target_name):
@@ -216,7 +213,7 @@ def check_spam(text, target_name):
     if re.search(r'<[^>]*>', text): return True, "Security Alert: HTML formatting is not allowed."
     if re.search(r'(http:\/\/|https:\/\/|www\.)', text): return True, "Spam Alert: Links are strictly prohibited."
     if re.search(r'(.)\1{5,}', text) or len(set(text)) < 4: return True, "Review rejected: Invalid characters detected."
-    if any(bad in text.lower() for bad in ["fuck", "shit", "bitch", "asshole"]): return True, "Review rejected: Profanity detected."
+    if any(bad in text.lower() for bad in ["fuck", "shit", "bitch", "asshole", "cunt", "slut", "dick", "pussy"]): return True, "Review rejected: Profanity detected."
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
     c.execute("SELECT COUNT(*) FROM reviews WHERE target_name=? AND review_text=?", (target_name, text))
@@ -265,27 +262,60 @@ def upvote_review(review_id):
     conn.commit()
     conn.close()
 
+# --- FULL DATA SEEDING RESTORED ---
 def seed_initial_data():
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
     c.execute("SELECT COUNT(*) FROM reviews")
     if c.fetchone()[0] == 0:
-        pool_good = ["Faculty is experienced and helpful.", "Great campus life.", "Easy subject to score if you study."]
-        pool_bad = ["Hostel rules are too strict.", "Syllabus is massive and tough.", "Teacher just reads slides."]
+        good_college = ["Good campus and nice placements.", "Faculty is experienced and helpful.", "Nice tech culture and okay college fests.", "Green campus, decent place to study."]
+        bad_college = ["Faculty is strict, feels like a school.", "Old blocks need serious renovation.", "Remote location makes commuting difficult.", "Hostel rules are too strict."]
+        
+        good_course = ["The faculty covered the syllabus well.", "Chill subject, easy to score.", "Labs make the theory easier.", "Relevant for industry placements."]
+        bad_course = ["The syllabus is massive and tough to finish.", "Exams are very hard, strict evaluation.", "Lab sessions here are a nightmare.", "Teacher just reads from the slides."]
+
+        cyber_good = ["Ethical hacking labs are so much fun.", "Cryptography is math-heavy but the teacher made it interesting.", "Best hands-on security course.", "Great CTF challenges in the lab."]
+        cyber_bad = ["Too many complex algorithms in Cryptography.", "Setting up the VMs for malware analysis took hours.", "Heavy coding required, very tough.", "Forensics tools kept crashing."]
+        
+        polymer_good = ["Polymer chemistry is fascinating.", "Lab experiments with composites were really practical.", "Great insights into material science.", "Very scoring subject if you know the basics."]
+        polymer_bad = ["Too many chemical reactions to memorize.", "Testing labs are tedious.", "Syllabus is very dry and theoretical.", "Industrial processing module was way too long."]
+
+        uce_college = ["A very good college with supportive faculty and decent placements.", "Great campus life, though some buildings are a bit old.", "Good tech culture and amazing college fests. Really enjoyed my time here.", "Academics are strong, but hostel facilities could use slight improvements.", "Overall a great experience. The faculty is very good."]
+        uce_course = ["Good teaching, the syllabus is manageable.", "Fairly easy to score if you study well. Great labs.", "The faculty is good and notes are helpful.", "Some topics are a bit tough, but overall a very good subject.", "Interesting curriculum, though the final exam was slightly hard."]
+
         data = []
-        for col in colleges_list:
-            for _ in range(15):
-                text = random.choice(pool_good if random.random() > 0.4 else pool_bad)
+        for college in colleges_list:
+            for _ in range(random.randint(10, 15)):
+                if college == "University College of Engineering Thodupuzha (UCE)":
+                    text = random.choice(uce_college)
+                else:
+                    text = random.choice(good_college if random.random() > 0.4 else bad_college)
+                
                 random_days = random.randint(0, 365)
                 ts = (datetime.now() - timedelta(days=random_days)).strftime("%Y-%m-%d %H:%M:%S")
-                data.append((col, "College", text, random.randint(0, 50), extract_tags(text, "College"), ts))
-            for dept, subs in ktu_hierarchy[col].items():
-                for sub in subs:
-                    for _ in range(5):
-                        text = random.choice(pool_good if random.random() > 0.5 else pool_bad)
+                data.append((college, "College", text, random.randint(0, 50), extract_tags(text, "College"), ts))
+
+        for college, depts in ktu_hierarchy.items():
+            for dept, subjects in depts.items():
+                for subject in subjects:
+                    target_name = f"{subject} @ {college}"
+                    for _ in range(random.randint(6, 10)): 
+                        if college == "University College of Engineering Thodupuzha (UCE)":
+                            text = random.choice(uce_course)
+                        else:
+                            is_good = random.random() > 0.5
+                            if "CY" in subject:
+                                pool = cyber_good + good_course if is_good else cyber_bad + bad_course
+                            elif "PO" in subject:
+                                pool = polymer_good + good_course if is_good else polymer_bad + bad_course
+                            else:
+                                pool = good_course if is_good else bad_course
+                            text = random.choice(pool)
+                        
                         random_days = random.randint(0, 365)
                         ts = (datetime.now() - timedelta(days=random_days)).strftime("%Y-%m-%d %H:%M:%S")
-                        data.append((f"{sub} @ {col}", "Course", text, random.randint(0, 30), extract_tags(text, "Course"), ts))
+                        data.append((target_name, "Course", text, random.randint(0, 30), extract_tags(text, "Course"), ts))
+
         c.executemany("INSERT INTO reviews (target_name, category, review_text, upvotes, tags, created_at) VALUES (?, ?, ?, ?, ?, ?)", data)
         conn.commit()
     conn.close()
@@ -305,23 +335,23 @@ def get_overall_sentiment(reviews_df, target_name=""):
 def analyze_course_aspects(reviews_df):
     metrics = {"Difficulty": 0.5, "Teaching Quality": 0.5, "Syllabus Load": 0.5}
     text = " ".join([r['review_text'] for r in reviews_df]).lower()
-    if any(x in text for x in ["hard", "strict", "tough"]): metrics["Difficulty"] = 0.85
-    elif any(x in text for x in ["easy", "chill"]): metrics["Difficulty"] = 0.2
-    if any(x in text for x in ["great", "helpful"]): metrics["Teaching Quality"] = 0.9
-    elif any(x in text for x in ["bad", "tedious"]): metrics["Teaching Quality"] = 0.3
-    if any(x in text for x in ["massive", "memorize"]): metrics["Syllabus Load"] = 0.9
-    elif any(x in text for x in ["manageable"]): metrics["Syllabus Load"] = 0.3
+    if any(x in text for x in ["hard", "strict", "nightmare", "tough", "complex"]): metrics["Difficulty"] = 0.85
+    elif any(x in text for x in ["easy", "chill", "fun"]): metrics["Difficulty"] = 0.2
+    if any(x in text for x in ["great", "helpful", "well", "good", "fascinating"]): metrics["Teaching Quality"] = 0.9
+    elif any(x in text for x in ["bad", "reads from", "tedious"]): metrics["Teaching Quality"] = 0.3
+    if any(x in text for x in ["massive", "tough to finish", "memorize"]): metrics["Syllabus Load"] = 0.9
+    elif any(x in text for x in ["easy to score", "manageable"]): metrics["Syllabus Load"] = 0.3
     return metrics
 
 def analyze_college_aspects(reviews_df):
-    metrics = {"Placements": 0.5, "Infrastructure": 0.5, "Culture": 0.5}
+    metrics = {"Placements & Careers": 0.5, "Infrastructure": 0.5, "Campus Culture": 0.5}
     text = " ".join([r['review_text'] for r in reviews_df]).lower()
-    if any(x in text for x in ["placements", "job"]): metrics["Placements"] = 0.9
-    elif any(x in text for x in ["poor placement"]): metrics["Placements"] = 0.3
-    if any(x in text for x in ["green campus", "great labs"]): metrics["Infrastructure"] = 0.9
-    elif any(x in text for x in ["old blocks", "bad hostel"]): metrics["Infrastructure"] = 0.3
-    if any(x in text for x in ["fests", "campus life"]): metrics["Culture"] = 0.9
-    elif any(x in text for x in ["strict", "toxic"]): metrics["Culture"] = 0.3
+    if any(x in text for x in ["nice placements", "strong placements", "top choice", "job", "recruit"]): metrics["Placements & Careers"] = 0.9
+    elif any(x in text for x in ["no placement", "poor placement", "lack of exposure"]): metrics["Placements & Careers"] = 0.3
+    if any(x in text for x in ["green campus", "modern", "good facilities", "great labs", "nice hostel"]): metrics["Infrastructure"] = 0.9
+    elif any(x in text for x in ["old blocks", "renovation", "bad hostel", "poor infrastructure", "bad food"]): metrics["Infrastructure"] = 0.3
+    if any(x in text for x in ["supportive faculty", "amazing college fests", "tech culture", "good campus life"]): metrics["Campus Culture"] = 0.9
+    elif any(x in text for x in ["strict", "like a school", "rules are too strict", "toxic"]): metrics["Campus Culture"] = 0.3
     return metrics
 
 def generate_rag_response(query, reviews):
@@ -387,6 +417,31 @@ def plot_wordcloud(reviews_df):
     fig.patch.set_alpha(0.0)
     st.pyplot(fig)
 
+def plot_geospatial_heatmap(colleges, is_light_theme):
+    map_data = []
+    for col in colleges:
+        reviews = get_reviews_from_db(col)
+        sentiment = get_overall_sentiment(reviews, col)
+        lat, lon = college_coords.get(col, (10.0, 76.0))
+        map_data.append({
+            "College": col,
+            "Lat": lat,
+            "Lon": lon,
+            "Sentiment Score": round(sentiment * 100, 1),
+            "Total Reviews": len(reviews)
+        })
+    
+    df = pd.DataFrame(map_data)
+    df['Marker Size'] = df['Total Reviews'].apply(lambda x: x if x > 0 else 1) 
+
+    fig = px.scatter_mapbox(df, lat="Lat", lon="Lon", hover_name="College", 
+                            hover_data={"Lat": False, "Lon": False, "Sentiment Score": True, "Total Reviews": True, "Marker Size": False},
+                            color="Sentiment Score", size="Marker Size",
+                            color_continuous_scale="Inferno", size_max=20, zoom=6, center={"lat": 9.5, "lon": 76.5})
+    
+    mapbox_style = "carto-positron" if is_light_theme else "carto-darkmatter"
+    fig.update_layout(mapbox_style=mapbox_style, margin={"r":0,"t":0,"l":0,"b":0}, paper_bgcolor="rgba(0,0,0,0)")
+    st.plotly_chart(fig, use_container_width=True)
 
 # --- 4. THE FRONTEND INTERFACE ---
 
@@ -409,7 +464,7 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-tab1, tab2, tab3 = st.tabs(["🏢 College Analytics", "📚 Course Analytics", "⚖️ Versus Arena"])
+tab1, tab2, tab3, tab4 = st.tabs(["🏢 College Analytics", "📚 Course Analytics", "⚖️ Versus Arena", "🗺️ Geospatial Heatmap"])
 
 # --- TAB 1: COLLEGE ASSESSMENT ---
 with tab1:
@@ -621,3 +676,11 @@ with tab3:
             fig.update_traces(fill='toself', opacity=0.4, line_width=2.5, marker=dict(size=6), line_shape='spline')
             fig.update_layout(height=350, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", polar=dict(bgcolor=radar_bg, radialaxis=dict(visible=True, showticklabels=False, gridcolor=radar_grid, linecolor=radar_grid), angularaxis=dict(tickfont=dict(color=chart_text_color, size=13), gridcolor=radar_grid, linecolor=radar_grid)), margin=dict(l=30, r=30, t=30, b=30), legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="center", x=0.5, font=dict(color=chart_text_color), title=""))
             st.plotly_chart(fig, use_container_width=True)
+
+# --- TAB 4: GEOSPATIAL HEATMAP ---
+with tab4:
+    st.markdown(f"<h3 style='color: {chart_text_color}; text-align: center;'>🗺️ KTU Interactive Heatmap</h3>", unsafe_allow_html=True)
+    st.markdown(f"<p style='text-align: center; color: {chart_text_color};'>A live geospatial view of college sentiments across Kerala.</p>", unsafe_allow_html=True)
+    st.divider()
+    
+    plot_geospatial_heatmap(colleges_list, st.session_state.light_theme)
