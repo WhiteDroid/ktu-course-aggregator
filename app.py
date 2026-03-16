@@ -65,30 +65,57 @@ if st.session_state.light_theme:
         # 👑 4. SEXY GODDESS (Velvet & Gold)
         t = {"app_bg": "#FFF7F8", "sidebar_bg": "#FFFFFF", "text": "#3A101E", "hero_grad": "linear-gradient(135deg, #C70039 0%, #900C3F 50%, #581845 100%)", "hero_shadow": "0 15px 30px -5px rgba(144, 12, 63, 0.35)", "hero_border": "#FFC300", "hero_txt_shadow": "0 2px 10px rgba(0,0,0,0.1)", "subtitle": "#FFC300", "form_bg": "#FFFFFF", "form_border": "#FADADD", "inp_bg": "#FFF7F8", "inp_border": "#F5C6CB", "focus": "#C70039", "btn_grad": "linear-gradient(135deg, #C70039 0%, #900C3F 100%)", "btn_shadow": "rgba(199, 0, 57, 0.3)", "btn_h_shadow": "rgba(144, 12, 63, 0.5)", "card_bg": "#FFFFFF", "card_border": "#FADADD", "card_h_border": "#FFC300", "card_h_shadow": "0 12px 20px -3px rgba(144, 12, 63, 0.15)", "pill_bg": "#FFF0F3", "pill_txt": "#900C3F", "pill_border": "#FFC300", "gauge_bar": "#C70039", "radar_fill": "rgba(199, 0, 57, 0.15)", "wc_cmap": "inferno", "c_red": "rgba(199, 0, 57, 0.05)", "c_yel": "rgba(199, 0, 57, 0.15)", "c_grn": "rgba(199, 0, 57, 0.25)", "comp_colors": ["#C70039", "#FFC300", "#900C3F"]}
 
+    # Injecting Dynamic CSS
     st.markdown(f"""
     <style>
         .stApp {{ background-color: {t['app_bg']} !important; color: {t['text']} !important; font-family: 'Inter', sans-serif; }}
         [data-testid="stSidebar"] {{ background-color: {t['sidebar_bg']} !important; border-right: 1px solid {t['card_border']} !important; }}
         h1, h2, h3, h4, h5, h6, p, label, .stMarkdown {{ color: {t['text']} !important; }}
-        .hero-container {{ background: {t['hero_grad']}; color: #FFFFFF !important; padding: 3.5rem 2rem; border-radius: 1rem; text-align: center; margin-bottom: 2.5rem; margin-top: -2rem; box-shadow: {t['hero_shadow']}; border: 1px solid {t['hero_border']}; }}
+        
+        .hero-container {{
+            background: {t['hero_grad']}; color: #FFFFFF !important; padding: 3.5rem 2rem; border-radius: 1rem; 
+            text-align: center; margin-bottom: 2.5rem; margin-top: -2rem; box-shadow: {t['hero_shadow']}; border: 1px solid {t['hero_border']};
+        }}
         .hero-title {{ font-size: 3.5rem; font-weight: 800; margin: 0; line-height: 1.2; letter-spacing: -0.01em; color: #FFFFFF !important; font-family: 'Georgia', serif; text-shadow: {t['hero_txt_shadow']};}}
         .hero-subtitle {{ font-size: 1.15rem; font-weight: 500; margin-top: 1rem; color: {t['subtitle']} !important; letter-spacing: 0.05em; text-transform: uppercase; }}
+        
         div[data-testid="stForm"] {{ background-color: {t['form_bg']} !important; border: 1px solid {t['form_border']} !important; border-radius: 0.75rem; box-shadow: 0 4px 15px -2px rgba(0, 0, 0, 0.03); padding: 2.5rem !important; }}
+        
         div[data-baseweb="select"] > div {{ background-color: {t['inp_bg']} !important; color: {t['text']} !important; border: 1px solid {t['inp_border']} !important; border-radius: 0.5rem; }}
         .stTextArea textarea, .stTextInput input {{ background-color: {t['inp_bg']} !important; color: {t['text']} !important; border: 1px solid {t['inp_border']} !important; border-radius: 0.5rem; }}
         .stTextArea textarea:focus, .stTextInput input:focus {{ border-color: {t['focus']} !important; box-shadow: 0 0 0 1px {t['focus']} !important; }}
-        div[data-testid="stForm"] button {{ background: {t['btn_grad']} !important; color: #FFFFFF !important; border: none !important; border-radius: 0.5rem !important; font-weight: 600 !important; letter-spacing: 0.02em !important; padding: 0.6rem 2.5rem !important; box-shadow: 0 4px 10px -1px {t['btn_shadow']} !important; transition: all 0.3s ease !important; }}
+        
+        div[data-testid="stForm"] button {{ 
+            background: {t['btn_grad']} !important; color: #FFFFFF !important; border: none !important; border-radius: 0.5rem !important; font-weight: 600 !important; letter-spacing: 0.02em !important; padding: 0.6rem 2.5rem !important; box-shadow: 0 4px 10px -1px {t['btn_shadow']} !important; transition: all 0.3s ease !important;
+        }}
         div[data-testid="stForm"] button:hover {{ transform: translateY(-2px); box-shadow: 0 8px 15px -2px {t['btn_h_shadow']} !important; }}
+        
         button[kind="secondary"] {{ background-color: #FFFFFF !important; color: {t['pill_txt']} !important; border: 1px solid {t['inp_border']} !important; border-radius: 2rem !important; font-weight: 500 !important;}}
         button[kind="secondary"]:hover {{ border-color: {t['focus']} !important; color: {t['focus']} !important; background-color: {t['pill_bg']} !important; }}
-        [data-testid="stVerticalBlockBorderWrapper"] {{ border-radius: 0.75rem !important; border: 1px solid {t['card_border']} !important; background-color: {t['card_bg']} !important; transition: all 0.3s ease !important; box-shadow: 0 2px 10px -1px rgba(0,0,0,0.02) !important; padding: 0.8rem !important; }}
+        
+        [data-testid="stVerticalBlockBorderWrapper"] {{
+            border-radius: 0.75rem !important; border: 1px solid {t['card_border']} !important; background-color: {t['card_bg']} !important; transition: all 0.3s ease !important; box-shadow: 0 2px 10px -1px rgba(0,0,0,0.02) !important; padding: 0.8rem !important;
+        }}
         [data-testid="stVerticalBlockBorderWrapper"]:hover {{ border-color: {t['card_h_border']} !important; box-shadow: {t['card_h_shadow']} !important; transform: translateY(-2px); }}
+        
         .tag-pill {{ background-color: {t['pill_bg']}; color: {t['pill_txt']}; padding: 0.25rem 0.8rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; display: inline-block; margin-right: 0.5rem; border: 1px solid {t['pill_border']}; letter-spacing: 0.03em; }}
     </style>
     """, unsafe_allow_html=True)
     
-    chart_text_color, gauge_bar, gauge_bg, step_red, step_yellow, step_green, radar_fill, radar_line, radar_bg, radar_grid, wc_cmap, comp_colors = t['text'], t['gauge_bar'], "rgba(0,0,0,0)", t['c_red'], t['c_yel'], t['c_grn'], t['radar_fill'], t['gauge_bar'], "rgba(255, 255, 255, 0.95)", t['card_border'], t['wc_cmap'], t['comp_colors']
-
+    # Assigning chart variables from the active dictionary
+    chart_text_color = t['text']           
+    gauge_bar = t['gauge_bar']                  
+    gauge_bg = "rgba(0,0,0,0)"             
+    step_red = t['c_red']               
+    step_yellow = t['c_yel']              
+    step_green = t['c_grn']                  
+    radar_fill = t['radar_fill'] 
+    radar_line = t['gauge_bar']
+    radar_bg = "rgba(255, 255, 255, 0.95)"  
+    radar_grid = t['card_border']                 
+    wc_cmap = t['wc_cmap']                       
+    comp_colors = t['comp_colors']
+    
 else:
     d_idx = st.session_state.dark_theme_cycle_idx
     if d_idx == 0:
@@ -493,9 +520,6 @@ with tab2:
         course_reviews = get_reviews_from_db(course_target_name, sort_by=sort_option)
         c_overall = get_overall_sentiment(course_reviews, course_target_name)
         c_metrics = analyze_course_aspects(course_reviews)
-        
-        if c_metrics.get("Difficulty", 0) > 0.8:
-            st.warning("⚠️ **HIGH ARREAR RISK DETECTED:** Students consistently report this as a massive filter subject.")
             
         a1, a2 = st.columns([1, 1])
         with a1: plot_gauge(c_overall, "Subject Sentiment")
