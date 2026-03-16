@@ -29,30 +29,44 @@ if theme_toggle != st.session_state.light_theme:
 if st.session_state.light_theme:
     st.markdown("""
     <style>
-        .stApp { background-color: #f8fafc !important; color: #0f172a !important; }
-        [data-testid="stSidebar"] { background-color: #ffffff !important; border-right: 1px solid #e2e8f0; }
-        h1, h2, h3, h4, h5, h6, p, label, .stMarkdown { color: #0f172a !important; }
-        div[data-testid="stForm"] { background-color: #ffffff !important; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
-        .stSelectbox label, .stTextArea label { color: #0f172a !important; }
-        div[data-baseweb="select"] > div { background-color: #ffffff !important; border: 1px solid #cbd5e1 !important; }
+        /* Clean, Natural Streamlit Light Theme */
+        .stApp { background-color: #FFFFFF !important; color: #31333F !important; }
+        [data-testid="stSidebar"] { background-color: #F0F2F6 !important; border-right: none; }
+        
+        /* Typography */
+        h1, h2, h3, h4, h5, h6, p, span, label, .stMarkdown { color: #31333F !important; }
+        
+        /* Form Containers */
+        div[data-testid="stForm"] { background-color: #F8F9FB !important; border: 1px solid #D3D6DF !important; border-radius: 0.5rem; }
+        
+        /* Input Elements (fixing the negative look) */
+        div[data-baseweb="select"] > div { background-color: #FFFFFF !important; color: #31333F !important; border: 1px solid #D3D6DF !important; }
+        .stTextArea textarea { background-color: #FFFFFF !important; color: #31333F !important; border: 1px solid #D3D6DF !important; }
+        .stTextInput input { background-color: #FFFFFF !important; color: #31333F !important; border: 1px solid #D3D6DF !important; }
+        
+        /* Buttons */
+        button[kind="secondary"] { background-color: #FFFFFF !important; color: #31333F !important; border: 1px solid #D3D6DF !important; }
+        button[kind="secondary"]:hover { border-color: #FF4B4B !important; color: #FF4B4B !important; }
     </style>
     """, unsafe_allow_html=True)
     
-    # Cool Light Mode Variables
-    chart_text_color = "#0f172a"
-    radar_fill = "rgba(14, 165, 233, 0.4)"   # Cyan-blue
-    radar_line = "#0ea5e9"
-    wc_cmap = "winter"                       # Cool blue/green colormap
-    gauge_bar = "#0ea5e9"
-    gauge_high = "rgba(14, 165, 233, 0.3)"
+    # Natural Light Mode Variables (Streamlit Blue & Dark Gray)
+    chart_text_color = "#31333F"
+    radar_fill = "rgba(0, 104, 201, 0.3)"   
+    radar_line = "#0068c9"
+    wc_cmap = "Blues"                       
+    gauge_bar = "#0068c9"
+    gauge_high = "rgba(0, 104, 201, 0.3)"
 else:
     st.markdown("""
     <style>
-        .stApp { background-color: #0e1117 !important; color: #fafafa !important; }
+        /* Standard Streamlit Dark Theme */
+        .stApp { background-color: #0E1117 !important; color: #FAFAFA !important; }
         [data-testid="stSidebar"] { background-color: #262730 !important; }
-        h1, h2, h3, h4, h5, h6, p, label, .stMarkdown { color: #fafafa !important; }
-        div[data-testid="stForm"] { background-color: #262730 !important; border: 1px solid #444; }
-        .stSelectbox label, .stTextArea label { color: #fafafa !important; }
+        
+        h1, h2, h3, h4, h5, h6, p, span, label, .stMarkdown { color: #FAFAFA !important; }
+        
+        div[data-testid="stForm"] { background-color: #262730 !important; border: 1px solid #444 !important; }
     </style>
     """, unsafe_allow_html=True)
     
