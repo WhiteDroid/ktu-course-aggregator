@@ -29,60 +29,91 @@ if theme_toggle != st.session_state.light_theme:
 if st.session_state.light_theme:
     st.markdown("""
     <style>
-        /* Vibrant Indigo & Magma Light Theme */
-        .stApp { background-color: #F8FAFC !important; color: #1E1B4B !important; }
-        [data-testid="stSidebar"] { background-color: #EEF2FF !important; border-right: none; } /* Indigo-50 */
+        /* Elegant & Minimalist Light Theme */
+        .stApp { background-color: #F9FAFB !important; color: #1F2937 !important; }
+        [data-testid="stSidebar"] { background-color: #FFFFFF !important; border-right: 1px solid #F3F4F6 !important; }
         
-        h1, h2, h3, h4, h5, h6, p, span, label, .stMarkdown { color: #1E1B4B !important; }
-        div[data-testid="stForm"] { background-color: #FFFFFF !important; border: 1px solid #E0E7FF !important; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(67, 56, 202, 0.05); }
+        h1, h2, h3, h4, h5, h6, p, span, label, .stMarkdown { color: #1F2937 !important; font-family: 'Inter', sans-serif !important; }
         
-        div[data-baseweb="select"] > div { background-color: #FFFFFF !important; color: #1E1B4B !important; border: 1px solid #C7D2FE !important; }
-        .stTextArea textarea, .stTextInput input { background-color: #FFFFFF !important; color: #1E1B4B !important; border: 1px solid #C7D2FE !important; }
+        /* Elegant Form Container */
+        div[data-testid="stForm"] { 
+            background-color: #FFFFFF !important; 
+            border: 1px solid #F3F4F6 !important; 
+            border-radius: 1rem; 
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.03), 0 4px 6px -2px rgba(0, 0, 0, 0.02); 
+            padding: 2rem !important;
+        }
         
-        button[kind="secondary"] { background-color: #FFFFFF !important; color: #4F46E5 !important; border: 1px solid #C7D2FE !important; }
-        button[kind="secondary"]:hover { border-color: #E11D48 !important; color: #E11D48 !important; } /* Magma Pink Hover */
+        /* Inputs */
+        div[data-baseweb="select"] > div { background-color: #F9FAFB !important; color: #1F2937 !important; border: 1px solid #E5E7EB !important; border-radius: 0.5rem; }
+        .stTextArea textarea, .stTextInput input { background-color: #F9FAFB !important; color: #1F2937 !important; border: 1px solid #E5E7EB !important; border-radius: 0.5rem; }
         
-        /* Review Card Upgrades */
+        /* BEAUTIFUL SUBMIT BUTTON */
+        div[data-testid="stForm"] button { 
+            background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%) !important; 
+            color: #FFFFFF !important; 
+            border: none !important;
+            border-radius: 0.5rem !important;
+            font-weight: 600 !important;
+            padding: 0.5rem 2rem !important;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3) !important;
+            transition: all 0.3s ease !important;
+        }
+        div[data-testid="stForm"] button:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.4) !important;
+        }
+        
+        /* Upvote Buttons */
+        button[kind="secondary"] { background-color: #FFFFFF !important; color: #6B7280 !important; border: 1px solid #E5E7EB !important; border-radius: 2rem !important; }
+        button[kind="secondary"]:hover { border-color: #6366F1 !important; color: #6366F1 !important; background-color: #EEF2FF !important; }
+        
+        /* Premium Review Cards */
         [data-testid="stVerticalBlockBorderWrapper"] {
-            border-radius: 0.75rem !important;
-            border: 1px solid #E0E7FF !important;
+            border-radius: 1rem !important;
+            border: 1px solid #F3F4F6 !important;
             background-color: #FFFFFF !important;
-            transition: all 0.2s ease-in-out !important;
-            box-shadow: 0 2px 4px -2px rgba(67, 56, 202, 0.05) !important;
+            transition: all 0.3s ease !important;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02) !important;
+            padding: 0.5rem !important;
         }
         [data-testid="stVerticalBlockBorderWrapper"]:hover {
-            border-color: #E11D48 !important; /* Magma Pink Glow */
-            box-shadow: 0 10px 15px -3px rgba(225, 29, 72, 0.15) !important;
-            transform: translateY(-2px);
+            border-color: #E0E7FF !important;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05) !important;
+            transform: translateY(-3px);
         }
+        
+        /* Soft Tag Pills */
         .tag-pill {
-            background-color: #FFF1F2; /* Magma Pink Faint */
-            color: #E11D48; /* Magma Deep Pink */
-            padding: 0.25rem 0.75rem;
+            background-color: #F3F4F6;
+            color: #4B5563;
+            padding: 0.3rem 0.8rem;
             border-radius: 9999px;
-            font-size: 0.8rem;
-            font-weight: 600;
+            font-size: 0.75rem;
+            font-weight: 500;
             display: inline-block;
             margin-right: 0.5rem;
-            border: 1px solid #FECDD3;
+            border: 1px solid #E5E7EB;
+            letter-spacing: 0.02em;
         }
     </style>
     """, unsafe_allow_html=True)
     
-    # VIBRANT INDIGO & MAGMA LIGHT MODE CHARTS
-    chart_text_color = "#1E1B4B"
-    gauge_bar = "#4F46E5"          # Vibrant Indigo 
-    gauge_bg = "#FFFFFF"
-    gauge_border = "#C7D2FE"
-    step_red = "rgba(81, 18, 124, 0.15)"     # Magma Dark Purple (Low)
-    step_yellow = "rgba(183, 55, 121, 0.15)" # Magma Pink (Medium)
-    step_green = "rgba(252, 137, 97, 0.2)"   # Magma Orange/Peach (High)
+    # ELEGANT LIGHT MODE CHARTS
+    chart_text_color = "#4B5563"           # Soft Slate Gray
+    gauge_bar = "#6366F1"                  # Soft, rich Indigo
+    gauge_bg = "rgba(0,0,0,0)"             # Transparent
     
-    radar_fill = "rgba(225, 29, 72, 0.15)"   # Magma Pink Wash
-    radar_line = "#E11D48"                   # Magma Pink Line
-    radar_bg = "rgba(238, 242, 255, 0.7)"    # Indigo Tinted Backdrop
-    radar_grid = "#C7D2FE"                   # Light Indigo Grid
-    wc_cmap = "magma"                        # The official Magma colormap
+    # Ultra-soft pastel background zones for the gauge
+    step_red = "#FEE2E2"                   # Soft Rose
+    step_yellow = "#FEF3C7"                # Pale Amber
+    step_green = "#D1FAE5"                 # Mint Green
+    
+    radar_fill = "rgba(99, 102, 241, 0.15)" # Delicate Indigo wash
+    radar_line = "#6366F1"
+    radar_bg = "rgba(255, 255, 255, 0.8)"  
+    radar_grid = "#E5E7EB"                 # Very soft gridlines
+    wc_cmap = "PuBu"                       # Elegant Purple-to-Blue tones
 else:
     st.markdown("""
     <style>
@@ -121,9 +152,8 @@ else:
     
     # PREMIUM DARK MODE CHARTS
     chart_text_color = "#F8FAFC"
-    gauge_bar = "#10B981"          # Neon Emerald
+    gauge_bar = "#10B981"          
     gauge_bg = "#1E293B"
-    gauge_border = "#334155"
     step_red = "rgba(239, 68, 68, 0.25)"
     step_yellow = "rgba(245, 158, 11, 0.25)"
     step_green = "rgba(16, 185, 129, 0.25)"
@@ -345,17 +375,17 @@ def analyze_course_aspects(reviews_df):
     return metrics
 
 def plot_gauge(score, title):
+    # ELEGANT GAUGE DESIGN: Ultra-thin bar, elegant font, pastel steps, no heavy borders
     fig = go.Figure(go.Indicator(
         mode = "gauge+number",
         value = score * 100,
-        title = {'text': title, 'font': {'size': 18, 'color': chart_text_color}},
-        number = {'suffix': "/100", 'font': {'color': chart_text_color, 'size': 42}},
+        title = {'text': title, 'font': {'size': 16, 'color': chart_text_color}},
+        number = {'suffix': "/100", 'font': {'color': chart_text_color, 'size': 36, 'family': "sans-serif"}},
         gauge = {
-            'axis': {'range': [None, 100], 'tickcolor': chart_text_color, 'tickwidth': 1.5},
-            'bar': {'color': gauge_bar, 'thickness': 0.35},
-            'bgcolor': gauge_bg,
-            'borderwidth': 1.5,
-            'bordercolor': gauge_border,
+            'axis': {'range': [None, 100], 'tickcolor': "#9CA3AF", 'tickwidth': 1, 'ticklen': 4},
+            'bar': {'color': gauge_bar, 'thickness': 0.15}, # Ultra sleek thin bar
+            'bgcolor': "rgba(0,0,0,0)",
+            'borderwidth': 0, # Removed the clunky black border
             'steps': [
                 {'range': [0, 40], 'color': step_red},
                 {'range': [40, 70], 'color': step_yellow},
@@ -369,8 +399,7 @@ def plot_radar(metrics):
     df = pd.DataFrame(dict(r=list(metrics.values()), theta=list(metrics.keys())))
     fig = px.line_polar(df, r='r', theta='theta', line_close=True, range_r=[0, 1])
     
-    # Adding line_shape='spline' creates the modern curved aesthetic instead of jagged lines
-    fig.update_traces(fill='toself', fillcolor=radar_fill, line_color=radar_line, line_width=3, marker=dict(color=radar_line, size=8), line_shape='spline')
+    fig.update_traces(fill='toself', fillcolor=radar_fill, line_color=radar_line, line_width=2.5, marker=dict(color=radar_line, size=6), line_shape='spline')
     fig.update_layout(
         height=300, 
         paper_bgcolor="rgba(0,0,0,0)", 
@@ -387,10 +416,8 @@ def plot_wordcloud(reviews_df):
     if not reviews_df: return
     text = " ".join([r['review_text'] for r in reviews_df])
     
-    # Enhanced WordCloud with layout preferences to make it look professional
-    wordcloud = WordCloud(width=800, height=400, background_color=None, mode="RGBA", colormap=wc_cmap, prefer_horizontal=0.85, max_words=100).generate(text)
+    wordcloud = WordCloud(width=800, height=400, background_color=None, mode="RGBA", colormap=wc_cmap, prefer_horizontal=0.9, max_words=80).generate(text)
     
-    # Added High DPI rendering to prevent pixelation on white screens
     fig, ax = plt.subplots(figsize=(8, 4), dpi=150)
     ax.imshow(wordcloud, interpolation='bilinear')
     ax.axis("off")
@@ -479,7 +506,7 @@ with tab1:
             # Display reviews as stylized cards
             for r in matched_reviews[:10]: 
                 with st.container(border=True):
-                    st.markdown(f"<p style='font-size: 1.1rem; font-style: italic; margin-bottom: 0.5rem;'>\"{r['review_text']}\"</p>", unsafe_allow_html=True)
+                    st.markdown(f"<p style='font-size: 1.05rem; font-style: italic; margin-bottom: 0.8rem; color: #374151;'>\"{r['review_text']}\"</p>", unsafe_allow_html=True)
                     
                     c1, c2 = st.columns([1, 6])
                     with c1:
@@ -556,7 +583,7 @@ with tab2:
         # Display reviews as stylized cards
         for r in matched_course_reviews[:10]:
             with st.container(border=True):
-                st.markdown(f"<p style='font-size: 1.1rem; font-style: italic; margin-bottom: 0.5rem;'>\"{r['review_text']}\"</p>", unsafe_allow_html=True)
+                st.markdown(f"<p style='font-size: 1.05rem; font-style: italic; margin-bottom: 0.8rem; color: #374151;'>\"{r['review_text']}\"</p>", unsafe_allow_html=True)
                 
                 c1, c2 = st.columns([1, 6])
                 with c1:
