@@ -102,66 +102,105 @@ if st.session_state.light_theme:
     # ELEGANT LIGHT MODE CHARTS
     chart_text_color = "#4B5563"           # Soft Slate Gray
     gauge_bar = "#6366F1"                  # Soft, rich Indigo
-    gauge_bg = "rgba(0,0,0,0)"             # Transparent
+    gauge_bg = "rgba(0,0,0,0)"             
     
     # Ultra-soft pastel background zones for the gauge
     step_red = "#FEE2E2"                   # Soft Rose
     step_yellow = "#FEF3C7"                # Pale Amber
     step_green = "#D1FAE5"                 # Mint Green
     
-    radar_fill = "rgba(99, 102, 241, 0.15)" # Delicate Indigo wash
+    radar_fill = "rgba(99, 102, 241, 0.15)" 
     radar_line = "#6366F1"
     radar_bg = "rgba(255, 255, 255, 0.8)"  
-    radar_grid = "#E5E7EB"                 # Very soft gridlines
-    wc_cmap = "PuBu"                       # Elegant Purple-to-Blue tones
+    radar_grid = "#E5E7EB"                 
+    wc_cmap = "PuBu"                       
 else:
     st.markdown("""
     <style>
-        /* Standard Streamlit Dark Theme */
-        .stApp { background-color: #0F172A !important; color: #F8FAFC !important; }
-        [data-testid="stSidebar"] { background-color: #1E293B !important; }
+        /* Premium Midnight & Neon Emerald Dark Theme */
+        .stApp { background-color: #0B0F19 !important; color: #F3F4F6 !important; }
+        [data-testid="stSidebar"] { background-color: #111827 !important; border-right: 1px solid #1F2937 !important; }
         
-        h1, h2, h3, h4, h5, h6, p, span, label, .stMarkdown { color: #F8FAFC !important; }
-        div[data-testid="stForm"] { background-color: #1E293B !important; border: 1px solid #334155 !important; border-radius: 0.75rem; }
+        h1, h2, h3, h4, h5, h6, p, span, label, .stMarkdown { color: #F3F4F6 !important; font-family: 'Inter', sans-serif !important; }
         
-        /* Review Card Upgrades */
+        /* Premium Form Container */
+        div[data-testid="stForm"] { 
+            background-color: #111827 !important; 
+            border: 1px solid #1F2937 !important; 
+            border-radius: 1rem; 
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5); 
+            padding: 2rem !important;
+        }
+        
+        /* Inputs */
+        div[data-baseweb="select"] > div { background-color: #0B0F19 !important; color: #F3F4F6 !important; border: 1px solid #374151 !important; border-radius: 0.5rem; }
+        .stTextArea textarea, .stTextInput input { background-color: #0B0F19 !important; color: #F3F4F6 !important; border: 1px solid #374151 !important; border-radius: 0.5rem; }
+        
+        /* BEAUTIFUL SUBMIT BUTTON */
+        div[data-testid="stForm"] button { 
+            background: linear-gradient(135deg, #2DD4BF 0%, #10B981 100%) !important; 
+            color: #022C22 !important; /* Deep forest green text for contrast */
+            border: none !important;
+            border-radius: 0.5rem !important;
+            font-weight: 700 !important;
+            padding: 0.5rem 2rem !important;
+            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2) !important;
+            transition: all 0.3s ease !important;
+        }
+        div[data-testid="stForm"] button:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.4) !important;
+        }
+        
+        /* Upvote Buttons */
+        button[kind="secondary"] { background-color: #111827 !important; color: #9CA3AF !important; border: 1px solid #374151 !important; border-radius: 2rem !important; }
+        button[kind="secondary"]:hover { border-color: #10B981 !important; color: #10B981 !important; background-color: rgba(16, 185, 129, 0.05) !important; }
+        
+        /* Premium Review Cards */
         [data-testid="stVerticalBlockBorderWrapper"] {
-            border-radius: 0.75rem !important;
-            border: 1px solid #334155 !important;
-            background-color: #1E293B !important;
-            transition: all 0.2s ease-in-out !important;
+            border-radius: 1rem !important;
+            border: 1px solid #1F2937 !important;
+            background-color: #111827 !important;
+            transition: all 0.3s ease !important;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3) !important;
+            padding: 0.5rem !important;
         }
         [data-testid="stVerticalBlockBorderWrapper"]:hover {
-            border-color: #10B981 !important;
-            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.15) !important;
-            transform: translateY(-2px);
+            border-color: #374151 !important;
+            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.1) !important;
+            transform: translateY(-3px);
         }
+        
+        /* Soft Tag Pills */
         .tag-pill {
-            background-color: rgba(16, 185, 129, 0.15);
+            background-color: rgba(16, 185, 129, 0.1);
             color: #34D399;
-            padding: 0.25rem 0.75rem;
+            padding: 0.3rem 0.8rem;
             border-radius: 9999px;
-            font-size: 0.8rem;
-            font-weight: 600;
+            font-size: 0.75rem;
+            font-weight: 500;
             display: inline-block;
             margin-right: 0.5rem;
-            border: 1px solid rgba(16, 185, 129, 0.3);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            letter-spacing: 0.02em;
         }
     </style>
     """, unsafe_allow_html=True)
     
     # PREMIUM DARK MODE CHARTS
-    chart_text_color = "#F8FAFC"
-    gauge_bar = "#10B981"          
-    gauge_bg = "#1E293B"
-    step_red = "rgba(239, 68, 68, 0.25)"
-    step_yellow = "rgba(245, 158, 11, 0.25)"
-    step_green = "rgba(16, 185, 129, 0.25)"
+    chart_text_color = "#E5E7EB"           # Light Silver
+    gauge_bar = "#10B981"                  # Neon Emerald
+    gauge_bg = "rgba(0,0,0,0)"             
     
-    radar_fill = "rgba(16, 185, 129, 0.2)"
+    # Sleek dark pastel background zones for the gauge
+    step_red = "rgba(239, 68, 68, 0.1)"    
+    step_yellow = "rgba(245, 158, 11, 0.1)"
+    step_green = "rgba(16, 185, 129, 0.1)" 
+    
+    radar_fill = "rgba(16, 185, 129, 0.15)" 
     radar_line = "#10B981"
-    radar_bg = "rgba(15, 23, 42, 0.7)"
-    radar_grid = "#334155"
+    radar_bg = "rgba(17, 24, 39, 0.8)"     # Slate-900 tint  
+    radar_grid = "#374151"                 
     wc_cmap = "viridis"            
 
 # --- ANIMATION HELPER ---
@@ -506,7 +545,8 @@ with tab1:
             # Display reviews as stylized cards
             for r in matched_reviews[:10]: 
                 with st.container(border=True):
-                    st.markdown(f"<p style='font-size: 1.05rem; font-style: italic; margin-bottom: 0.8rem; color: #374151;'>\"{r['review_text']}\"</p>", unsafe_allow_html=True)
+                    # Uses dynamic chart_text_color so text looks perfect in both modes
+                    st.markdown(f"<p style='font-size: 1.05rem; font-style: italic; margin-bottom: 0.8rem; color: {chart_text_color};'>\"{r['review_text']}\"</p>", unsafe_allow_html=True)
                     
                     c1, c2 = st.columns([1, 6])
                     with c1:
@@ -583,7 +623,8 @@ with tab2:
         # Display reviews as stylized cards
         for r in matched_course_reviews[:10]:
             with st.container(border=True):
-                st.markdown(f"<p style='font-size: 1.05rem; font-style: italic; margin-bottom: 0.8rem; color: #374151;'>\"{r['review_text']}\"</p>", unsafe_allow_html=True)
+                # Uses dynamic chart_text_color so text looks perfect in both modes
+                st.markdown(f"<p style='font-size: 1.05rem; font-style: italic; margin-bottom: 0.8rem; color: {chart_text_color};'>\"{r['review_text']}\"</p>", unsafe_allow_html=True)
                 
                 c1, c2 = st.columns([1, 6])
                 with c1:
