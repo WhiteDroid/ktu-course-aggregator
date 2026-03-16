@@ -40,63 +40,63 @@ if theme_toggle != st.session_state.light_theme:
 if st.session_state.light_theme:
     st.markdown("""
     <style>
-        /* Bold, Passionate, & Alluring Light Theme */
-        .stApp { background-color: #FFF5F7 !important; color: #4A1525 !important; font-family: 'Inter', sans-serif; }
-        [data-testid="stSidebar"] { background-color: #FFFFFF !important; border-right: 1px solid #FFE4E8 !important; }
-        h1, h2, h3, h4, h5, h6, p, label, .stMarkdown { color: #4A1525 !important; }
+        /* 🔥 Velvet & Gold Goddess Light Theme 🔥 */
+        .stApp { background-color: #FFF7F8 !important; color: #3A101E !important; font-family: 'Inter', sans-serif; }
+        [data-testid="stSidebar"] { background-color: #FFFFFF !important; border-right: 1px solid #FADADD !important; }
+        h1, h2, h3, h4, h5, h6, p, label, .stMarkdown { color: #3A101E !important; }
         
-        /* 🔥 SCORCHING CRIMSON HERO BANNER 🔥 */
+        /* 💋 SULTRY CRIMSON & GOLD HERO BANNER 💋 */
         .hero-container {
-            background: linear-gradient(135deg, #FF0055 0%, #D50032 50%, #8A0030 100%);
+            background: linear-gradient(135deg, #C70039 0%, #900C3F 50%, #581845 100%);
             color: #FFFFFF !important;
             padding: 3.5rem 2rem;
             border-radius: 1rem; 
             text-align: center;
             margin-bottom: 2.5rem;
             margin-top: -2rem;
-            box-shadow: 0 15px 30px -5px rgba(213, 0, 50, 0.3);
-            border: 1px solid #FFB3C6;
+            box-shadow: 0 15px 30px -5px rgba(144, 12, 63, 0.35);
+            border: 1px solid #FFC300;
         }
         .hero-title { font-size: 3.5rem; font-weight: 800; margin: 0; line-height: 1.2; letter-spacing: -0.01em; color: #FFFFFF !important; font-family: 'Georgia', serif; }
-        .hero-subtitle { font-size: 1.15rem; font-weight: 500; margin-top: 1rem; color: #FFD1DC !important; letter-spacing: 0.05em; text-transform: uppercase; }
+        .hero-subtitle { font-size: 1.15rem; font-weight: 500; margin-top: 1rem; color: #FFC300 !important; letter-spacing: 0.05em; text-transform: uppercase; }
         
-        div[data-testid="stForm"] { background-color: #FFFFFF !important; border: 1px solid #FFE4E8 !important; border-radius: 0.75rem; box-shadow: 0 4px 15px -2px rgba(213, 0, 50, 0.05); padding: 2.5rem !important; }
+        div[data-testid="stForm"] { background-color: #FFFFFF !important; border: 1px solid #FADADD !important; border-radius: 0.75rem; box-shadow: 0 4px 15px -2px rgba(144, 12, 63, 0.05); padding: 2.5rem !important; }
         
-        div[data-baseweb="select"] > div { background-color: #FFF5F7 !important; color: #4A1525 !important; border: 1px solid #FFCCD5 !important; border-radius: 0.5rem; }
-        .stTextArea textarea, .stTextInput input { background-color: #FFF5F7 !important; color: #4A1525 !important; border: 1px solid #FFCCD5 !important; border-radius: 0.5rem; }
-        .stTextArea textarea:focus, .stTextInput input:focus { border-color: #D50032 !important; box-shadow: 0 0 0 1px #D50032 !important; }
+        div[data-baseweb="select"] > div { background-color: #FFF7F8 !important; color: #3A101E !important; border: 1px solid #F5C6CB !important; border-radius: 0.5rem; }
+        .stTextArea textarea, .stTextInput input { background-color: #FFF7F8 !important; color: #3A101E !important; border: 1px solid #F5C6CB !important; border-radius: 0.5rem; }
+        .stTextArea textarea:focus, .stTextInput input:focus { border-color: #C70039 !important; box-shadow: 0 0 0 1px #C70039 !important; }
         
-        /* FIERCE RED SUBMIT BUTTON */
+        /* FIERCE VELVET SUBMIT BUTTON */
         div[data-testid="stForm"] button { 
-            background: linear-gradient(135deg, #FF0055 0%, #D50032 100%) !important; 
-            color: #FFFFFF !important; border: none !important; border-radius: 0.5rem !important; font-weight: 600 !important; letter-spacing: 0.02em !important; padding: 0.6rem 2.5rem !important; box-shadow: 0 4px 10px -1px rgba(213, 0, 50, 0.3) !important; transition: all 0.3s ease !important;
+            background: linear-gradient(135deg, #C70039 0%, #900C3F 100%) !important; 
+            color: #FFFFFF !important; border: none !important; border-radius: 0.5rem !important; font-weight: 600 !important; letter-spacing: 0.02em !important; padding: 0.6rem 2.5rem !important; box-shadow: 0 4px 10px -1px rgba(199, 0, 57, 0.3) !important; transition: all 0.3s ease !important;
         }
-        div[data-testid="stForm"] button:hover { transform: translateY(-2px); box-shadow: 0 8px 15px -2px rgba(213, 0, 50, 0.5) !important; }
+        div[data-testid="stForm"] button:hover { transform: translateY(-2px); box-shadow: 0 8px 15px -2px rgba(144, 12, 63, 0.5) !important; }
         
-        button[kind="secondary"] { background-color: #FFFFFF !important; color: #D50032 !important; border: 1px solid #FFCCD5 !important; border-radius: 2rem !important; font-weight: 500 !important;}
-        button[kind="secondary"]:hover { border-color: #FF0055 !important; color: #FF0055 !important; background-color: #FFF0F3 !important; }
+        button[kind="secondary"] { background-color: #FFFFFF !important; color: #900C3F !important; border: 1px solid #F5C6CB !important; border-radius: 2rem !important; font-weight: 500 !important;}
+        button[kind="secondary"]:hover { border-color: #C70039 !important; color: #C70039 !important; background-color: #FFF0F3 !important; }
         
         [data-testid="stVerticalBlockBorderWrapper"] {
-            border-radius: 0.75rem !important; border: 1px solid #FFE4E8 !important; background-color: #FFFFFF !important; transition: all 0.3s ease !important; box-shadow: 0 2px 10px -1px rgba(0,0,0,0.02) !important; padding: 0.8rem !important;
+            border-radius: 0.75rem !important; border: 1px solid #FADADD !important; background-color: #FFFFFF !important; transition: all 0.3s ease !important; box-shadow: 0 2px 10px -1px rgba(0,0,0,0.02) !important; padding: 0.8rem !important;
         }
-        [data-testid="stVerticalBlockBorderWrapper"]:hover { border-color: #FFCCD5 !important; box-shadow: 0 12px 20px -3px rgba(213, 0, 50, 0.15) !important; transform: translateY(-2px); }
+        [data-testid="stVerticalBlockBorderWrapper"]:hover { border-color: #FFC300 !important; box-shadow: 0 12px 20px -3px rgba(144, 12, 63, 0.15) !important; transform: translateY(-2px); }
         
-        .tag-pill { background-color: #FFF0F3; color: #D50032; padding: 0.25rem 0.8rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; display: inline-block; margin-right: 0.5rem; border: 1px solid #FFE4E8; letter-spacing: 0.03em; }
+        .tag-pill { background-color: #FFF0F3; color: #900C3F; padding: 0.25rem 0.8rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; display: inline-block; margin-right: 0.5rem; border: 1px solid #FFC300; letter-spacing: 0.03em; }
     </style>
     """, unsafe_allow_html=True)
     
-    chart_text_color = "#4A1525"           
-    gauge_bar = "#D50032"                  
+    chart_text_color = "#3A101E"           
+    gauge_bar = "#C70039"                  
     gauge_bg = "rgba(0,0,0,0)"             
-    step_red = "rgba(213, 0, 50, 0.05)"               
-    step_yellow = "rgba(213, 0, 50, 0.15)"              
-    step_green = "rgba(213, 0, 50, 0.25)"                  
-    radar_fill = "rgba(213, 0, 50, 0.15)" 
-    radar_line = "#D50032"
+    step_red = "rgba(199, 0, 57, 0.05)"               
+    step_yellow = "rgba(199, 0, 57, 0.15)"              
+    step_green = "rgba(199, 0, 57, 0.25)"                  
+    radar_fill = "rgba(199, 0, 57, 0.15)" 
+    radar_line = "#C70039"
     radar_bg = "rgba(255, 255, 255, 0.95)"  
-    radar_grid = "#FFE4E8"                 
-    wc_cmap = "Reds"                       
-    comp_colors = ["#D50032", "#FF0055", "#8A0030"] 
+    radar_grid = "#FADADD"                 
+    wc_cmap = "inferno"                       
+    comp_colors = ["#C70039", "#FFC300", "#900C3F"] 
 else:
     st.markdown("""
     <style>
@@ -403,7 +403,7 @@ def plot_gauge(score, title):
         title = {'text': title, 'font': {'size': 16, 'color': chart_text_color}},
         number = {'suffix': "/100", 'font': {'color': chart_text_color, 'size': 36, 'family': "sans-serif"}},
         gauge = {
-            'axis': {'range': [None, 100], 'tickcolor': "#EAD8DC", 'tickwidth': 1, 'ticklen': 4},
+            'axis': {'range': [None, 100], 'tickcolor': "#FADADD", 'tickwidth': 1, 'ticklen': 4},
             'bar': {'color': gauge_bar, 'thickness': 0.15}, 
             'bgcolor': "rgba(0,0,0,0)",
             'borderwidth': 0, 
