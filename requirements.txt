@@ -1,3 +1,8 @@
 streamlit
 pandas
 textblob
+requests
+plotly
+wordcloud
+matplotlib
+streamlit-lottie
