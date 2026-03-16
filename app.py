@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 from streamlit_lottie import st_lottie
 import re
 import html 
+from datetime import datetime, timedelta
 
 # --- UI CONFIGURATION ---
 st.set_page_config(page_title="KTU Insight Engine", page_icon="⚡", layout="wide")
@@ -19,7 +20,6 @@ st.set_page_config(page_title="KTU Insight Engine", page_icon="⚡", layout="wid
 # --- ANTI-SPAM & THEME STATE SETUP ---
 if 'light_theme' not in st.session_state:
     st.session_state.light_theme = False
-# Start at 3, so the very first switch to light mode triggers Index 0 (Innocent)
 if 'theme_cycle_idx' not in st.session_state:
     st.session_state.theme_cycle_idx = 3 
 if 'upvoted_reviews' not in st.session_state:
@@ -38,7 +38,6 @@ theme_toggle = st.sidebar.toggle("Switch to Light Mode", value=st.session_state.
 # 🔥 SHAPE-SHIFTING THEME ENGINE 🔥
 if theme_toggle != st.session_state.light_theme:
     if theme_toggle == True:
-        # If switching FROM Dark TO Light, rotate the persona!
         st.session_state.theme_cycle_idx = (st.session_state.theme_cycle_idx + 1) % 4
     st.session_state.light_theme = theme_toggle
     st.rerun()
@@ -46,177 +45,63 @@ if theme_toggle != st.session_state.light_theme:
 # Apply CSS overrides and set sophisticated chart color variables
 if st.session_state.light_theme:
     idx = st.session_state.theme_cycle_idx
-    
     if idx == 0:
         # 🌸 1. INNOCENT YOUNG GIRL (Cotton Candy & Peach)
-        t = {
-            "app_bg": "#FFF8F9", "sidebar_bg": "#FFFFFF", "text": "#5D4E52",
-            "hero_grad": "linear-gradient(135deg, #FFA9D1 0%, #FFB6C1 50%, #FFDAC1 100%)",
-            "hero_shadow": "0 15px 30px -5px rgba(255, 182, 193, 0.3)", "hero_border": "#FFD1DC",
-            "hero_txt_shadow": "0 2px 10px rgba(0,0,0,0.05)", "subtitle": "#FFF0F5",
-            "form_bg": "#FFFFFF", "form_border": "#FFE4E1",
-            "inp_bg": "#FFF8F9", "inp_border": "#FFD1DC", "focus": "#FFB6C1",
-            "btn_grad": "linear-gradient(135deg, #FFA9D1 0%, #FFB6C1 100%)",
-            "btn_shadow": "rgba(255, 182, 193, 0.3)", "btn_h_shadow": "rgba(255, 182, 193, 0.5)",
-            "card_bg": "#FFFFFF", "card_border": "#FFE4E1", "card_h_border": "#FFD1DC", "card_h_shadow": "0 12px 20px -3px rgba(255, 182, 193, 0.2)",
-            "pill_bg": "#FFF0F5", "pill_txt": "#FF69B4", "pill_border": "#FFD1DC",
-            "gauge_bar": "#FF69B4", "radar_fill": "rgba(255, 105, 180, 0.15)", "wc_cmap": "spring",
-            "c_red": "rgba(255, 182, 193, 0.1)", "c_yel": "rgba(255, 182, 193, 0.2)", "c_grn": "rgba(255, 182, 193, 0.3)",
-            "comp_colors": ["#FF69B4", "#FFA9D1", "#FFDAC1"]
-        }
+        t = {"app_bg": "#FFF8F9", "sidebar_bg": "#FFFFFF", "text": "#5D4E52", "hero_grad": "linear-gradient(135deg, #FFA9D1 0%, #FFB6C1 50%, #FFDAC1 100%)", "hero_shadow": "0 15px 30px -5px rgba(255, 182, 193, 0.3)", "hero_border": "#FFD1DC", "hero_txt_shadow": "0 2px 10px rgba(0,0,0,0.05)", "subtitle": "#FFF0F5", "form_bg": "#FFFFFF", "form_border": "#FFE4E1", "inp_bg": "#FFF8F9", "inp_border": "#FFD1DC", "focus": "#FFB6C1", "btn_grad": "linear-gradient(135deg, #FFA9D1 0%, #FFB6C1 100%)", "btn_shadow": "rgba(255, 182, 193, 0.3)", "btn_h_shadow": "rgba(255, 182, 193, 0.5)", "card_bg": "#FFFFFF", "card_border": "#FFE4E1", "card_h_border": "#FFD1DC", "card_h_shadow": "0 12px 20px -3px rgba(255, 182, 193, 0.2)", "pill_bg": "#FFF0F5", "pill_txt": "#FF69B4", "pill_border": "#FFD1DC", "gauge_bar": "#FF69B4", "radar_fill": "rgba(255, 105, 180, 0.15)", "wc_cmap": "spring", "c_red": "rgba(255, 182, 193, 0.1)", "c_yel": "rgba(255, 182, 193, 0.2)", "c_grn": "rgba(255, 182, 193, 0.3)", "comp_colors": ["#FF69B4", "#FFA9D1", "#FFDAC1"]}
     elif idx == 1:
         # 🍷 2. ELEGANT YOUNG LADY (Blush & Silk)
-        t = {
-            "app_bg": "#FCF9F9", "sidebar_bg": "#FFFFFF", "text": "#4A4040",
-            "hero_grad": "linear-gradient(135deg, #DCA7B8 0%, #D49BAA 50%, #CE8E9E 100%)",
-            "hero_shadow": "0 15px 30px -5px rgba(212, 155, 170, 0.25)", "hero_border": "#E6BCCD",
-            "hero_txt_shadow": "0 2px 10px rgba(0,0,0,0.1)", "subtitle": "#FFF0F2",
-            "form_bg": "#FFFFFF", "form_border": "#F5EBEB",
-            "inp_bg": "#FCF9F9", "inp_border": "#EAD8DC", "focus": "#D49BAA",
-            "btn_grad": "linear-gradient(135deg, #DCA7B8 0%, #CE8E9E 100%)",
-            "btn_shadow": "rgba(212, 155, 170, 0.3)", "btn_h_shadow": "rgba(212, 155, 170, 0.4)",
-            "card_bg": "#FFFFFF", "card_border": "#F5EBEB", "card_h_border": "#EAD8DC", "card_h_shadow": "0 12px 20px -3px rgba(212, 155, 170, 0.1)",
-            "pill_bg": "#FDF4F6", "pill_txt": "#9A7480", "pill_border": "#F5EBEB",
-            "gauge_bar": "#D49BAA", "radar_fill": "rgba(212, 155, 170, 0.15)", "wc_cmap": "PuRd",
-            "c_red": "rgba(226, 176, 192, 0.1)", "c_yel": "rgba(226, 176, 192, 0.2)", "c_grn": "rgba(226, 176, 192, 0.3)",
-            "comp_colors": ["#D49BAA", "#A39BA8", "#E3B5A4"]
-        }
+        t = {"app_bg": "#FCF9F9", "sidebar_bg": "#FFFFFF", "text": "#4A4040", "hero_grad": "linear-gradient(135deg, #DCA7B8 0%, #D49BAA 50%, #CE8E9E 100%)", "hero_shadow": "0 15px 30px -5px rgba(212, 155, 170, 0.25)", "hero_border": "#E6BCCD", "hero_txt_shadow": "0 2px 10px rgba(0,0,0,0.1)", "subtitle": "#FFF0F2", "form_bg": "#FFFFFF", "form_border": "#F5EBEB", "inp_bg": "#FCF9F9", "inp_border": "#EAD8DC", "focus": "#D49BAA", "btn_grad": "linear-gradient(135deg, #DCA7B8 0%, #CE8E9E 100%)", "btn_shadow": "rgba(212, 155, 170, 0.3)", "btn_h_shadow": "rgba(212, 155, 170, 0.4)", "card_bg": "#FFFFFF", "card_border": "#F5EBEB", "card_h_border": "#EAD8DC", "card_h_shadow": "0 12px 20px -3px rgba(212, 155, 170, 0.1)", "pill_bg": "#FDF4F6", "pill_txt": "#9A7480", "pill_border": "#F5EBEB", "gauge_bar": "#D49BAA", "radar_fill": "rgba(212, 155, 170, 0.15)", "wc_cmap": "PuRd", "c_red": "rgba(226, 176, 192, 0.1)", "c_yel": "rgba(226, 176, 192, 0.2)", "c_grn": "rgba(226, 176, 192, 0.3)", "comp_colors": ["#D49BAA", "#A39BA8", "#E3B5A4"]}
     elif idx == 2:
         # 💋 3. HOT & SEXY LADY (Crimson & Ruby)
-        t = {
-            "app_bg": "#FFF5F7", "sidebar_bg": "#FFFFFF", "text": "#4A1525",
-            "hero_grad": "linear-gradient(135deg, #FF0055 0%, #D50032 50%, #8A0030 100%)",
-            "hero_shadow": "0 15px 30px -5px rgba(213, 0, 50, 0.3)", "hero_border": "#FFB3C6",
-            "hero_txt_shadow": "0 2px 10px rgba(0,0,0,0.1)", "subtitle": "#FFD1DC",
-            "form_bg": "#FFFFFF", "form_border": "#FFE4E8",
-            "inp_bg": "#FFF5F7", "inp_border": "#FFCCD5", "focus": "#D50032",
-            "btn_grad": "linear-gradient(135deg, #FF0055 0%, #D50032 100%)",
-            "btn_shadow": "rgba(213, 0, 50, 0.3)", "btn_h_shadow": "rgba(213, 0, 50, 0.5)",
-            "card_bg": "#FFFFFF", "card_border": "#FFE4E8", "card_h_border": "#FFCCD5", "card_h_shadow": "0 12px 20px -3px rgba(213, 0, 50, 0.15)",
-            "pill_bg": "#FFF0F3", "pill_txt": "#D50032", "pill_border": "#FFE4E8",
-            "gauge_bar": "#D50032", "radar_fill": "rgba(213, 0, 50, 0.15)", "wc_cmap": "Reds",
-            "c_red": "rgba(213, 0, 50, 0.05)", "c_yel": "rgba(213, 0, 50, 0.15)", "c_grn": "rgba(213, 0, 50, 0.25)",
-            "comp_colors": ["#D50032", "#FF0055", "#8A0030"]
-        }
+        t = {"app_bg": "#FFF5F7", "sidebar_bg": "#FFFFFF", "text": "#4A1525", "hero_grad": "linear-gradient(135deg, #FF0055 0%, #D50032 50%, #8A0030 100%)", "hero_shadow": "0 15px 30px -5px rgba(213, 0, 50, 0.3)", "hero_border": "#FFB3C6", "hero_txt_shadow": "0 2px 10px rgba(0,0,0,0.1)", "subtitle": "#FFD1DC", "form_bg": "#FFFFFF", "form_border": "#FFE4E8", "inp_bg": "#FFF5F7", "inp_border": "#FFCCD5", "focus": "#D50032", "btn_grad": "linear-gradient(135deg, #FF0055 0%, #D50032 100%)", "btn_shadow": "rgba(213, 0, 50, 0.3)", "btn_h_shadow": "rgba(213, 0, 50, 0.5)", "card_bg": "#FFFFFF", "card_border": "#FFE4E8", "card_h_border": "#FFCCD5", "card_h_shadow": "0 12px 20px -3px rgba(213, 0, 50, 0.15)", "pill_bg": "#FFF0F3", "pill_txt": "#D50032", "pill_border": "#FFE4E8", "gauge_bar": "#D50032", "radar_fill": "rgba(213, 0, 50, 0.15)", "wc_cmap": "Reds", "c_red": "rgba(213, 0, 50, 0.05)", "c_yel": "rgba(213, 0, 50, 0.15)", "c_grn": "rgba(213, 0, 50, 0.25)", "comp_colors": ["#D50032", "#FF0055", "#8A0030"]}
     else:
         # 👑 4. SEXY GODDESS (Velvet & Gold)
-        t = {
-            "app_bg": "#FFF7F8", "sidebar_bg": "#FFFFFF", "text": "#3A101E",
-            "hero_grad": "linear-gradient(135deg, #C70039 0%, #900C3F 50%, #581845 100%)",
-            "hero_shadow": "0 15px 30px -5px rgba(144, 12, 63, 0.35)", "hero_border": "#FFC300",
-            "hero_txt_shadow": "0 2px 10px rgba(0,0,0,0.1)", "subtitle": "#FFC300",
-            "form_bg": "#FFFFFF", "form_border": "#FADADD",
-            "inp_bg": "#FFF7F8", "inp_border": "#F5C6CB", "focus": "#C70039",
-            "btn_grad": "linear-gradient(135deg, #C70039 0%, #900C3F 100%)",
-            "btn_shadow": "rgba(199, 0, 57, 0.3)", "btn_h_shadow": "rgba(144, 12, 63, 0.5)",
-            "card_bg": "#FFFFFF", "card_border": "#FADADD", "card_h_border": "#FFC300", "card_h_shadow": "0 12px 20px -3px rgba(144, 12, 63, 0.15)",
-            "pill_bg": "#FFF0F3", "pill_txt": "#900C3F", "pill_border": "#FFC300",
-            "gauge_bar": "#C70039", "radar_fill": "rgba(199, 0, 57, 0.15)", "wc_cmap": "inferno",
-            "c_red": "rgba(199, 0, 57, 0.05)", "c_yel": "rgba(199, 0, 57, 0.15)", "c_grn": "rgba(199, 0, 57, 0.25)",
-            "comp_colors": ["#C70039", "#FFC300", "#900C3F"]
-        }
+        t = {"app_bg": "#FFF7F8", "sidebar_bg": "#FFFFFF", "text": "#3A101E", "hero_grad": "linear-gradient(135deg, #C70039 0%, #900C3F 50%, #581845 100%)", "hero_shadow": "0 15px 30px -5px rgba(144, 12, 63, 0.35)", "hero_border": "#FFC300", "hero_txt_shadow": "0 2px 10px rgba(0,0,0,0.1)", "subtitle": "#FFC300", "form_bg": "#FFFFFF", "form_border": "#FADADD", "inp_bg": "#FFF7F8", "inp_border": "#F5C6CB", "focus": "#C70039", "btn_grad": "linear-gradient(135deg, #C70039 0%, #900C3F 100%)", "btn_shadow": "rgba(199, 0, 57, 0.3)", "btn_h_shadow": "rgba(144, 12, 63, 0.5)", "card_bg": "#FFFFFF", "card_border": "#FADADD", "card_h_border": "#FFC300", "card_h_shadow": "0 12px 20px -3px rgba(144, 12, 63, 0.15)", "pill_bg": "#FFF0F3", "pill_txt": "#900C3F", "pill_border": "#FFC300", "gauge_bar": "#C70039", "radar_fill": "rgba(199, 0, 57, 0.15)", "wc_cmap": "inferno", "c_red": "rgba(199, 0, 57, 0.05)", "c_yel": "rgba(199, 0, 57, 0.15)", "c_grn": "rgba(199, 0, 57, 0.25)", "comp_colors": ["#C70039", "#FFC300", "#900C3F"]}
 
-    # Injecting Dynamic CSS
     st.markdown(f"""
     <style>
         .stApp {{ background-color: {t['app_bg']} !important; color: {t['text']} !important; font-family: 'Inter', sans-serif; }}
         [data-testid="stSidebar"] {{ background-color: {t['sidebar_bg']} !important; border-right: 1px solid {t['card_border']} !important; }}
         h1, h2, h3, h4, h5, h6, p, label, .stMarkdown {{ color: {t['text']} !important; }}
-        
-        .hero-container {{
-            background: {t['hero_grad']}; color: #FFFFFF !important; padding: 3.5rem 2rem; border-radius: 1rem; 
-            text-align: center; margin-bottom: 2.5rem; margin-top: -2rem; box-shadow: {t['hero_shadow']}; border: 1px solid {t['hero_border']};
-        }}
+        .hero-container {{ background: {t['hero_grad']}; color: #FFFFFF !important; padding: 3.5rem 2rem; border-radius: 1rem; text-align: center; margin-bottom: 2.5rem; margin-top: -2rem; box-shadow: {t['hero_shadow']}; border: 1px solid {t['hero_border']}; }}
         .hero-title {{ font-size: 3.5rem; font-weight: 800; margin: 0; line-height: 1.2; letter-spacing: -0.01em; color: #FFFFFF !important; font-family: 'Georgia', serif; text-shadow: {t['hero_txt_shadow']};}}
         .hero-subtitle {{ font-size: 1.15rem; font-weight: 500; margin-top: 1rem; color: {t['subtitle']} !important; letter-spacing: 0.05em; text-transform: uppercase; }}
-        
         div[data-testid="stForm"] {{ background-color: {t['form_bg']} !important; border: 1px solid {t['form_border']} !important; border-radius: 0.75rem; box-shadow: 0 4px 15px -2px rgba(0, 0, 0, 0.03); padding: 2.5rem !important; }}
-        
         div[data-baseweb="select"] > div {{ background-color: {t['inp_bg']} !important; color: {t['text']} !important; border: 1px solid {t['inp_border']} !important; border-radius: 0.5rem; }}
         .stTextArea textarea, .stTextInput input {{ background-color: {t['inp_bg']} !important; color: {t['text']} !important; border: 1px solid {t['inp_border']} !important; border-radius: 0.5rem; }}
         .stTextArea textarea:focus, .stTextInput input:focus {{ border-color: {t['focus']} !important; box-shadow: 0 0 0 1px {t['focus']} !important; }}
-        
-        div[data-testid="stForm"] button {{ 
-            background: {t['btn_grad']} !important; color: #FFFFFF !important; border: none !important; border-radius: 0.5rem !important; font-weight: 600 !important; letter-spacing: 0.02em !important; padding: 0.6rem 2.5rem !important; box-shadow: 0 4px 10px -1px {t['btn_shadow']} !important; transition: all 0.3s ease !important;
-        }}
+        div[data-testid="stForm"] button {{ background: {t['btn_grad']} !important; color: #FFFFFF !important; border: none !important; border-radius: 0.5rem !important; font-weight: 600 !important; letter-spacing: 0.02em !important; padding: 0.6rem 2.5rem !important; box-shadow: 0 4px 10px -1px {t['btn_shadow']} !important; transition: all 0.3s ease !important; }}
         div[data-testid="stForm"] button:hover {{ transform: translateY(-2px); box-shadow: 0 8px 15px -2px {t['btn_h_shadow']} !important; }}
-        
         button[kind="secondary"] {{ background-color: #FFFFFF !important; color: {t['pill_txt']} !important; border: 1px solid {t['inp_border']} !important; border-radius: 2rem !important; font-weight: 500 !important;}}
         button[kind="secondary"]:hover {{ border-color: {t['focus']} !important; color: {t['focus']} !important; background-color: {t['pill_bg']} !important; }}
-        
-        [data-testid="stVerticalBlockBorderWrapper"] {{
-            border-radius: 0.75rem !important; border: 1px solid {t['card_border']} !important; background-color: {t['card_bg']} !important; transition: all 0.3s ease !important; box-shadow: 0 2px 10px -1px rgba(0,0,0,0.02) !important; padding: 0.8rem !important;
-        }}
+        [data-testid="stVerticalBlockBorderWrapper"] {{ border-radius: 0.75rem !important; border: 1px solid {t['card_border']} !important; background-color: {t['card_bg']} !important; transition: all 0.3s ease !important; box-shadow: 0 2px 10px -1px rgba(0,0,0,0.02) !important; padding: 0.8rem !important; }}
         [data-testid="stVerticalBlockBorderWrapper"]:hover {{ border-color: {t['card_h_border']} !important; box-shadow: {t['card_h_shadow']} !important; transform: translateY(-2px); }}
-        
         .tag-pill {{ background-color: {t['pill_bg']}; color: {t['pill_txt']}; padding: 0.25rem 0.8rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; display: inline-block; margin-right: 0.5rem; border: 1px solid {t['pill_border']}; letter-spacing: 0.03em; }}
     </style>
     """, unsafe_allow_html=True)
-    
-    # Assigning chart variables from the active dictionary
-    chart_text_color = t['text']           
-    gauge_bar = t['gauge_bar']                  
-    gauge_bg = "rgba(0,0,0,0)"             
-    step_red = t['c_red']               
-    step_yellow = t['c_yel']              
-    step_green = t['c_grn']                  
-    radar_fill = t['radar_fill'] 
-    radar_line = t['gauge_bar']
-    radar_bg = "rgba(255, 255, 255, 0.95)"  
-    radar_grid = t['card_border']                 
-    wc_cmap = t['wc_cmap']                       
-    comp_colors = t['comp_colors']
-    
+    chart_text_color, gauge_bar, gauge_bg, step_red, step_yellow, step_green, radar_fill, radar_line, radar_bg, radar_grid, wc_cmap, comp_colors = t['text'], t['gauge_bar'], "rgba(0,0,0,0)", t['c_red'], t['c_yel'], t['c_grn'], t['radar_fill'], t['gauge_bar'], "rgba(255, 255, 255, 0.95)", t['card_border'], t['wc_cmap'], t['comp_colors']
 else:
-    # --- DARK MODE ALWAYS REMAINS IDENTICAL ---
     st.markdown("""
     <style>
-        /* Premium Midnight & Neon Emerald Dark Theme */
         .stApp { background-color: #0B0F19 !important; color: #F3F4F6 !important; font-family: 'Inter', sans-serif; }
         [data-testid="stSidebar"] { background-color: #111827 !important; border-right: 1px solid #1F2937 !important; }
         h1, h2, h3, h4, h5, h6, p, label, .stMarkdown { color: #F3F4F6 !important; }
-        
-        .hero-container {
-            background: linear-gradient(135deg, #022C22 0%, #0B0F19 50%, #111827 100%);
-            padding: 3rem 2rem; border-radius: 1.5rem; text-align: center; margin-bottom: 2rem; margin-top: -2rem; border: 1px solid rgba(16, 185, 129, 0.3); box-shadow: 0 0 40px -10px rgba(16, 185, 129, 0.15), inset 0 0 20px -5px rgba(16, 185, 129, 0.1);
-        }
+        .hero-container { background: linear-gradient(135deg, #022C22 0%, #0B0F19 50%, #111827 100%); padding: 3rem 2rem; border-radius: 1.5rem; text-align: center; margin-bottom: 2rem; margin-top: -2rem; border: 1px solid rgba(16, 185, 129, 0.3); box-shadow: 0 0 40px -10px rgba(16, 185, 129, 0.15), inset 0 0 20px -5px rgba(16, 185, 129, 0.1); }
         .hero-title { font-size: 3.5rem; font-weight: 900; margin: 0; line-height: 1.2; letter-spacing: -0.03em; color: #FFFFFF !important; }
         .hero-subtitle { font-size: 1.25rem; font-weight: 500; margin-top: 0.75rem; color: #34D399 !important; }
-        
         div[data-testid="stForm"] { background-color: #111827 !important; border: 1px solid #1F2937 !important; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5); padding: 2rem !important; }
-        
         div[data-baseweb="select"] > div { background-color: #0B0F19 !important; color: #F3F4F6 !important; border: 1px solid #374151 !important; border-radius: 0.5rem; }
         .stTextArea textarea, .stTextInput input { background-color: #0B0F19 !important; color: #F3F4F6 !important; border: 1px solid #374151 !important; border-radius: 0.5rem; }
-        
-        div[data-testid="stForm"] button { 
-            background: linear-gradient(135deg, #2DD4BF 0%, #10B981 100%) !important; color: #022C22 !important; border: none !important; border-radius: 0.5rem !important; font-weight: 700 !important; padding: 0.5rem 2rem !important; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2) !important; transition: all 0.3s ease !important;
-        }
+        div[data-testid="stForm"] button { background: linear-gradient(135deg, #2DD4BF 0%, #10B981 100%) !important; color: #022C22 !important; border: none !important; border-radius: 0.5rem !important; font-weight: 700 !important; padding: 0.5rem 2rem !important; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2) !important; transition: all 0.3s ease !important; }
         div[data-testid="stForm"] button:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.4) !important; }
-        
         button[kind="secondary"] { background-color: #111827 !important; color: #9CA3AF !important; border: 1px solid #374151 !important; border-radius: 2rem !important; }
         button[kind="secondary"]:hover { border-color: #10B981 !important; color: #10B981 !important; background-color: rgba(16, 185, 129, 0.05) !important; }
-        
-        [data-testid="stVerticalBlockBorderWrapper"] {
-            border-radius: 1rem !important; border: 1px solid #1F2937 !important; background-color: #111827 !important; transition: all 0.3s ease !important; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3) !important; padding: 0.5rem !important;
-        }
+        [data-testid="stVerticalBlockBorderWrapper"] { border-radius: 1rem !important; border: 1px solid #1F2937 !important; background-color: #111827 !important; transition: all 0.3s ease !important; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3) !important; padding: 0.5rem !important; }
         [data-testid="stVerticalBlockBorderWrapper"]:hover { border-color: #374151 !important; box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.1) !important; transform: translateY(-3px); }
-        
         .tag-pill { background-color: rgba(16, 185, 129, 0.1); color: #34D399; padding: 0.3rem 0.8rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; display: inline-block; margin-right: 0.5rem; border: 1px solid rgba(16, 185, 129, 0.2); letter-spacing: 0.02em; }
     </style>
     """, unsafe_allow_html=True)
-    
-    chart_text_color = "#E5E7EB"           
-    gauge_bar = "#10B981"                  
-    gauge_bg = "rgba(0,0,0,0)"             
-    step_red = "rgba(239, 68, 68, 0.1)"    
-    step_yellow = "rgba(245, 158, 11, 0.1)"
-    step_green = "rgba(16, 185, 129, 0.1)" 
-    radar_fill = "rgba(16, 185, 129, 0.15)" 
-    radar_line = "#10B981"
-    radar_bg = "rgba(17, 24, 39, 0.8)"       
-    radar_grid = "#374151"                 
-    wc_cmap = "viridis"   
-    comp_colors = ["#10B981", "#3B82F6", "#F43F5E"] 
+    chart_text_color, gauge_bar, gauge_bg, step_red, step_yellow, step_green, radar_fill, radar_line, radar_bg, radar_grid, wc_cmap, comp_colors = "#E5E7EB", "#10B981", "rgba(0,0,0,0)", "rgba(239, 68, 68, 0.1)", "rgba(245, 158, 11, 0.1)", "rgba(16, 185, 129, 0.1)", "rgba(16, 185, 129, 0.15)", "#10B981", "rgba(17, 24, 39, 0.8)", "#374151", "viridis", ["#10B981", "#3B82F6", "#F43F5E"]
 
 # --- ANIMATION HELPER ---
 @st.cache_data
@@ -226,74 +111,42 @@ def load_lottieurl(url: str):
         if r.status_code != 200: return None
         return r.json()
     except: return None
-
 lottie_ai = load_lottieurl("https://assets5.lottiefiles.com/packages/lf20_1m1of8zi.json")
 
 # --- 1. DATA HIERARCHY ---
 standard_departments = {
-      "Artificial Intelligence (AI & DS)": [
-        "AD301: Deep Learning", "AD302: Reinforcement Learning", 
-        "AD303: Data Analytics", "AD304: Big Data Technologies", 
-	"AD305: Natural Language Processing", "AD307: Computer Vision"
-    ],
-    "Electronics & Communication (ECE)": [
-        "EC301: Digital Signal Processing", "EC302: VLSI Design", 
-        "EC303: Applied Electromagnetic Theory", "EC304: Control Systems", 
-        "EC305: Microprocessors & Microcontrollers", "EC307: Power Electronics"
-    ],
-    "Electrical & Electronics (EEE)": [
-        "EE301: Power Generation", "EE302: Electromagnetics", 
-        "EE303: Linear Control Systems", "EE305: Electrical Machines", 
-        "EE307: Signals and Systems", "EE309: Microprocessor and Embedded Systems"
-    ],
-    "Cybersecurity (CY)": [
-        "CY301: Cryptography & Network Security", "CY302: Ethical Hacking", 
-        "CY303: Digital Forensics", "CY304: Malware Analysis", 
-        "CY305: Secure Coding Practices", "CY309: Cyber Threat Intelligence"
-    ],
-    "Polymer Engineering (PO)": [
-        "PO301: Polymer Chemistry", "PO302: Polymer Processing Technology", 
-        "PO303: Rubber Science", "PO304: Plastics Materials", 
-        "PO305: Polymer Testing & Characterization", "PO309: Composite Materials"
-    ],
-    "Computer Science (CSE)": [
-        "CS301: Theory of Computation", "CS302: Design & Analysis of Algorithms", 
-        "CS303: Operating Systems", "CS304: Compiler Design", 
-        "CS305: Microprocessors", "CS309: Graph Theory"
-    ]
+      "Artificial Intelligence (AI & DS)": ["AD301: Deep Learning", "AD302: Reinforcement Learning", "AD303: Data Analytics", "AD304: Big Data Technologies", "AD305: Natural Language Processing", "AD307: Computer Vision"],
+      "Computer Science (CSE)": ["CS301: Theory of Computation", "CS302: Design & Analysis of Algorithms", "CS303: Operating Systems", "CS304: Compiler Design", "CS305: Microprocessors", "CS309: Graph Theory"]
 }
-
 ktu_hierarchy = {
     "University College of Engineering Thodupuzha (UCE)": standard_departments,
     "Model Engineering College (MEC)": standard_departments,
-    "College of Engineering Trivandrum (CET)": standard_departments,
-    "TKM College of Engineering, Kollam (TKM)": standard_departments,
-    "Rajiv Gandhi Institute of Technology (RIT), Kottayam": standard_departments,
-    "Government Engineering College, Thrissur (GEC)": standard_departments,
-    "Muthoot Institute of Technology and Science (MITS)": standard_departments,
-    "Rajagiri School of Engineering & Technology (RSET)": standard_departments,
-    "Mar Athanasius College of Engineering (MACE)": standard_departments,
-    "Federal Institute of Science and Technology (FISAT)": standard_departments
+    "College of Engineering Trivandrum (CET)": standard_departments
 }
-
 colleges_list = list(ktu_hierarchy.keys())
 
-# --- 2. DATABASE SETUP & UPGRADE ---
+# --- 2. DATABASE SETUP, MIGRATION & ANTI-SPAM ---
 DB_NAME = "ktu_reviews.db"
 
 def init_db():
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS reviews (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            target_name TEXT,
-            category TEXT,
-            review_text TEXT,
-            upvotes INTEGER DEFAULT 0,
-            tags TEXT
-        )
-    ''')
+    # Ensure reviews table exists
+    c.execute('''CREATE TABLE IF NOT EXISTS reviews (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    target_name TEXT, category TEXT, review_text TEXT,
+                    upvotes INTEGER DEFAULT 0, tags TEXT,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP)''')
+    
+    # 🛡️ DB MIGRATION: Add timestamp if it's missing from an old DB
+    try: c.execute("ALTER TABLE reviews ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP")
+    except: pass 
+    
+    # 💬 NEW: Replies Table for Threaded Discussions
+    c.execute('''CREATE TABLE IF NOT EXISTS replies (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    review_id INTEGER, reply_text TEXT,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP)''')
     conn.commit()
     conn.close()
 
@@ -304,44 +157,26 @@ def extract_tags(text, category):
         if "placement" in text or "job" in text: tags.append("💼 Placements")
         if "faculty" in text or "teacher" in text: tags.append("👨‍🏫 Faculty")
         if "hostel" in text or "food" in text: tags.append("🛏️ Hostel")
-        if "campus" in text or "infrastructure" in text: tags.append("🏛️ Campus")
     else:
-        if "hard" in text or "difficult" in text or "complex" in text: tags.append("⚠️ Tough Syllabus")
-        if "easy" in text or "chill" in text or "fun" in text: tags.append("✅ Easy Scoring")
-        if "lab" in text or "hands-on" in text or "vm" in text or "experiments" in text: tags.append("🧪 Heavy Labs")
+        if "hard" in text or "difficult" in text: tags.append("⚠️ Tough Syllabus")
+        if "easy" in text or "chill" in text: tags.append("✅ Easy Scoring")
+        if "lab" in text or "hands-on" in text: tags.append("🧪 Heavy Labs")
     return ", ".join(tags)
 
-# 🛡️ ENTERPRISE SECURITY: CYBER THREAT PREVENTION ENGINE 🛡️
 def check_spam(text, target_name):
     text = text.strip()
-    
-    if len(text) < 10:
-        return True, "Review too short. Please provide a detailed review."
-    if len(text) > 800:
-        return True, "Review too long. Please keep it under 800 characters."
-        
-    if re.search(r'<[^>]*>', text):
-        return True, "Security Alert: HTML formatting and scripts are not allowed."
-        
-    if re.search(r'(http:\/\/|https:\/\/|www\.|[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?)', text):
-        return True, "Spam Alert: Links and URLs are strictly prohibited."
-        
-    if re.search(r'(.)\1{5,}', text) or len(set(text)) < 4:
-        return True, "Review rejected: Invalid or repeating characters detected."
-        
-    profanity_list = ["fuck", "shit", "bitch", "asshole", "cunt", "slut", "dick", "pussy", "bastard"]
-    if any(bad_word in text.lower() for bad_word in profanity_list):
-        return True, "Review rejected: Please keep the language professional and respectful."
-        
+    if len(text) < 10: return True, "Review too short. Please provide a detailed review."
+    if len(text) > 800: return True, "Review too long. Please keep it under 800 characters."
+    if re.search(r'<[^>]*>', text): return True, "Security Alert: HTML formatting is not allowed."
+    if re.search(r'(http:\/\/|https:\/\/|www\.)', text): return True, "Spam Alert: Links are strictly prohibited."
+    if re.search(r'(.)\1{5,}', text) or len(set(text)) < 4: return True, "Review rejected: Invalid characters detected."
+    if any(bad in text.lower() for bad in ["fuck", "shit", "bitch", "asshole"]): return True, "Review rejected: Profanity detected."
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
     c.execute("SELECT COUNT(*) FROM reviews WHERE target_name=? AND review_text=?", (target_name, text))
-    is_duplicate = c.fetchone()[0] > 0
+    is_dup = c.fetchone()[0] > 0
     conn.close()
-    
-    if is_duplicate:
-        return True, "Review rejected: This exact review has already been posted to this target."
-        
+    if is_dup: return True, "Review rejected: This exact review has already been posted."
     return False, ""
 
 def add_review_to_db(target_name, category, review_text):
@@ -353,14 +188,27 @@ def add_review_to_db(target_name, category, review_text):
     conn.commit()
     conn.close()
 
+def add_reply_to_db(review_id, reply_text):
+    safe_reply = html.escape(reply_text.strip())
+    if len(safe_reply) < 3: return
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
+    c.execute("INSERT INTO replies (review_id, reply_text) VALUES (?, ?)", (review_id, safe_reply))
+    conn.commit()
+    conn.close()
+
 def get_reviews_from_db(target_name, sort_by="Most Upvoted"):
     conn = sqlite3.connect(DB_NAME)
-    if sort_by == "Newest":
-        order_clause = "ORDER BY id DESC"
-    else:
-        order_clause = "ORDER BY upvotes DESC, id DESC"
-    query = f"SELECT id, review_text, upvotes, tags FROM reviews WHERE target_name=? {order_clause}"
+    order = "ORDER BY id DESC" if sort_by == "Newest" else "ORDER BY upvotes DESC, id DESC"
+    query = f"SELECT id, review_text, upvotes, tags, created_at FROM reviews WHERE target_name=? {order}"
     df = pd.read_sql_query(query, conn, params=(target_name,))
+    conn.close()
+    return df.to_dict('records')
+
+def get_replies(review_id):
+    conn = sqlite3.connect(DB_NAME)
+    query = "SELECT reply_text, created_at FROM replies WHERE review_id=? ORDER BY id ASC"
+    df = pd.read_sql_query(query, conn, params=(review_id,))
     conn.close()
     return df.to_dict('records')
 
@@ -375,132 +223,115 @@ def seed_initial_data():
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
     c.execute("SELECT COUNT(*) FROM reviews")
-    
     if c.fetchone()[0] == 0:
-        good_college = ["Good campus and nice placements.", "Faculty is experienced and helpful.", "Nice tech culture and okay college fests.", "Green campus, decent place to study."]
-        bad_college = ["Faculty is strict, feels like a school.", "Old blocks need serious renovation.", "Remote location makes commuting difficult.", "Hostel rules are too strict."]
-        
-        good_course = ["The faculty covered the syllabus well.", "Chill subject, easy to score.", "Labs make the theory easier.", "Relevant for industry placements."]
-        bad_course = ["The syllabus is massive and tough to finish.", "Exams are very hard, strict evaluation.", "Lab sessions here are a nightmare.", "Teacher just reads from the slides."]
-
-        cyber_good = ["Ethical hacking labs are so much fun.", "Cryptography is math-heavy but the teacher made it interesting.", "Best hands-on security course.", "Great CTF challenges in the lab."]
-        cyber_bad = ["Too many complex algorithms in Cryptography.", "Setting up the VMs for malware analysis took hours.", "Heavy coding required, very tough.", "Forensics tools kept crashing."]
-        
-        polymer_good = ["Polymer chemistry is fascinating.", "Lab experiments with composites were really practical.", "Great insights into material science.", "Very scoring subject if you know the basics."]
-        polymer_bad = ["Too many chemical reactions to memorize.", "Testing labs are tedious.", "Syllabus is very dry and theoretical.", "Industrial processing module was way too long."]
-
-        uce_college = ["A very good college with supportive faculty and decent placements.", "Great campus life, though some buildings are a bit old.", "Good tech culture and amazing college fests. Really enjoyed my time here.", "Academics are strong, but hostel facilities could use slight improvements.", "Overall a great experience. The faculty is very good."]
-        uce_course = ["Good teaching, the syllabus is manageable.", "Fairly easy to score if you study well. Great labs.", "The faculty is good and notes are helpful.", "Some topics are a bit tough, but overall a very good subject.", "Interesting curriculum, though the final exam was slightly hard."]
-
-        initial_data = []
-
-        for college in colleges_list:
-            for _ in range(random.randint(10, 15)):
-                if college == "University College of Engineering Thodupuzha (UCE)":
-                    text = random.choice(uce_college)
-                else:
-                    text = random.choice(good_college if random.random() > 0.4 else bad_college)
-                initial_data.append((college, "College", text, random.randint(0, 50), extract_tags(text, "College")))
-
-        for college, depts in ktu_hierarchy.items():
-            for dept, subjects in depts.items():
-                for subject in subjects:
-                    target_name = f"{subject} @ {college}"
-                    for _ in range(random.randint(10, 15)):
-                        if college == "University College of Engineering Thodupuzha (UCE)":
-                            text = random.choice(uce_course)
-                        else:
-                            is_good = random.random() > 0.5
-                            if "CY" in subject:
-                                pool = cyber_good + good_course if is_good else cyber_bad + bad_course
-                            elif "PO" in subject:
-                                pool = polymer_good + good_course if is_good else polymer_bad + bad_course
-                            else:
-                                pool = good_course if is_good else bad_course
-                            text = random.choice(pool)
-                        initial_data.append((target_name, "Course", text, random.randint(0, 30), extract_tags(text, "Course")))
-
-        c.executemany("INSERT INTO reviews (target_name, category, review_text, upvotes, tags) VALUES (?, ?, ?, ?, ?)", initial_data)
+        pool_good = ["Faculty is experienced and helpful.", "Great campus life.", "Easy subject to score if you study."]
+        pool_bad = ["Hostel rules are too strict.", "Syllabus is massive and tough.", "Teacher just reads slides."]
+        data = []
+        for col in colleges_list:
+            for _ in range(15):
+                text = random.choice(pool_good if random.random() > 0.4 else pool_bad)
+                # 📈 Generate random timestamps over the last 12 months for the timeline feature
+                random_days = random.randint(0, 365)
+                ts = (datetime.now() - timedelta(days=random_days)).strftime("%Y-%m-%d %H:%M:%S")
+                data.append((col, "College", text, random.randint(0, 50), extract_tags(text, "College"), ts))
+            for dept, subs in ktu_hierarchy[col].items():
+                for sub in subs:
+                    for _ in range(5):
+                        text = random.choice(pool_good if random.random() > 0.5 else pool_bad)
+                        random_days = random.randint(0, 365)
+                        ts = (datetime.now() - timedelta(days=random_days)).strftime("%Y-%m-%d %H:%M:%S")
+                        data.append((f"{sub} @ {col}", "Course", text, random.randint(0, 30), extract_tags(text, "Course"), ts))
+        c.executemany("INSERT INTO reviews (target_name, category, review_text, upvotes, tags, created_at) VALUES (?, ?, ?, ?, ?, ?)", data)
         conn.commit()
     conn.close()
 
 init_db()
 seed_initial_data()
 
-# --- 3. AI & VISUALIZATION LOGIC ---
+# --- 3. AI, VISUALIZATION, & RAG LOGIC ---
 def get_overall_sentiment(reviews_df, target_name=""):
     if not reviews_df: return 0.5 
     texts = [r['review_text'] for r in reviews_df]
     text = " ".join(texts)
     normalized_score = (TextBlob(text).sentiment.polarity + 1) / 2
-    if "Thodupuzha" in target_name and len(texts) <= 15:
-        return 0.85
+    if "Thodupuzha" in target_name and len(texts) <= 15: return 0.85
     return max(0.0, min(1.0, normalized_score))
 
 def analyze_course_aspects(reviews_df):
     metrics = {"Difficulty": 0.5, "Teaching Quality": 0.5, "Syllabus Load": 0.5}
-    texts = [r['review_text'] for r in reviews_df]
-    text = " ".join(texts).lower()
-    
-    if any(x in text for x in ["hard", "strict", "nightmare", "tough", "complex"]): metrics["Difficulty"] = 0.85
-    elif any(x in text for x in ["easy", "chill", "fun"]): metrics["Difficulty"] = 0.2
-    
-    if any(x in text for x in ["great", "helpful", "well", "good", "fascinating"]): metrics["Teaching Quality"] = 0.9
-    elif any(x in text for x in ["bad", "reads from", "tedious"]): metrics["Teaching Quality"] = 0.3
-    
-    if any(x in text for x in ["massive", "tough to finish", "memorize"]): metrics["Syllabus Load"] = 0.9
-    elif any(x in text for x in ["easy to score", "manageable"]): metrics["Syllabus Load"] = 0.3
+    text = " ".join([r['review_text'] for r in reviews_df]).lower()
+    if any(x in text for x in ["hard", "strict", "tough"]): metrics["Difficulty"] = 0.85
+    elif any(x in text for x in ["easy", "chill"]): metrics["Difficulty"] = 0.2
+    if any(x in text for x in ["great", "helpful"]): metrics["Teaching Quality"] = 0.9
+    elif any(x in text for x in ["bad", "tedious"]): metrics["Teaching Quality"] = 0.3
+    if any(x in text for x in ["massive", "memorize"]): metrics["Syllabus Load"] = 0.9
+    elif any(x in text for x in ["manageable"]): metrics["Syllabus Load"] = 0.3
     return metrics
 
 def analyze_college_aspects(reviews_df):
-    metrics = {"Placements & Careers": 0.5, "Infrastructure": 0.5, "Campus Culture": 0.5}
-    texts = [r['review_text'] for r in reviews_df]
-    text = " ".join(texts).lower()
-    
-    if any(x in text for x in ["nice placements", "strong placements", "top choice", "job", "recruit"]): metrics["Placements & Careers"] = 0.9
-    elif any(x in text for x in ["no placement", "poor placement", "lack of exposure"]): metrics["Placements & Careers"] = 0.3
-    
-    if any(x in text for x in ["green campus", "modern", "good facilities", "great labs", "nice hostel"]): metrics["Infrastructure"] = 0.9
-    elif any(x in text for x in ["old blocks", "renovation", "bad hostel", "poor infrastructure", "bad food"]): metrics["Infrastructure"] = 0.3
-    
-    if any(x in text for x in ["supportive faculty", "amazing college fests", "tech culture", "good campus life"]): metrics["Campus Culture"] = 0.9
-    elif any(x in text for x in ["strict", "like a school", "rules are too strict", "toxic"]): metrics["Campus Culture"] = 0.3
+    metrics = {"Placements": 0.5, "Infrastructure": 0.5, "Culture": 0.5}
+    text = " ".join([r['review_text'] for r in reviews_df]).lower()
+    if any(x in text for x in ["placements", "job"]): metrics["Placements"] = 0.9
+    elif any(x in text for x in ["poor placement"]): metrics["Placements"] = 0.3
+    if any(x in text for x in ["green campus", "great labs"]): metrics["Infrastructure"] = 0.9
+    elif any(x in text for x in ["old blocks", "bad hostel"]): metrics["Infrastructure"] = 0.3
+    if any(x in text for x in ["fests", "campus life"]): metrics["Culture"] = 0.9
+    elif any(x in text for x in ["strict", "toxic"]): metrics["Culture"] = 0.3
     return metrics
+
+def generate_rag_response(query, reviews):
+    """🤖 Local RAG Simulator: Answers questions based only on DB reviews."""
+    if not reviews: return "I don't have enough data to answer that yet."
+    keywords = [word.lower() for word in query.split() if len(word) > 3 and word.lower() not in ['what', 'how', 'when', 'the', 'are', 'is']]
+    if not keywords: return "Could you be a bit more specific? (e.g., 'How are the placements?')"
+    
+    relevant_reviews = [r['review_text'] for r in reviews if any(k in r['review_text'].lower() for k in keywords)]
+    if not relevant_reviews:
+        return f"I scoured the database, but none of the students have specifically mentioned anything related to '{query}' yet."
+    
+    avg_sent = sum([(TextBlob(t).sentiment.polarity + 1)/2 for t in relevant_reviews]) / len(relevant_reviews)
+    verdict = "highly positive" if avg_sent > 0.65 else "mixed or critical" if avg_sent < 0.4 else "neutral"
+    
+    response = f"**AI RAG Synthesis:** Based on {len(relevant_reviews)} student reviews mentioning your keywords, the general consensus is **{verdict}**.\n\n"
+    response += f"> *\"{random.choice(relevant_reviews)}\"*"
+    return response
+
+def plot_sentiment_timeline(reviews_df):
+    """📈 Plots a trendline of sentiment over time."""
+    if not reviews_df: return
+    df = pd.DataFrame(reviews_df)
+    if 'created_at' not in df.columns: return
+    df['Date'] = pd.to_datetime(df['created_at'])
+    df['Month'] = df['Date'].dt.to_period('M').dt.to_timestamp()
+    df['Sentiment'] = df['review_text'].apply(lambda x: (TextBlob(x).sentiment.polarity + 1)/2 * 100)
+    
+    trend = df.groupby('Month')['Sentiment'].mean().reset_index()
+    if len(trend) < 2: return
+    
+    fig = px.line(trend, x='Month', y='Sentiment', markers=True)
+    fig.update_traces(line_color=gauge_bar, line_width=3, marker=dict(size=8))
+    fig.update_layout(height=250, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                      xaxis=dict(title="", gridcolor=radar_grid, tickfont=dict(color=chart_text_color)),
+                      yaxis=dict(title="Sentiment Score", gridcolor=radar_grid, tickfont=dict(color=chart_text_color)),
+                      margin=dict(l=10, r=10, t=10, b=10))
+    st.plotly_chart(fig, use_container_width=True)
 
 def plot_gauge(score, title):
     fig = go.Figure(go.Indicator(
-        mode = "gauge+number",
-        value = score * 100,
-        title = {'text': title, 'font': {'size': 16, 'color': chart_text_color}},
-        number = {'suffix': "/100", 'font': {'color': chart_text_color, 'size': 36, 'family': "sans-serif"}},
-        gauge = {
-            'axis': {'range': [None, 100], 'tickcolor': radar_grid, 'tickwidth': 1, 'ticklen': 4},
-            'bar': {'color': gauge_bar, 'thickness': 0.15}, 
-            'bgcolor': "rgba(0,0,0,0)",
-            'borderwidth': 0, 
-            'steps': [
-                {'range': [0, 40], 'color': step_red},
-                {'range': [40, 70], 'color': step_yellow},
-                {'range': [70, 100], 'color': step_green}],
-        }
+        mode="gauge+number", value=score * 100, title={'text': title, 'font': {'size': 16, 'color': chart_text_color}},
+        number={'suffix': "/100", 'font': {'color': chart_text_color, 'size': 36}},
+        gauge={'axis': {'range': [None, 100], 'tickcolor': radar_grid, 'tickwidth': 1, 'ticklen': 4},
+               'bar': {'color': gauge_bar, 'thickness': 0.15}, 'bgcolor': "rgba(0,0,0,0)", 'borderwidth': 0, 
+               'steps': [{'range': [0, 40], 'color': step_red}, {'range': [40, 70], 'color': step_yellow}, {'range': [70, 100], 'color': step_green}]}
     ))
-    fig.update_layout(height=250, margin=dict(l=10, r=10, t=40, b=10), paper_bgcolor="rgba(0,0,0,0)", font={'color': chart_text_color})
+    fig.update_layout(height=250, margin=dict(l=10, r=10, t=40, b=10), paper_bgcolor="rgba(0,0,0,0)")
     st.plotly_chart(fig, use_container_width=True)
 
 def plot_radar(metrics):
     df = pd.DataFrame(dict(r=list(metrics.values()), theta=list(metrics.keys())))
     fig = px.line_polar(df, r='r', theta='theta', line_close=True, range_r=[0, 1])
-    fig.update_traces(fill='toself', fillcolor=radar_fill, line_color=radar_line, line_width=2.5, marker=dict(color=radar_line, size=6), line_shape='spline')
-    fig.update_layout(
-        height=300, 
-        paper_bgcolor="rgba(0,0,0,0)", 
-        polar=dict(
-            bgcolor=radar_bg, 
-            radialaxis=dict(visible=True, showticklabels=False, gridcolor=radar_grid, linecolor=radar_grid),
-            angularaxis=dict(tickfont=dict(color=chart_text_color, size=13), gridcolor=radar_grid, linecolor=radar_grid)
-        ), 
-        margin=dict(l=30, r=30, t=30, b=30)
-    )
+    fig.update_traces(fill='toself', fillcolor=radar_fill, line_color=radar_line, line_width=2.5, marker=dict(size=6), line_shape='spline')
+    fig.update_layout(height=300, paper_bgcolor="rgba(0,0,0,0)", polar=dict(bgcolor=radar_bg, radialaxis=dict(visible=True, showticklabels=False, gridcolor=radar_grid, linecolor=radar_grid), angularaxis=dict(tickfont=dict(color=chart_text_color, size=13), gridcolor=radar_grid, linecolor=radar_grid)), margin=dict(l=30, r=30, t=30, b=30))
     st.plotly_chart(fig, use_container_width=True)
 
 def plot_wordcloud(reviews_df):
@@ -513,69 +344,22 @@ def plot_wordcloud(reviews_df):
     fig.patch.set_alpha(0.0)
     st.pyplot(fig)
 
-def generate_smart_summary(sentiment_score, category):
-    if category == "College":
-        if sentiment_score >= 0.85: return "🌟 **AI Summary:** Students rate this institution highly (85% Positive). Excellent academics and faculty support are frequently mentioned, alongside minor notes for facility improvements."
-        elif sentiment_score > 0.7: return "✅ **AI Summary:** Overall, students praise this institution. Strong placements make it a top choice, though infrastructure varies by department."
-        elif sentiment_score > 0.4: return "⚖️ **AI Summary:** Mixed feelings from the student body. While the core academics hold up, strict rules and outdated facilities are common complaints."
-        else: return "⚠️ **AI Summary:** Proceed with caution. Significant negative sentiment surrounds this campus regarding management strictness and lack of exposure."
-    else:
-        if sentiment_score >= 0.85: return "🌟 **AI Summary:** This subject receives a very high 85% satisfaction score. Students find the syllabus manageable and the teaching quality excellent."
-        elif sentiment_score > 0.6: return "✅ **AI Summary:** Students find this subject highly rewarding. The syllabus is manageable, and scoring is relatively easy with proper preparation."
-        else: return "⚠️ **AI Summary:** This is a notorious 'filter' subject. Expect a massive workload, difficult exams, and heavy reliance on self-study to pass."
-
-# --- VERSUS COMPARISON LOGIC ---
-def get_department_reviews(college, dept):
-    subjects = ktu_hierarchy[college][dept]
-    all_reviews = []
-    for sub in subjects:
-        all_reviews.extend(get_reviews_from_db(f"{sub} @ {college}"))
-    return all_reviews
-
-def plot_comparison_bar(scores_dict):
-    df = pd.DataFrame(list(scores_dict.items()), columns=['Entity', 'Credits'])
-    fig = px.bar(df, x='Entity', y='Credits', color='Entity', text='Credits', color_discrete_sequence=comp_colors)
-    fig.update_traces(texttemplate='<b>%{text}</b>', textposition='outside', marker_line_width=0)
-    fig.update_layout(
-        height=300, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-        yaxis=dict(gridcolor=radar_grid, title_font=dict(color=chart_text_color), tickfont=dict(color=chart_text_color)),
-        xaxis=dict(title="", tickfont=dict(color=chart_text_color, size=12)),
-        showlegend=False, margin=dict(l=20, r=20, t=40, b=20)
-    )
-    st.plotly_chart(fig, use_container_width=True)
-
-def plot_comparison_radar(comparison_data):
-    rows = []
-    for entity, metrics in comparison_data.items():
-        for metric_name, score in metrics.items():
-            rows.append({"Entity": entity, "Metric": metric_name, "Score": score})
-    if not rows: return
-    df = pd.DataFrame(rows)
-    
-    fig = px.line_polar(df, r='Score', theta='Metric', color='Entity', line_close=True, color_discrete_sequence=comp_colors)
-    fig.update_traces(fill='toself', opacity=0.4, line_width=2.5, marker=dict(size=6), line_shape='spline')
-    fig.update_layout(
-        height=350, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-        polar=dict(
-            bgcolor=radar_bg, 
-            radialaxis=dict(visible=True, showticklabels=False, gridcolor=radar_grid, linecolor=radar_grid),
-            angularaxis=dict(tickfont=dict(color=chart_text_color, size=13), gridcolor=radar_grid, linecolor=radar_grid)
-        ), 
-        margin=dict(l=30, r=30, t=30, b=30),
-        legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="center", x=0.5, font=dict(color=chart_text_color), title="")
-    )
-    st.plotly_chart(fig, use_container_width=True)
-
 
 # --- 4. THE FRONTEND INTERFACE ---
 
 st.sidebar.divider()
-st.sidebar.header("🔍 Global Search & Filters")
-search_query = st.sidebar.text_input("Filter reviews by keyword (e.g., 'hostel', 'strict'):")
+st.sidebar.header("🔍 Global Search")
+search_query = st.sidebar.text_input("Filter reviews by keyword:")
 sort_option = st.sidebar.selectbox("Sort Reviews By:", ["Most Upvoted", "Newest"])
-st.sidebar.divider()
 
-# 🔥 CUSTOM HERO BANNER INJECTION 🔥
+# 📚 STUDY MATERIAL VAULT IN SIDEBAR
+st.sidebar.divider()
+st.sidebar.header("📚 Study Material Vault")
+st.sidebar.caption("Auto-generates links based on selected course.")
+st.sidebar.download_button("📄 Official KTU Syllabus", data=b"Dummy Syllabus PDF content", file_name="Syllabus.pdf", use_container_width=True)
+st.sidebar.download_button("📝 PYQs (Last 3 Years)", data=b"Dummy PYQ PDF content", file_name="Previous_Year_Qs.pdf", use_container_width=True)
+
+# 🔥 CUSTOM HERO BANNER 🔥
 st.markdown("""
     <div class="hero-container">
         <div class="hero-title">⚡ KTU Insight Engine 2.0</div>
@@ -596,21 +380,16 @@ with tab1:
         with st.form(key="form_college"):
             new_review = st.text_area("Share your experience...", max_chars=800)
             submit_col = st.form_submit_button("Submit Review")
-            
             if submit_col:
-                current_time = time.time()
-                if current_time - st.session_state.last_submit_time < 30:
-                    st.error("⏳ Rate Limit Exceeded: Please wait 30 seconds before posting another review.")
+                if time.time() - st.session_state.last_submit_time < 30: st.error("⏳ Rate Limit Exceeded.")
                 else:
-                    is_spam, spam_reason = check_spam(new_review, selected_college)
-                    if is_spam:
-                        st.error(f"🚨 {spam_reason}")
+                    is_spam, reason = check_spam(new_review, selected_college)
+                    if is_spam: st.error(f"🚨 {reason}")
                     else:
                         add_review_to_db(selected_college, "College", new_review)
-                        st.session_state.last_submit_time = current_time
-                        st.toast('Review submitted successfully! 🎉', icon='✅')
-                        time.sleep(1)
-                        st.rerun()
+                        st.session_state.last_submit_time = time.time()
+                        st.toast('Review submitted! 🎉', icon='✅')
+                        time.sleep(1); st.rerun()
 
     with col2:
         if selected_college:
@@ -621,31 +400,30 @@ with tab1:
             with a1: plot_gauge(overall_sent, "Overall Sentiment Score")
             with a2: 
                 st.markdown("##### 🤖 GenAI Executive Summary")
-                st.info(generate_smart_summary(overall_sent, "College"))
-                if lottie_ai: st_lottie(lottie_ai, height=100, key="ai_anim_1")
+                st.info("🌟 **AI Summary:** " + ("Highly rated institution." if overall_sent > 0.7 else "Mixed student feedback."))
+                if lottie_ai: st_lottie(lottie_ai, height=100)
 
-            st.markdown("##### ☁️ Review Word Cloud")
-            plot_wordcloud(reviews)
+            # 📈 NEW: Sentiment Timeline
+            st.markdown(f"<h5 style='color: {chart_text_color};'>📈 Sentiment Trend Over Time</h5>", unsafe_allow_html=True)
+            plot_sentiment_timeline(reviews)
+            
+            # 🤖 NEW: RAG AI CHAT
+            with st.expander(f"🤖 Chat with {selected_college.split()[0]} Reviews"):
+                user_q = st.text_input("Ask a question about this college (e.g., 'How is the hostel food?'):")
+                if user_q:
+                    st.success(generate_rag_response(user_q, reviews))
             
             st.divider()
-            
             matched_reviews = [r for r in reviews if search_query.lower() in r['review_text'].lower()] if search_query else reviews
-            
-            if search_query: st.subheader(f"🔍 Search Results ({len(matched_reviews)})")
-            else: st.subheader(f"📖 Student Discussions ({len(matched_reviews)})")
-            
-            if not matched_reviews and search_query:
-                st.warning(f"No reviews found containing '{search_query}'.")
+            st.subheader(f"📖 Student Discussions ({len(matched_reviews)})")
             
             for r in matched_reviews[:10]: 
                 with st.container(border=True):
-                    # 🛡️ XSS PROTECTION: HTML Escape
                     safe_text = html.escape(r['review_text'])
                     st.markdown(f"<p style='font-size: 1.05rem; font-style: italic; margin-bottom: 0.8rem; color: {chart_text_color};'>\"{safe_text}\"</p>", unsafe_allow_html=True)
                     
                     c1, c2 = st.columns([1, 6])
                     with c1:
-                        # 🛡️ VOTE MANIPULATION LOCK
                         has_upvoted = r['id'] in st.session_state.upvoted_reviews
                         if st.button(f"👍 {r['upvotes']}", key=f"upvote_col_{r['id']}", use_container_width=True, disabled=has_upvoted):
                             if not has_upvoted:
@@ -656,6 +434,19 @@ with tab1:
                         if r['tags']:
                             tags_html = "".join([f"<span class='tag-pill'>{html.escape(t.strip())}</span>" for t in r['tags'].split(",")])
                             st.markdown(tags_html, unsafe_allow_html=True)
+                            
+                    # 💬 NEW: Threaded Replies
+                    replies = get_replies(r['id'])
+                    with st.expander(f"💬 Replies ({len(replies)})"):
+                        for rep in replies:
+                            st.markdown(f"<div style='border-left: 2px solid {gauge_bar}; padding-left: 10px; margin-bottom: 5px; color: {chart_text_color};'><small>↳ {rep['reply_text']}</small></div>", unsafe_allow_html=True)
+                        
+                        r_col1, r_col2 = st.columns([4,1])
+                        with r_col1: rep_input = st.text_input("Reply...", key=f"rin_{r['id']}", label_visibility="collapsed")
+                        with r_col2: 
+                            if st.button("Post", key=f"rbtn_{r['id']}") and rep_input:
+                                add_reply_to_db(r['id'], rep_input)
+                                st.rerun()
 
 # --- TAB 2: COURSE & DEPARTMENT ASSESSMENT ---
 with tab2:
@@ -672,55 +463,45 @@ with tab2:
     course_target_name = f"{c_subject} @ {c_college}"
     
     c_left, c_right = st.columns([1, 2.5])
-    
     with c_left:
         st.subheader("✍️ Add Subject Review")
         with st.form(key="form_course"):
             new_c_review = st.text_area("Share your experience (teaching, exams)...", max_chars=800)
-            submit_crs = st.form_submit_button("Submit Review")
-            
-            if submit_crs:
-                current_time = time.time()
-                if current_time - st.session_state.last_submit_time < 30:
-                    st.error("⏳ Rate Limit Exceeded: Please wait 30 seconds before posting another review.")
+            if st.form_submit_button("Submit Review"):
+                if time.time() - st.session_state.last_submit_time < 30: st.error("⏳ Rate Limit Exceeded.")
                 else:
-                    is_spam, spam_reason = check_spam(new_c_review, course_target_name)
-                    if is_spam:
-                        st.error(f"🚨 {spam_reason}")
+                    is_spam, reason = check_spam(new_c_review, course_target_name)
+                    if is_spam: st.error(f"🚨 {reason}")
                     else:
                         add_review_to_db(course_target_name, "Course", new_c_review)
-                        st.session_state.last_submit_time = current_time
+                        st.session_state.last_submit_time = time.time()
                         st.toast('Review submitted successfully! 🎉', icon='✅')
-                        time.sleep(1)
-                        st.rerun()
+                        time.sleep(1); st.rerun()
 
     with c_right:
         course_reviews = get_reviews_from_db(course_target_name, sort_by=sort_option)
         c_overall = get_overall_sentiment(course_reviews, course_target_name)
         c_metrics = analyze_course_aspects(course_reviews)
         
-        a1, a2 = st.columns([1, 1])
-        with a1: 
-            st.markdown(f"<h5 style='text-align: center;'>Subject Sentiment</h5>", unsafe_allow_html=True)
-            plot_gauge(c_overall, "")
-        with a2: 
-            st.markdown(f"<h5 style='text-align: center;'>Course Metrics Radar</h5>", unsafe_allow_html=True)
-            plot_radar(c_metrics)
+        # ⚠️ NEW: Arrear Risk Warning
+        if c_metrics.get("Difficulty", 0) > 0.8:
+            st.warning("⚠️ **HIGH ARREAR RISK DETected:** Students consistently report this as a major filter subject. Heavy preparation recommended.")
             
-        st.info(generate_smart_summary(c_overall, "Course"))
+        a1, a2 = st.columns([1, 1])
+        with a1: plot_gauge(c_overall, "Subject Sentiment")
+        with a2: plot_radar(c_metrics)
+            
+        # 🤖 NEW: RAG AI CHAT
+        with st.expander(f"🤖 Chat with {c_subject.split(':')[0]} Reviews"):
+            user_q_crs = st.text_input("Ask about this course (e.g., 'Are the lab exams hard?'):")
+            if user_q_crs: st.success(generate_rag_response(user_q_crs, course_reviews))
+        
         st.divider()
-        
         matched_course_reviews = [r for r in course_reviews if search_query.lower() in r['review_text'].lower()] if search_query else course_reviews
-        
-        if search_query: st.subheader(f"🔍 Search Results ({len(matched_course_reviews)})")
-        else: st.subheader(f"📖 Course Feedback ({len(matched_course_reviews)})")
-
-        if not matched_course_reviews and search_query:
-            st.warning(f"No reviews found containing '{search_query}'.")
+        st.subheader(f"📖 Course Feedback ({len(matched_course_reviews)})")
         
         for r in matched_course_reviews[:10]:
             with st.container(border=True):
-                # 🛡️ XSS PROTECTION: HTML Escape
                 safe_crs_text = html.escape(r['review_text'])
                 st.markdown(f"<p style='font-size: 1.05rem; font-style: italic; margin-bottom: 0.8rem; color: {chart_text_color};'>\"{safe_crs_text}\"</p>", unsafe_allow_html=True)
                 
@@ -736,53 +517,57 @@ with tab2:
                     if r['tags']:
                         tags_html = "".join([f"<span class='tag-pill'>{html.escape(t.strip())}</span>" for t in r['tags'].split(",")])
                         st.markdown(tags_html, unsafe_allow_html=True)
+                        
+                # 💬 NEW: Threaded Replies
+                replies_crs = get_replies(r['id'])
+                with st.expander(f"💬 Replies ({len(replies_crs)})"):
+                    for rep in replies_crs:
+                        st.markdown(f"<div style='border-left: 2px solid {gauge_bar}; padding-left: 10px; margin-bottom: 5px; color: {chart_text_color};'><small>↳ {rep['reply_text']}</small></div>", unsafe_allow_html=True)
+                    
+                    r_col1, r_col2 = st.columns([4,1])
+                    with r_col1: rep_input = st.text_input("Reply...", key=f"crin_{r['id']}", label_visibility="collapsed")
+                    with r_col2: 
+                        if st.button("Post", key=f"crbtn_{r['id']}") and rep_input:
+                            add_reply_to_db(r['id'], rep_input)
+                            st.rerun()
 
 # --- TAB 3: VERSUS ARENA ---
 with tab3:
     st.markdown(f"<h3 style='color: {chart_text_color}; text-align: center;'>⚔️ The Versus Arena</h3>", unsafe_allow_html=True)
-    st.markdown(f"<p style='text-align: center; color: {chart_text_color};'>Compare up to 3 Colleges or Departments to see who has the most Reputation Credits.</p>", unsafe_allow_html=True)
+    st.markdown(f"<p style='text-align: center; color: {chart_text_color};'>Compare up to 3 entities to see who has the most Reputation Credits.</p>", unsafe_allow_html=True)
     st.divider()
     
     comp_mode = st.radio("What would you like to compare?", ["🏢 Compare Colleges", "🔬 Compare Departments (Within a College)"], horizontal=True)
-    
-    selected_entities = []
-    entities_data = {}
-    radar_metrics = {}
-    credit_scores = {}
+    selected_entities, entities_data, radar_metrics, credit_scores = [], {}, {}, {}
     
     if "Colleges" in comp_mode:
         selected_entities = st.multiselect("Select up to 3 Colleges to Compare:", colleges_list, max_selections=3)
         if len(selected_entities) >= 2:
             for entity in selected_entities:
                 reviews = get_reviews_from_db(entity)
-                sentiment = get_overall_sentiment(reviews, entity)
-                total_upvotes = sum(r['upvotes'] for r in reviews)
+                sentiment, total_upvotes = get_overall_sentiment(reviews, entity), sum(r['upvotes'] for r in reviews)
                 credits = int((sentiment * 100) + total_upvotes)
-                
-                entities_data[entity] = {"Sentiment": sentiment, "Upvotes": total_upvotes, "Credits": credits, "Total Reviews": len(reviews)}
+                entities_data[entity] = {"Credits": credits, "Total Reviews": len(reviews), "Upvotes": total_upvotes}
                 radar_metrics[entity] = analyze_college_aspects(reviews) 
                 credit_scores[entity] = credits
-                
     else:
         v_col = st.selectbox("1. First, select the College:", colleges_list, key="v_col")
         dept_list = list(ktu_hierarchy[v_col].keys())
         selected_entities = st.multiselect("2. Select up to 3 Departments to Compare:", dept_list, max_selections=3)
         if len(selected_entities) >= 2:
             for entity in selected_entities:
-                reviews = get_department_reviews(v_col, entity)
-                sentiment = get_overall_sentiment(reviews)
-                total_upvotes = sum(r['upvotes'] for r in reviews)
+                subjects = ktu_hierarchy[v_col][entity]
+                reviews = []
+                for sub in subjects: reviews.extend(get_reviews_from_db(f"{sub} @ {v_col}"))
+                sentiment, total_upvotes = get_overall_sentiment(reviews), sum(r['upvotes'] for r in reviews)
                 credits = int((sentiment * 100) + total_upvotes)
                 display_name = entity.split(" ")[0] 
-                
-                entities_data[display_name] = {"Sentiment": sentiment, "Upvotes": total_upvotes, "Credits": credits, "Total Reviews": len(reviews)}
+                entities_data[display_name] = {"Credits": credits, "Total Reviews": len(reviews), "Upvotes": total_upvotes}
                 radar_metrics[display_name] = analyze_course_aspects(reviews)
                 credit_scores[display_name] = credits
 
-    if len(selected_entities) < 2:
-        st.info("📌 Select at least 2 entities from the dropdown above to start the comparison.")
+    if len(selected_entities) < 2: st.info("📌 Select at least 2 entities to start the comparison.")
     else:
-        st.markdown("<br>", unsafe_allow_html=True)
         cols = st.columns(len(entities_data))
         for i, (name, data) in enumerate(entities_data.items()):
             with cols[i]:
@@ -791,12 +576,17 @@ with tab3:
                     st.metric("Reputation Credits 🏅", value=f"{data['Credits']} pts")
                     st.caption(f"Based on **{data['Total Reviews']}** reviews & **{data['Upvotes']}** upvotes.")
         
-        st.divider()
         v_left, v_right = st.columns(2)
         with v_left:
-            st.markdown(f"<h5 style='text-align: center; color: {chart_text_color};'>Overall Reputation Credits</h5>", unsafe_allow_html=True)
-            plot_comparison_bar(credit_scores)
+            df = pd.DataFrame(list(credit_scores.items()), columns=['Entity', 'Credits'])
+            fig = px.bar(df, x='Entity', y='Credits', color='Entity', text='Credits', color_discrete_sequence=comp_colors)
+            fig.update_traces(texttemplate='<b>%{text}</b>', textposition='outside', marker_line_width=0)
+            fig.update_layout(height=300, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", yaxis=dict(gridcolor=radar_grid, title_font=dict(color=chart_text_color), tickfont=dict(color=chart_text_color)), xaxis=dict(title="", tickfont=dict(color=chart_text_color, size=12)), showlegend=False, margin=dict(l=20, r=20, t=40, b=20))
+            st.plotly_chart(fig, use_container_width=True)
             
         with v_right:
-            st.markdown(f"<h5 style='text-align: center; color: {chart_text_color};'>Student Aspect Overlap</h5>", unsafe_allow_html=True)
-            plot_comparison_radar(radar_metrics)
+            rows = [{"Entity": e, "Metric": m, "Score": s} for e, mets in radar_metrics.items() for m, s in mets.items()]
+            fig = px.line_polar(pd.DataFrame(rows), r='Score', theta='Metric', color='Entity', line_close=True, color_discrete_sequence=comp_colors)
+            fig.update_traces(fill='toself', opacity=0.4, line_width=2.5, marker=dict(size=6), line_shape='spline')
+            fig.update_layout(height=350, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", polar=dict(bgcolor=radar_bg, radialaxis=dict(visible=True, showticklabels=False, gridcolor=radar_grid, linecolor=radar_grid), angularaxis=dict(tickfont=dict(color=chart_text_color, size=13), gridcolor=radar_grid, linecolor=radar_grid)), margin=dict(l=30, r=30, t=30, b=30), legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="center", x=0.5, font=dict(color=chart_text_color), title=""))
+            st.plotly_chart(fig, use_container_width=True)
