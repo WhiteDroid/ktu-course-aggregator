@@ -17,11 +17,13 @@ from datetime import datetime, timedelta
 # --- UI CONFIGURATION ---
 st.set_page_config(page_title="KTU Insight Engine", page_icon="⚡", layout="wide")
 
-# --- ANTI-SPAM & THEME STATE SETUP ---
+# --- ANTI-SPAM & DUAL THEME STATE SETUP ---
 if 'light_theme' not in st.session_state:
     st.session_state.light_theme = False
 if 'theme_cycle_idx' not in st.session_state:
-    st.session_state.theme_cycle_idx = 3 
+    st.session_state.theme_cycle_idx = 3 # Light Mode Cycle
+if 'dark_theme_cycle_idx' not in st.session_state:
+    st.session_state.dark_theme_cycle_idx = 3 # Dark Mode Cycle
 if 'upvoted_reviews' not in st.session_state:
     st.session_state.upvoted_reviews = set() 
 if 'last_submit_time' not in st.session_state:
@@ -35,10 +37,15 @@ st.sidebar.divider()
 st.sidebar.markdown("### 🌗 Appearance")
 theme_toggle = st.sidebar.toggle("Switch to Light Mode", value=st.session_state.light_theme)
 
-# 🔥 SHAPE-SHIFTING THEME ENGINE 🔥
+# 🔥 DUAL SHAPE-SHIFTING THEME ENGINE 🔥
 if theme_toggle != st.session_state.light_theme:
     if theme_toggle == True:
+        # Switched to Light: Rotate Light Persona
         st.session_state.theme_cycle_idx = (st.session_state.theme_cycle_idx + 1) % 4
+    else:
+        # Switched to Dark: Rotate Dark Persona
+        st.session_state.dark_theme_cycle_idx = (st.session_state.dark_theme_cycle_idx + 1) % 4
+        
     st.session_state.light_theme = theme_toggle
     st.rerun()
 
@@ -79,29 +86,47 @@ if st.session_state.light_theme:
         .tag-pill {{ background-color: {t['pill_bg']}; color: {t['pill_txt']}; padding: 0.25rem 0.8rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; display: inline-block; margin-right: 0.5rem; border: 1px solid {t['pill_border']}; letter-spacing: 0.03em; }}
     </style>
     """, unsafe_allow_html=True)
+    
     chart_text_color, gauge_bar, gauge_bg, step_red, step_yellow, step_green, radar_fill, radar_line, radar_bg, radar_grid, wc_cmap, comp_colors = t['text'], t['gauge_bar'], "rgba(0,0,0,0)", t['c_red'], t['c_yel'], t['c_grn'], t['radar_fill'], t['gauge_bar'], "rgba(255, 255, 255, 0.95)", t['card_border'], t['wc_cmap'], t['comp_colors']
+
 else:
-    st.markdown("""
+    d_idx = st.session_state.dark_theme_cycle_idx
+    if d_idx == 0:
+        # 🕵️‍♂️ 1. THE CYBERPUNK ASSASSIN (Midnight & Neon Emerald)
+        d = {"app_bg": "#0B0F19", "sidebar_bg": "#111827", "text": "#F3F4F6", "hero_grad": "linear-gradient(135deg, #022C22 0%, #0B0F19 50%, #111827 100%)", "hero_shadow": "0 0 40px -10px rgba(16, 185, 129, 0.15), inset 0 0 20px -5px rgba(16, 185, 129, 0.1)", "hero_border": "rgba(16, 185, 129, 0.3)", "subtitle": "#34D399", "form_bg": "#111827", "form_border": "#1F2937", "inp_bg": "#0B0F19", "inp_border": "#374151", "focus": "#10B981", "btn_grad": "linear-gradient(135deg, #2DD4BF 0%, #10B981 100%)", "btn_txt": "#022C22", "btn_shadow": "rgba(16, 185, 129, 0.2)", "btn_h_shadow": "rgba(16, 185, 129, 0.4)", "card_bg": "#111827", "card_border": "#1F2937", "card_h_border": "#374151", "card_h_shadow": "0 10px 25px -5px rgba(16, 185, 129, 0.1)", "pill_bg": "rgba(16, 185, 129, 0.1)", "pill_txt": "#34D399", "pill_border": "rgba(16, 185, 129, 0.2)", "gauge_bar": "#10B981", "radar_fill": "rgba(16, 185, 129, 0.15)", "wc_cmap": "viridis", "c_red": "rgba(239, 68, 68, 0.1)", "c_yel": "rgba(245, 158, 11, 0.1)", "c_grn": "rgba(16, 185, 129, 0.1)", "comp_colors": ["#10B981", "#3B82F6", "#F43F5E"]}
+    elif d_idx == 1:
+        # 🥃 2. THE STEALTH OPERATIVE (Obsidian & Amber)
+        d = {"app_bg": "#0A0A0A", "sidebar_bg": "#121212", "text": "#E5E7EB", "hero_grad": "linear-gradient(135deg, #451A03 0%, #0A0A0A 50%, #121212 100%)", "hero_shadow": "0 0 40px -10px rgba(245, 158, 11, 0.15), inset 0 0 20px -5px rgba(245, 158, 11, 0.1)", "hero_border": "rgba(245, 158, 11, 0.3)", "subtitle": "#FBBF24", "form_bg": "#121212", "form_border": "#27272A", "inp_bg": "#0A0A0A", "inp_border": "#3F3F46", "focus": "#F59E0B", "btn_grad": "linear-gradient(135deg, #FBBF24 0%, #D97706 100%)", "btn_txt": "#451A03", "btn_shadow": "rgba(245, 158, 11, 0.2)", "btn_h_shadow": "rgba(245, 158, 11, 0.4)", "card_bg": "#121212", "card_border": "#27272A", "card_h_border": "#3F3F46", "card_h_shadow": "0 10px 25px -5px rgba(245, 158, 11, 0.1)", "pill_bg": "rgba(245, 158, 11, 0.1)", "pill_txt": "#FBBF24", "pill_border": "rgba(245, 158, 11, 0.2)", "gauge_bar": "#F59E0B", "radar_fill": "rgba(245, 158, 11, 0.15)", "wc_cmap": "copper", "c_red": "rgba(239, 68, 68, 0.1)", "c_yel": "rgba(245, 158, 11, 0.1)", "c_grn": "rgba(16, 185, 129, 0.1)", "comp_colors": ["#F59E0B", "#B45309", "#78350F"]}
+    elif d_idx == 2:
+        # 🌊 3. THE DEEP SEA COMMANDER (Abyssal Navy & Electric Cyan)
+        d = {"app_bg": "#020617", "sidebar_bg": "#0F172A", "text": "#E0F2FE", "hero_grad": "linear-gradient(135deg, #082F49 0%, #020617 50%, #0F172A 100%)", "hero_shadow": "0 0 40px -10px rgba(14, 165, 233, 0.15), inset 0 0 20px -5px rgba(14, 165, 233, 0.1)", "hero_border": "rgba(14, 165, 233, 0.3)", "subtitle": "#38BDF8", "form_bg": "#0F172A", "form_border": "#1E293B", "inp_bg": "#020617", "inp_border": "#334155", "focus": "#0EA5E9", "btn_grad": "linear-gradient(135deg, #38BDF8 0%, #0284C7 100%)", "btn_txt": "#082F49", "btn_shadow": "rgba(14, 165, 233, 0.2)", "btn_h_shadow": "rgba(14, 165, 233, 0.4)", "card_bg": "#0F172A", "card_border": "#1E293B", "card_h_border": "#334155", "card_h_shadow": "0 10px 25px -5px rgba(14, 165, 233, 0.1)", "pill_bg": "rgba(14, 165, 233, 0.1)", "pill_txt": "#38BDF8", "pill_border": "rgba(14, 165, 233, 0.2)", "gauge_bar": "#0EA5E9", "radar_fill": "rgba(14, 165, 233, 0.15)", "wc_cmap": "Blues", "c_red": "rgba(239, 68, 68, 0.1)", "c_yel": "rgba(245, 158, 11, 0.1)", "c_grn": "rgba(16, 185, 129, 0.1)", "comp_colors": ["#0EA5E9", "#0284C7", "#0369A1"]}
+    else:
+        # 🔥 4. THE FORGE MASTER (Vantablack & Crimson)
+        d = {"app_bg": "#050505", "sidebar_bg": "#111111", "text": "#FECACA", "hero_grad": "linear-gradient(135deg, #450A0A 0%, #050505 50%, #111111 100%)", "hero_shadow": "0 0 40px -10px rgba(220, 38, 38, 0.15), inset 0 0 20px -5px rgba(220, 38, 38, 0.1)", "hero_border": "rgba(220, 38, 38, 0.3)", "subtitle": "#F87171", "form_bg": "#111111", "form_border": "#262626", "inp_bg": "#050505", "inp_border": "#3F3F46", "focus": "#DC2626", "btn_grad": "linear-gradient(135deg, #F87171 0%, #DC2626 100%)", "btn_txt": "#450A0A", "btn_shadow": "rgba(220, 38, 38, 0.2)", "btn_h_shadow": "rgba(220, 38, 38, 0.4)", "card_bg": "#111111", "card_border": "#262626", "card_h_border": "#3F3F46", "card_h_shadow": "0 10px 25px -5px rgba(220, 38, 38, 0.1)", "pill_bg": "rgba(220, 38, 38, 0.1)", "pill_txt": "#F87171", "pill_border": "rgba(220, 38, 38, 0.2)", "gauge_bar": "#DC2626", "radar_fill": "rgba(220, 38, 38, 0.15)", "wc_cmap": "Reds", "c_red": "rgba(239, 68, 68, 0.1)", "c_yel": "rgba(245, 158, 11, 0.1)", "c_grn": "rgba(16, 185, 129, 0.1)", "comp_colors": ["#DC2626", "#991B1B", "#7F1D1D"]}
+
+    st.markdown(f"""
     <style>
-        .stApp { background-color: #0B0F19 !important; color: #F3F4F6 !important; font-family: 'Inter', sans-serif; }
-        [data-testid="stSidebar"] { background-color: #111827 !important; border-right: 1px solid #1F2937 !important; }
-        h1, h2, h3, h4, h5, h6, p, label, .stMarkdown { color: #F3F4F6 !important; }
-        .hero-container { background: linear-gradient(135deg, #022C22 0%, #0B0F19 50%, #111827 100%); padding: 3rem 2rem; border-radius: 1.5rem; text-align: center; margin-bottom: 2rem; margin-top: -2rem; border: 1px solid rgba(16, 185, 129, 0.3); box-shadow: 0 0 40px -10px rgba(16, 185, 129, 0.15), inset 0 0 20px -5px rgba(16, 185, 129, 0.1); }
-        .hero-title { font-size: 3.5rem; font-weight: 900; margin: 0; line-height: 1.2; letter-spacing: -0.03em; color: #FFFFFF !important; }
-        .hero-subtitle { font-size: 1.25rem; font-weight: 500; margin-top: 0.75rem; color: #34D399 !important; }
-        div[data-testid="stForm"] { background-color: #111827 !important; border: 1px solid #1F2937 !important; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5); padding: 2rem !important; }
-        div[data-baseweb="select"] > div { background-color: #0B0F19 !important; color: #F3F4F6 !important; border: 1px solid #374151 !important; border-radius: 0.5rem; }
-        .stTextArea textarea, .stTextInput input { background-color: #0B0F19 !important; color: #F3F4F6 !important; border: 1px solid #374151 !important; border-radius: 0.5rem; }
-        div[data-testid="stForm"] button { background: linear-gradient(135deg, #2DD4BF 0%, #10B981 100%) !important; color: #022C22 !important; border: none !important; border-radius: 0.5rem !important; font-weight: 700 !important; padding: 0.5rem 2rem !important; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2) !important; transition: all 0.3s ease !important; }
-        div[data-testid="stForm"] button:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.4) !important; }
-        button[kind="secondary"] { background-color: #111827 !important; color: #9CA3AF !important; border: 1px solid #374151 !important; border-radius: 2rem !important; }
-        button[kind="secondary"]:hover { border-color: #10B981 !important; color: #10B981 !important; background-color: rgba(16, 185, 129, 0.05) !important; }
-        [data-testid="stVerticalBlockBorderWrapper"] { border-radius: 1rem !important; border: 1px solid #1F2937 !important; background-color: #111827 !important; transition: all 0.3s ease !important; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3) !important; padding: 0.5rem !important; }
-        [data-testid="stVerticalBlockBorderWrapper"]:hover { border-color: #374151 !important; box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.1) !important; transform: translateY(-3px); }
-        .tag-pill { background-color: rgba(16, 185, 129, 0.1); color: #34D399; padding: 0.3rem 0.8rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; display: inline-block; margin-right: 0.5rem; border: 1px solid rgba(16, 185, 129, 0.2); letter-spacing: 0.02em; }
+        .stApp {{ background-color: {d['app_bg']} !important; color: {d['text']} !important; font-family: 'Inter', sans-serif; }}
+        [data-testid="stSidebar"] {{ background-color: {d['sidebar_bg']} !important; border-right: 1px solid {d['form_border']} !important; }}
+        h1, h2, h3, h4, h5, h6, p, label, .stMarkdown {{ color: {d['text']} !important; }}
+        .hero-container {{ background: {d['hero_grad']}; padding: 3rem 2rem; border-radius: 1.5rem; text-align: center; margin-bottom: 2rem; margin-top: -2rem; border: 1px solid {d['hero_border']}; box-shadow: {d['hero_shadow']}; }}
+        .hero-title {{ font-size: 3.5rem; font-weight: 900; margin: 0; line-height: 1.2; letter-spacing: -0.03em; color: #FFFFFF !important; }}
+        .hero-subtitle {{ font-size: 1.25rem; font-weight: 500; margin-top: 0.75rem; color: {d['subtitle']} !important; }}
+        div[data-testid="stForm"] {{ background-color: {d['form_bg']} !important; border: 1px solid {d['form_border']} !important; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5); padding: 2rem !important; }}
+        div[data-baseweb="select"] > div {{ background-color: {d['inp_bg']} !important; color: {d['text']} !important; border: 1px solid {d['inp_border']} !important; border-radius: 0.5rem; }}
+        .stTextArea textarea, .stTextInput input {{ background-color: {d['inp_bg']} !important; color: {d['text']} !important; border: 1px solid {d['inp_border']} !important; border-radius: 0.5rem; }}
+        .stTextArea textarea:focus, .stTextInput input:focus {{ border-color: {d['focus']} !important; box-shadow: 0 0 0 1px {d['focus']} !important; }}
+        div[data-testid="stForm"] button {{ background: {d['btn_grad']} !important; color: {d['btn_txt']} !important; border: none !important; border-radius: 0.5rem !important; font-weight: 700 !important; padding: 0.5rem 2rem !important; box-shadow: 0 4px 6px -1px {d['btn_shadow']} !important; transition: all 0.3s ease !important; }}
+        div[data-testid="stForm"] button:hover {{ transform: translateY(-2px); box-shadow: 0 10px 15px -3px {d['btn_h_shadow']} !important; }}
+        button[kind="secondary"] {{ background-color: {d['sidebar_bg']} !important; color: {d['pill_txt']} !important; border: 1px solid {d['inp_border']} !important; border-radius: 2rem !important; }}
+        button[kind="secondary"]:hover {{ border-color: {d['focus']} !important; color: {d['focus']} !important; background-color: {d['pill_bg']} !important; }}
+        [data-testid="stVerticalBlockBorderWrapper"] {{ border-radius: 1rem !important; border: 1px solid {d['card_border']} !important; background-color: {d['card_bg']} !important; transition: all 0.3s ease !important; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3) !important; padding: 0.5rem !important; }}
+        [data-testid="stVerticalBlockBorderWrapper"]:hover {{ border-color: {d['card_h_border']} !important; box-shadow: {d['card_h_shadow']} !important; transform: translateY(-3px); }}
+        .tag-pill {{ background-color: {d['pill_bg']}; color: {d['pill_txt']}; padding: 0.3rem 0.8rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; display: inline-block; margin-right: 0.5rem; border: 1px solid {d['pill_border']}; letter-spacing: 0.02em; }}
     </style>
     """, unsafe_allow_html=True)
-    chart_text_color, gauge_bar, gauge_bg, step_red, step_yellow, step_green, radar_fill, radar_line, radar_bg, radar_grid, wc_cmap, comp_colors = "#E5E7EB", "#10B981", "rgba(0,0,0,0)", "rgba(239, 68, 68, 0.1)", "rgba(245, 158, 11, 0.1)", "rgba(16, 185, 129, 0.1)", "rgba(16, 185, 129, 0.15)", "#10B981", "rgba(17, 24, 39, 0.8)", "#374151", "viridis", ["#10B981", "#3B82F6", "#F43F5E"]
+    
+    chart_text_color, gauge_bar, gauge_bg, step_red, step_yellow, step_green, radar_fill, radar_line, radar_bg, radar_grid, wc_cmap, comp_colors = d['text'], d['gauge_bar'], "rgba(0,0,0,0)", d['c_red'], d['c_yel'], d['c_grn'], d['radar_fill'], d['gauge_bar'], d['sidebar_bg'], d['card_border'], d['wc_cmap'], d['comp_colors']
 
 # --- ANIMATION HELPER ---
 @st.cache_data
@@ -131,18 +156,13 @@ DB_NAME = "ktu_reviews.db"
 def init_db():
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
-    # Ensure reviews table exists
     c.execute('''CREATE TABLE IF NOT EXISTS reviews (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     target_name TEXT, category TEXT, review_text TEXT,
                     upvotes INTEGER DEFAULT 0, tags TEXT,
                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP)''')
-    
-    # 🛡️ DB MIGRATION: Add timestamp if it's missing from an old DB
     try: c.execute("ALTER TABLE reviews ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP")
     except: pass 
-    
-    # 💬 NEW: Replies Table for Threaded Discussions
     c.execute('''CREATE TABLE IF NOT EXISTS replies (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     review_id INTEGER, reply_text TEXT,
@@ -230,7 +250,6 @@ def seed_initial_data():
         for col in colleges_list:
             for _ in range(15):
                 text = random.choice(pool_good if random.random() > 0.4 else pool_bad)
-                # 📈 Generate random timestamps over the last 12 months for the timeline feature
                 random_days = random.randint(0, 365)
                 ts = (datetime.now() - timedelta(days=random_days)).strftime("%Y-%m-%d %H:%M:%S")
                 data.append((col, "College", text, random.randint(0, 50), extract_tags(text, "College"), ts))
@@ -280,7 +299,6 @@ def analyze_college_aspects(reviews_df):
     return metrics
 
 def generate_rag_response(query, reviews):
-    """🤖 Local RAG Simulator: Answers questions based only on DB reviews."""
     if not reviews: return "I don't have enough data to answer that yet."
     keywords = [word.lower() for word in query.split() if len(word) > 3 and word.lower() not in ['what', 'how', 'when', 'the', 'are', 'is']]
     if not keywords: return "Could you be a bit more specific? (e.g., 'How are the placements?')"
@@ -297,7 +315,6 @@ def generate_rag_response(query, reviews):
     return response
 
 def plot_sentiment_timeline(reviews_df):
-    """📈 Plots a trendline of sentiment over time."""
     if not reviews_df: return
     df = pd.DataFrame(reviews_df)
     if 'created_at' not in df.columns: return
@@ -352,14 +369,13 @@ st.sidebar.header("🔍 Global Search")
 search_query = st.sidebar.text_input("Filter reviews by keyword:")
 sort_option = st.sidebar.selectbox("Sort Reviews By:", ["Most Upvoted", "Newest"])
 
-# 📚 STUDY MATERIAL VAULT IN SIDEBAR
+# 📚 STUDY MATERIAL VAULT
 st.sidebar.divider()
 st.sidebar.header("📚 Study Material Vault")
 st.sidebar.caption("Auto-generates links based on selected course.")
-st.sidebar.download_button("📄 Official KTU Syllabus", data=b"Dummy Syllabus PDF content", file_name="Syllabus.pdf", use_container_width=True)
-st.sidebar.download_button("📝 PYQs (Last 3 Years)", data=b"Dummy PYQ PDF content", file_name="Previous_Year_Qs.pdf", use_container_width=True)
+st.sidebar.download_button("📄 Official KTU Syllabus", data=b"Dummy Syllabus PDF", file_name="Syllabus.pdf", use_container_width=True)
+st.sidebar.download_button("📝 PYQs (Last 3 Years)", data=b"Dummy PYQ PDF", file_name="Previous_Year_Qs.pdf", use_container_width=True)
 
-# 🔥 CUSTOM HERO BANNER 🔥
 st.markdown("""
     <div class="hero-container">
         <div class="hero-title">⚡ KTU Insight Engine 2.0</div>
@@ -374,7 +390,6 @@ with tab1:
     col1, col2 = st.columns([1, 2.5])
     with col1:
         selected_college = st.selectbox("Search College:", colleges_list, key="col_select")
-        
         st.markdown("---")
         st.subheader("✍️ Add Review")
         with st.form(key="form_college"):
@@ -403,15 +418,12 @@ with tab1:
                 st.info("🌟 **AI Summary:** " + ("Highly rated institution." if overall_sent > 0.7 else "Mixed student feedback."))
                 if lottie_ai: st_lottie(lottie_ai, height=100)
 
-            # 📈 NEW: Sentiment Timeline
             st.markdown(f"<h5 style='color: {chart_text_color};'>📈 Sentiment Trend Over Time</h5>", unsafe_allow_html=True)
             plot_sentiment_timeline(reviews)
             
-            # 🤖 NEW: RAG AI CHAT
             with st.expander(f"🤖 Chat with {selected_college.split()[0]} Reviews"):
                 user_q = st.text_input("Ask a question about this college (e.g., 'How is the hostel food?'):")
-                if user_q:
-                    st.success(generate_rag_response(user_q, reviews))
+                if user_q: st.success(generate_rag_response(user_q, reviews))
             
             st.divider()
             matched_reviews = [r for r in reviews if search_query.lower() in r['review_text'].lower()] if search_query else reviews
@@ -435,7 +447,6 @@ with tab1:
                             tags_html = "".join([f"<span class='tag-pill'>{html.escape(t.strip())}</span>" for t in r['tags'].split(",")])
                             st.markdown(tags_html, unsafe_allow_html=True)
                             
-                    # 💬 NEW: Threaded Replies
                     replies = get_replies(r['id'])
                     with st.expander(f"💬 Replies ({len(replies)})"):
                         for rep in replies:
@@ -448,7 +459,7 @@ with tab1:
                                 add_reply_to_db(r['id'], rep_input)
                                 st.rerun()
 
-# --- TAB 2: COURSE & DEPARTMENT ASSESSMENT ---
+# --- TAB 2: COURSE ASSESSMENT ---
 with tab2:
     drop1, drop2, drop3 = st.columns(3)
     with drop1: c_college = st.selectbox("1. College:", colleges_list, key="c_col")
@@ -483,15 +494,13 @@ with tab2:
         c_overall = get_overall_sentiment(course_reviews, course_target_name)
         c_metrics = analyze_course_aspects(course_reviews)
         
-        # ⚠️ NEW: Arrear Risk Warning
         if c_metrics.get("Difficulty", 0) > 0.8:
-            st.warning("⚠️ **HIGH ARREAR RISK DETected:** Students consistently report this as a major filter subject. Heavy preparation recommended.")
+            st.warning("⚠️ **HIGH ARREAR RISK DETECTED:** Students consistently report this as a massive filter subject.")
             
         a1, a2 = st.columns([1, 1])
         with a1: plot_gauge(c_overall, "Subject Sentiment")
         with a2: plot_radar(c_metrics)
             
-        # 🤖 NEW: RAG AI CHAT
         with st.expander(f"🤖 Chat with {c_subject.split(':')[0]} Reviews"):
             user_q_crs = st.text_input("Ask about this course (e.g., 'Are the lab exams hard?'):")
             if user_q_crs: st.success(generate_rag_response(user_q_crs, course_reviews))
@@ -518,7 +527,6 @@ with tab2:
                         tags_html = "".join([f"<span class='tag-pill'>{html.escape(t.strip())}</span>" for t in r['tags'].split(",")])
                         st.markdown(tags_html, unsafe_allow_html=True)
                         
-                # 💬 NEW: Threaded Replies
                 replies_crs = get_replies(r['id'])
                 with st.expander(f"💬 Replies ({len(replies_crs)})"):
                     for rep in replies_crs:
