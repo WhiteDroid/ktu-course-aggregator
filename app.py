@@ -18,6 +18,12 @@ st.set_page_config(page_title="KTU Insight Engine", page_icon="⚡", layout="wid
 if 'light_theme' not in st.session_state:
     st.session_state.light_theme = False
 
+# 🔥 BRAND LOGO INJECTION 🔥
+# You can replace this URL with your own local file path, e.g., st.sidebar.image("my_logo.png", width=60)
+st.sidebar.image("https://cdn-icons-png.flaticon.com/512/1162/1162803.png", width=55)
+st.sidebar.markdown("## KTU Insight")
+st.sidebar.divider()
+
 st.sidebar.markdown("### 🌗 Appearance")
 theme_toggle = st.sidebar.toggle("Switch to Light Mode", value=st.session_state.light_theme)
 
@@ -29,103 +35,106 @@ if theme_toggle != st.session_state.light_theme:
 if st.session_state.light_theme:
     st.markdown("""
     <style>
-        /* Elegant & Minimalist Light Theme */
-        .stApp { background-color: #F9FAFB !important; color: #1F2937 !important; font-family: 'Inter', sans-serif; }
-        [data-testid="stSidebar"] { background-color: #FFFFFF !important; border-right: 1px solid #F3F4F6 !important; }
+        /* Beautiful Aurora Light Theme */
+        .stApp { background-color: #FDFDFD !important; color: #374151 !important; font-family: 'Inter', sans-serif; }
+        [data-testid="stSidebar"] { background-color: #FAFAFB !important; border-right: 1px solid #F3F4F6 !important; }
         
-        /* Removed 'span' and '!important' font overrides here to protect Streamlit Material Icons */
-        h1, h2, h3, h4, h5, h6, p, label, .stMarkdown { color: #1F2937 !important; }
+        h1, h2, h3, h4, h5, h6, p, label, .stMarkdown { color: #374151 !important; }
         
-        /* 🔥 AWESOME HERO BANNER (LIGHT) 🔥 */
+        /* 🔥 GORGEOUS SUNSET/AURORA HERO BANNER 🔥 */
         .hero-container {
-            background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
+            background: linear-gradient(135deg, #8B5CF6 0%, #E879F9 50%, #FB7185 100%);
             color: #FFFFFF !important;
-            padding: 3rem 2rem;
+            padding: 3.5rem 2rem;
             border-radius: 1.5rem;
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
             margin-top: -2rem;
-            box-shadow: 0 20px 25px -5px rgba(79, 70, 229, 0.15), 0 10px 10px -5px rgba(79, 70, 229, 0.1);
+            box-shadow: 0 20px 40px -10px rgba(232, 121, 249, 0.25), 0 10px 15px -5px rgba(139, 92, 246, 0.15);
         }
-        .hero-title { font-size: 3.5rem; font-weight: 900; margin: 0; line-height: 1.2; letter-spacing: -0.03em; color: #FFFFFF !important; }
-        .hero-subtitle { font-size: 1.25rem; font-weight: 500; margin-top: 0.75rem; color: #FDF2F8 !important; opacity: 0.95; }
+        .hero-title { font-size: 3.5rem; font-weight: 900; margin: 0; line-height: 1.2; letter-spacing: -0.03em; color: #FFFFFF !important; text-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .hero-subtitle { font-size: 1.25rem; font-weight: 500; margin-top: 0.75rem; color: #FFF1F2 !important; opacity: 0.95; }
         
-        /* Elegant Form Container */
+        /* Beautiful Form Container */
         div[data-testid="stForm"] { 
             background-color: #FFFFFF !important; 
-            border: 1px solid #F3F4F6 !important; 
+            border: 1px solid #FDF2F8 !important; 
             border-radius: 1rem; 
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.03), 0 4px 6px -2px rgba(0, 0, 0, 0.02); 
-            padding: 2rem !important;
+            box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.04), 0 5px 15px -5px rgba(0, 0, 0, 0.02); 
+            padding: 2.5rem !important;
         }
         
-        /* Inputs */
-        div[data-baseweb="select"] > div { background-color: #F9FAFB !important; color: #1F2937 !important; border: 1px solid #E5E7EB !important; border-radius: 0.5rem; }
-        .stTextArea textarea, .stTextInput input { background-color: #F9FAFB !important; color: #1F2937 !important; border: 1px solid #E5E7EB !important; border-radius: 0.5rem; }
+        /* Soft Inputs */
+        div[data-baseweb="select"] > div { background-color: #FCFDFD !important; color: #374151 !important; border: 1px solid #F3F4F6 !important; border-radius: 0.75rem; }
+        .stTextArea textarea, .stTextInput input { background-color: #FCFDFD !important; color: #374151 !important; border: 1px solid #F3F4F6 !important; border-radius: 0.75rem; }
+        .stTextArea textarea:focus, .stTextInput input:focus { border-color: #E879F9 !important; box-shadow: 0 0 0 1px #E879F9 !important; }
         
         /* BEAUTIFUL SUBMIT BUTTON */
         div[data-testid="stForm"] button { 
-            background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%) !important; 
+            background: linear-gradient(135deg, #8B5CF6 0%, #E879F9 100%) !important; 
             color: #FFFFFF !important; 
             border: none !important;
-            border-radius: 0.5rem !important;
+            border-radius: 0.75rem !important;
             font-weight: 600 !important;
-            padding: 0.5rem 2rem !important;
-            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3) !important;
+            padding: 0.6rem 2.5rem !important;
+            box-shadow: 0 10px 20px -5px rgba(232, 121, 249, 0.4) !important;
             transition: all 0.3s ease !important;
         }
         div[data-testid="stForm"] button:hover { 
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.4) !important;
+            transform: translateY(-3px);
+            box-shadow: 0 15px 25px -5px rgba(232, 121, 249, 0.5) !important;
         }
         
-        /* Upvote Buttons */
-        button[kind="secondary"] { background-color: #FFFFFF !important; color: #6B7280 !important; border: 1px solid #E5E7EB !important; border-radius: 2rem !important; }
-        button[kind="secondary"]:hover { border-color: #6366F1 !important; color: #6366F1 !important; background-color: #EEF2FF !important; }
+        /* Soft Upvote Buttons */
+        button[kind="secondary"] { background-color: #FFFFFF !important; color: #8B5CF6 !important; border: 1px solid #E9D5FF !important; border-radius: 2rem !important; font-weight: 500 !important;}
+        button[kind="secondary"]:hover { border-color: #E879F9 !important; color: #E879F9 !important; background-color: #FDF4FF !important; }
         
-        /* Premium Review Cards */
+        /* Floating Review Cards */
         [data-testid="stVerticalBlockBorderWrapper"] {
-            border-radius: 1rem !important;
-            border: 1px solid #F3F4F6 !important;
+            border-radius: 1.2rem !important;
+            border: 1px solid #FDF2F8 !important;
             background-color: #FFFFFF !important;
-            transition: all 0.3s ease !important;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02) !important;
-            padding: 0.5rem !important;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.03) !important;
+            padding: 0.8rem !important;
         }
         [data-testid="stVerticalBlockBorderWrapper"]:hover {
-            border-color: #E0E7FF !important;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05) !important;
-            transform: translateY(-3px);
+            border-color: #FBCFE8 !important;
+            box-shadow: 0 20px 40px -10px rgba(232, 121, 249, 0.15) !important;
+            transform: translateY(-4px);
         }
         
-        /* Soft Tag Pills */
+        /* Elegant Lavender Tag Pills */
         .tag-pill {
-            background-color: #F3F4F6;
-            color: #4B5563;
-            padding: 0.3rem 0.8rem;
+            background-color: #FAF5FF;
+            color: #7E22CE;
+            padding: 0.3rem 1rem;
             border-radius: 9999px;
             font-size: 0.75rem;
-            font-weight: 500;
+            font-weight: 600;
             display: inline-block;
             margin-right: 0.5rem;
-            border: 1px solid #E5E7EB;
-            letter-spacing: 0.02em;
+            border: 1px solid #E9D5FF;
+            letter-spacing: 0.03em;
         }
     </style>
     """, unsafe_allow_html=True)
     
-    # ELEGANT LIGHT MODE CHARTS
+    # BEAUTIFUL LIGHT MODE CHARTS
     chart_text_color = "#4B5563"           
-    gauge_bar = "#6366F1"                  
+    gauge_bar = "#A855F7"                  # Beautiful Amethyst Purple
     gauge_bg = "rgba(0,0,0,0)"             
-    step_red = "#FEE2E2"                   
-    step_yellow = "#FEF3C7"                
-    step_green = "#D1FAE5"                 
-    radar_fill = "rgba(99, 102, 241, 0.15)" 
-    radar_line = "#6366F1"
-    radar_bg = "rgba(255, 255, 255, 0.8)"  
-    radar_grid = "#E5E7EB"                 
-    wc_cmap = "PuBu"                       
+    
+    # Ultra-soft ethereal background zones
+    step_red = "#FFE4E6"                   # Soft Rose Water
+    step_yellow = "#FFEDD5"                # Soft Peach
+    step_green = "#D1FAE5"                 # Mint Mist
+    
+    radar_fill = "rgba(168, 85, 247, 0.12)" # Soft Amethyst wash
+    radar_line = "#A855F7"
+    radar_bg = "rgba(255, 255, 255, 0.9)"  
+    radar_grid = "#F3F4F6"                 # Whisper light grid
+    wc_cmap = "RdPu"                       # Red-Purple stunning colormap for words
 else:
     st.markdown("""
     <style>
