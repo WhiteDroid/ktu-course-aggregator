@@ -30,10 +30,11 @@ if st.session_state.light_theme:
     st.markdown("""
     <style>
         /* Elegant & Minimalist Light Theme */
-        .stApp { background-color: #F9FAFB !important; color: #1F2937 !important; }
+        .stApp { background-color: #F9FAFB !important; color: #1F2937 !important; font-family: 'Inter', sans-serif; }
         [data-testid="stSidebar"] { background-color: #FFFFFF !important; border-right: 1px solid #F3F4F6 !important; }
         
-        h1, h2, h3, h4, h5, h6, p, span, label, .stMarkdown { color: #1F2937 !important; font-family: 'Inter', sans-serif !important; }
+        /* Removed 'span' and '!important' font overrides here to protect Streamlit Material Icons */
+        h1, h2, h3, h4, h5, h6, p, label, .stMarkdown { color: #1F2937 !important; }
         
         /* 🔥 AWESOME HERO BANNER (LIGHT) 🔥 */
         .hero-container {
@@ -129,10 +130,11 @@ else:
     st.markdown("""
     <style>
         /* Premium Midnight & Neon Emerald Dark Theme */
-        .stApp { background-color: #0B0F19 !important; color: #F3F4F6 !important; }
+        .stApp { background-color: #0B0F19 !important; color: #F3F4F6 !important; font-family: 'Inter', sans-serif; }
         [data-testid="stSidebar"] { background-color: #111827 !important; border-right: 1px solid #1F2937 !important; }
         
-        h1, h2, h3, h4, h5, h6, p, span, label, .stMarkdown { color: #F3F4F6 !important; font-family: 'Inter', sans-serif !important; }
+        /* Removed 'span' and '!important' font overrides here to protect Streamlit Material Icons */
+        h1, h2, h3, h4, h5, h6, p, label, .stMarkdown { color: #F3F4F6 !important; }
         
         /* 🔥 AWESOME HERO BANNER (DARK) 🔥 */
         .hero-container {
