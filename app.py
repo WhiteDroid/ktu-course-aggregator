@@ -132,7 +132,10 @@ if st.session_state.light_theme:
     radar_line = "#A855F7"
     radar_bg = "rgba(255, 255, 255, 0.9)"  
     radar_grid = "#F3F4F6"                 
-    wc_cmap = "RdPu"                       
+    wc_cmap = "RdPu"
+    
+    # Comparison Palettes
+    comp_colors = ["#8B5CF6", "#EC4899", "#10B981"] # Violet, Pink, Mint
 else:
     st.markdown("""
     <style>
@@ -233,7 +236,10 @@ else:
     radar_line = "#10B981"
     radar_bg = "rgba(17, 24, 39, 0.8)"       
     radar_grid = "#374151"                 
-    wc_cmap = "viridis"            
+    wc_cmap = "viridis"   
+    
+    # Comparison Palettes
+    comp_colors = ["#10B981", "#3B82F6", "#F43F5E"] # Emerald, Blue, Rose
 
 # --- ANIMATION HELPER ---
 @st.cache_data
@@ -477,14 +483,57 @@ def plot_radar(metrics):
 def plot_wordcloud(reviews_df):
     if not reviews_df: return
     text = " ".join([r['review_text'] for r in reviews_df])
-    
     wordcloud = WordCloud(width=800, height=400, background_color=None, mode="RGBA", colormap=wc_cmap, prefer_horizontal=0.9, max_words=80).generate(text)
-    
     fig, ax = plt.subplots(figsize=(8, 4), dpi=150)
     ax.imshow(wordcloud, interpolation='bilinear')
     ax.axis("off")
     fig.patch.set_alpha(0.0)
     st.pyplot(fig)
+
+# --- VERSUS COMPARISON LOGIC & CHARTS ---
+def get_department_reviews(college, dept):
+    """Fetches and aggregates all reviews for all subjects inside a specific department."""
+    subjects = ktu_hierarchy[college][dept]
+    all_reviews = []
+    for sub in subjects:
+        all_reviews.extend(get_reviews_from_db(f"{sub} @ {college}"))
+    return all_reviews
+
+def plot_comparison_bar(scores_dict):
+    """Plots a beautiful side-by-side bar chart for total Reputation Credits."""
+    df = pd.DataFrame(list(scores_dict.items()), columns=['Entity', 'Credits'])
+    fig = px.bar(df, x='Entity', y='Credits', color='Entity', text='Credits', color_discrete_sequence=comp_colors)
+    fig.update_traces(texttemplate='<b>%{text}</b>', textposition='outside', marker_line_width=0)
+    fig.update_layout(
+        height=300, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+        yaxis=dict(gridcolor=radar_grid, title_font=dict(color=chart_text_color), tickfont=dict(color=chart_text_color)),
+        xaxis=dict(title="", tickfont=dict(color=chart_text_color, size=12)),
+        showlegend=False, margin=dict(l=20, r=20, t=40, b=20)
+    )
+    st.plotly_chart(fig, use_container_width=True)
+
+def plot_comparison_radar(comparison_data):
+    """Plots an overlapping radar chart for up to 3 entities."""
+    rows = []
+    for entity, metrics in comparison_data.items():
+        for metric_name, score in metrics.items():
+            rows.append({"Entity": entity, "Metric": metric_name, "Score": score})
+    if not rows: return
+    df = pd.DataFrame(rows)
+    
+    fig = px.line_polar(df, r='Score', theta='Metric', color='Entity', line_close=True, color_discrete_sequence=comp_colors)
+    fig.update_traces(fill='toself', opacity=0.4, line_width=2.5, marker=dict(size=6), line_shape='spline')
+    fig.update_layout(
+        height=350, paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+        polar=dict(
+            bgcolor=radar_bg, 
+            radialaxis=dict(visible=True, showticklabels=False, gridcolor=radar_grid, linecolor=radar_grid),
+            angularaxis=dict(tickfont=dict(color=chart_text_color, size=13), gridcolor=radar_grid, linecolor=radar_grid)
+        ), 
+        margin=dict(l=30, r=30, t=30, b=30),
+        legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="center", x=0.5, font=dict(color=chart_text_color), title="")
+    )
+    st.plotly_chart(fig, use_container_width=True)
 
 def generate_smart_summary(sentiment_score, category):
     if category == "College":
@@ -514,7 +563,7 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-tab1, tab2 = st.tabs(["🏢 College Analytics", "📚 Course Analytics"])
+tab1, tab2, tab3 = st.tabs(["🏢 College Analytics", "📚 Course Analytics", "⚖️ Versus Arena"])
 
 # --- TAB 1: COLLEGE ASSESSMENT ---
 with tab1:
@@ -565,7 +614,6 @@ with tab1:
             # Display reviews as stylized cards
             for r in matched_reviews[:10]: 
                 with st.container(border=True):
-                    # Uses dynamic chart_text_color so text looks perfect in both modes
                     st.markdown(f"<p style='font-size: 1.05rem; font-style: italic; margin-bottom: 0.8rem; color: {chart_text_color};'>\"{r['review_text']}\"</p>", unsafe_allow_html=True)
                     
                     c1, c2 = st.columns([1, 6])
@@ -636,7 +684,6 @@ with tab2:
         # Display reviews as stylized cards
         for r in matched_course_reviews[:10]:
             with st.container(border=True):
-                # Uses dynamic chart_text_color so text looks perfect in both modes
                 st.markdown(f"<p style='font-size: 1.05rem; font-style: italic; margin-bottom: 0.8rem; color: {chart_text_color};'>\"{r['review_text']}\"</p>", unsafe_allow_html=True)
                 
                 c1, c2 = st.columns([1, 6])
@@ -648,3 +695,73 @@ with tab2:
                     if r['tags']:
                         tags_html = "".join([f"<span class='tag-pill'>{t.strip()}</span>" for t in r['tags'].split(",")])
                         st.markdown(tags_html, unsafe_allow_html=True)
+
+# --- TAB 3: VERSUS ARENA ---
+with tab3:
+    st.markdown(f"<h3 style='color: {chart_text_color}; text-align: center;'>⚔️ The Versus Arena</h3>", unsafe_allow_html=True)
+    st.markdown(f"<p style='text-align: center; color: {chart_text_color};'>Compare up to 3 Colleges or Departments to see who has the most Reputation Credits.</p>", unsafe_allow_html=True)
+    st.divider()
+    
+    comp_mode = st.radio("What would you like to compare?", ["🏢 Compare Colleges", "🔬 Compare Departments (Within a College)"], horizontal=True)
+    
+    selected_entities = []
+    entities_data = {}
+    radar_metrics = {}
+    credit_scores = {}
+    
+    if "Colleges" in comp_mode:
+        selected_entities = st.multiselect("Select up to 3 Colleges to Compare:", colleges_list, max_selections=3)
+        if len(selected_entities) >= 2:
+            for entity in selected_entities:
+                reviews = get_reviews_from_db(entity)
+                sentiment = get_overall_sentiment(reviews, entity)
+                total_upvotes = sum(r['upvotes'] for r in reviews)
+                
+                # Formula: Reputation Credits = (Sentiment * 100) + Total Upvotes
+                credits = int((sentiment * 100) + total_upvotes)
+                
+                entities_data[entity] = {"Sentiment": sentiment, "Upvotes": total_upvotes, "Credits": credits, "Total Reviews": len(reviews)}
+                radar_metrics[entity] = analyze_course_aspects(reviews) # We run aspect extraction globally over all their reviews
+                credit_scores[entity] = credits
+                
+    else:
+        v_col = st.selectbox("1. First, select the College:", colleges_list, key="v_col")
+        dept_list = list(ktu_hierarchy[v_col].keys())
+        selected_entities = st.multiselect("2. Select up to 3 Departments to Compare:", dept_list, max_selections=3)
+        if len(selected_entities) >= 2:
+            for entity in selected_entities:
+                reviews = get_department_reviews(v_col, entity)
+                sentiment = get_overall_sentiment(reviews)
+                total_upvotes = sum(r['upvotes'] for r in reviews)
+                
+                credits = int((sentiment * 100) + total_upvotes)
+                display_name = entity.split(" ")[0] # Keep name short for charts
+                
+                entities_data[display_name] = {"Sentiment": sentiment, "Upvotes": total_upvotes, "Credits": credits, "Total Reviews": len(reviews)}
+                radar_metrics[display_name] = analyze_course_aspects(reviews)
+                credit_scores[display_name] = credits
+
+    if len(selected_entities) < 2:
+        st.info("📌 Select at least 2 entities from the dropdown above to start the comparison.")
+    else:
+        st.markdown("<br>", unsafe_allow_html=True)
+        # 1. Reputation Credits KPI Row
+        cols = st.columns(len(entities_data))
+        for i, (name, data) in enumerate(entities_data.items()):
+            with cols[i]:
+                with st.container(border=True):
+                    st.markdown(f"<h4 style='color: {comp_colors[i]}; margin-bottom: 0px;'>{name}</h4>", unsafe_allow_html=True)
+                    st.metric("Reputation Credits 🏅", value=f"{data['Credits']} pts")
+                    st.caption(f"Based on **{data['Total Reviews']}** reviews & **{data['Upvotes']}** upvotes.")
+        
+        st.divider()
+        
+        # 2. Side-by-Side Visuals
+        v_left, v_right = st.columns(2)
+        with v_left:
+            st.markdown(f"<h5 style='text-align: center; color: {chart_text_color};'>Overall Reputation Credits</h5>", unsafe_allow_html=True)
+            plot_comparison_bar(credit_scores)
+            
+        with v_right:
+            st.markdown(f"<h5 style='text-align: center; color: {chart_text_color};'>Student Aspect Overlap</h5>", unsafe_allow_html=True)
+            plot_comparison_radar(radar_metrics)
