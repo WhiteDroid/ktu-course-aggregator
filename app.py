@@ -34,108 +34,113 @@ if theme_toggle != st.session_state.light_theme:
 if st.session_state.light_theme:
     st.markdown("""
     <style>
-        /* Beautiful Aurora Light Theme - Elegant Pearl Background */
-        .stApp { background-color: #FAF9FF !important; color: #374151 !important; font-family: 'Inter', sans-serif; }
-        [data-testid="stSidebar"] { background-color: #FFFFFF !important; border-right: 1px solid #F3F4F6 !important; }
+        /* Refined Gentleman Light Theme - Tailored Navy & Champagne */
+        .stApp { background-color: #F6F6F4 !important; color: #2C3E50 !important; font-family: 'Inter', sans-serif; }
+        [data-testid="stSidebar"] { background-color: #FFFFFF !important; border-right: 1px solid #E5E5E4 !important; }
         
-        h1, h2, h3, h4, h5, h6, p, label, .stMarkdown { color: #374151 !important; }
+        h1, h2, h3, h4, h5, h6, p, label, .stMarkdown { color: #2C3E50 !important; }
         
-        /* 🔥 GORGEOUS SUNSET/AURORA HERO BANNER 🔥 */
+        /* 🔥 REFINED HERO BANNER 🔥 */
         .hero-container {
-            background: linear-gradient(135deg, #8B5CF6 0%, #E879F9 50%, #FB7185 100%);
+            background: linear-gradient(135deg, #0F172A 0%, #1E3A8A 100%);
             color: #FFFFFF !important;
             padding: 3.5rem 2rem;
-            border-radius: 1.5rem;
+            border-radius: 1rem; 
             text-align: center;
             margin-bottom: 2.5rem;
             margin-top: -2rem;
-            box-shadow: 0 20px 40px -10px rgba(232, 121, 249, 0.25), 0 10px 15px -5px rgba(139, 92, 246, 0.15);
+            box-shadow: 0 15px 30px -5px rgba(30, 58, 138, 0.2);
+            border: 1px solid #334155;
         }
-        .hero-title { font-size: 3.5rem; font-weight: 900; margin: 0; line-height: 1.2; letter-spacing: -0.03em; color: #FFFFFF !important; text-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .hero-subtitle { font-size: 1.25rem; font-weight: 500; margin-top: 0.75rem; color: #FFF1F2 !important; opacity: 0.95; }
+        .hero-title { font-size: 3.5rem; font-weight: 800; margin: 0; line-height: 1.2; letter-spacing: -0.02em; color: #FFFFFF !important; font-family: 'Georgia', serif; }
+        .hero-subtitle { font-size: 1.15rem; font-weight: 600; margin-top: 1rem; color: #D4AF37 !important; letter-spacing: 0.08em; text-transform: uppercase; }
         
         /* Beautiful Form Container */
         div[data-testid="stForm"] { 
             background-color: #FFFFFF !important; 
-            border: 1px solid #FDF2F8 !important; 
-            border-radius: 1rem; 
-            box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.04), 0 5px 15px -5px rgba(0, 0, 0, 0.02); 
+            border: 1px solid #E5E5E4 !important; 
+            border-radius: 0.5rem; 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); 
             padding: 2.5rem !important;
         }
         
         /* Soft Inputs */
-        div[data-baseweb="select"] > div { background-color: #FFFFFF !important; color: #374151 !important; border: 1px solid #F3F4F6 !important; border-radius: 0.75rem; }
-        .stTextArea textarea, .stTextInput input { background-color: #FFFFFF !important; color: #374151 !important; border: 1px solid #F3F4F6 !important; border-radius: 0.75rem; }
-        .stTextArea textarea:focus, .stTextInput input:focus { border-color: #E879F9 !important; box-shadow: 0 0 0 1px #E879F9 !important; }
+        div[data-baseweb="select"] > div { background-color: #F8F9FA !important; color: #2C3E50 !important; border: 1px solid #D1D5DB !important; border-radius: 0.25rem; }
+        .stTextArea textarea, .stTextInput input { background-color: #F8F9FA !important; color: #2C3E50 !important; border: 1px solid #D1D5DB !important; border-radius: 0.25rem; }
+        .stTextArea textarea:focus, .stTextInput input:focus { border-color: #1E3A8A !important; box-shadow: 0 0 0 1px #1E3A8A !important; }
         
         /* BEAUTIFUL SUBMIT BUTTON */
         div[data-testid="stForm"] button { 
-            background: linear-gradient(135deg, #8B5CF6 0%, #E879F9 100%) !important; 
+            background: #1E3A8A !important; 
             color: #FFFFFF !important; 
             border: none !important;
-            border-radius: 0.75rem !important;
-            font-weight: 600 !important;
+            border-radius: 0.25rem !important;
+            font-weight: 500 !important;
+            letter-spacing: 0.02em !important;
             padding: 0.6rem 2.5rem !important;
-            box-shadow: 0 10px 20px -5px rgba(232, 121, 249, 0.4) !important;
-            transition: all 0.3s ease !important;
+            box-shadow: 0 4px 6px -1px rgba(30, 58, 138, 0.2) !important;
+            transition: all 0.2s ease !important;
         }
         div[data-testid="stForm"] button:hover { 
-            transform: translateY(-3px);
-            box-shadow: 0 15px 25px -5px rgba(232, 121, 249, 0.5) !important;
+            background: #0F172A !important;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 10px -2px rgba(15, 23, 42, 0.3) !important;
         }
         
         /* Soft Upvote Buttons */
-        button[kind="secondary"] { background-color: #FFFFFF !important; color: #8B5CF6 !important; border: 1px solid #E9D5FF !important; border-radius: 2rem !important; font-weight: 500 !important;}
-        button[kind="secondary"]:hover { border-color: #E879F9 !important; color: #E879F9 !important; background-color: #FDF4FF !important; }
+        button[kind="secondary"] { background-color: #FFFFFF !important; color: #475569 !important; border: 1px solid #CBD5E1 !important; border-radius: 2rem !important; font-weight: 500 !important;}
+        button[kind="secondary"]:hover { border-color: #1E3A8A !important; color: #1E3A8A !important; background-color: #F8FAFC !important; }
         
         /* Floating Review Cards */
         [data-testid="stVerticalBlockBorderWrapper"] {
-            border-radius: 1.2rem !important;
-            border: 1px solid #FDF2F8 !important;
+            border-radius: 0.5rem !important;
+            border: 1px solid #E5E5E4 !important;
             background-color: #FFFFFF !important;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.03) !important;
+            transition: all 0.3s ease !important;
+            box-shadow: 0 2px 4px -1px rgba(0,0,0,0.03) !important;
             padding: 0.8rem !important;
         }
         [data-testid="stVerticalBlockBorderWrapper"]:hover {
-            border-color: #FBCFE8 !important;
-            box-shadow: 0 20px 40px -10px rgba(232, 121, 249, 0.15) !important;
-            transform: translateY(-4px);
+            border-color: #CBD5E1 !important;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05) !important;
+            transform: translateY(-2px);
         }
         
-        /* Elegant Lavender Tag Pills */
+        /* Elegant Tag Pills */
         .tag-pill {
-            background-color: #FAF5FF;
-            color: #7E22CE;
-            padding: 0.3rem 1rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
+            background-color: #F8FAFC;
+            color: #334155;
+            padding: 0.25rem 0.8rem;
+            border-radius: 0.25rem; 
+            font-size: 0.7rem;
             font-weight: 600;
             display: inline-block;
             margin-right: 0.5rem;
-            border: 1px solid #E9D5FF;
-            letter-spacing: 0.03em;
+            border: 1px solid #E2E8F0;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
     </style>
     """, unsafe_allow_html=True)
     
-    # BEAUTIFUL LIGHT MODE CHARTS
-    chart_text_color = "#4B5563"           
-    gauge_bar = "#A855F7"                  
+    # REFINED GENTLEMAN LIGHT MODE CHARTS
+    chart_text_color = "#334155"           
+    gauge_bar = "#1E3A8A"                  # Oxford Navy
     gauge_bg = "rgba(0,0,0,0)"             
     
-    step_red = "#FFE4E6"                   
-    step_yellow = "#FFEDD5"                
-    step_green = "#D1FAE5"                 
+    # Muted, ultra-sheer tailored background zones
+    step_red = "rgba(153, 27, 27, 0.05)"   # Faint Burgundy             
+    step_yellow = "rgba(180, 83, 9, 0.05)" # Faint Antique Brass                
+    step_green = "rgba(20, 83, 45, 0.05)"  # Faint British Racing Green                 
     
-    radar_fill = "rgba(168, 85, 247, 0.12)" 
-    radar_line = "#A855F7"
+    radar_fill = "rgba(30, 58, 138, 0.08)" # Delicate Navy wash
+    radar_line = "#1E3A8A"
     radar_bg = "rgba(255, 255, 255, 0.9)"  
-    radar_grid = "#F3F4F6"                 
-    wc_cmap = "RdPu"
+    radar_grid = "#E2E8F0"                 
+    wc_cmap = "cividis"                    # Stunning Navy-to-Gold gradient mapping
     
     # Comparison Palettes
-    comp_colors = ["#8B5CF6", "#EC4899", "#10B981"] # Violet, Pink, Mint
+    comp_colors = ["#1E3A8A", "#64748B", "#B45309"] # Navy, Slate, Brass
 else:
     st.markdown("""
     <style>
@@ -483,7 +488,9 @@ def plot_radar(metrics):
 def plot_wordcloud(reviews_df):
     if not reviews_df: return
     text = " ".join([r['review_text'] for r in reviews_df])
+    
     wordcloud = WordCloud(width=800, height=400, background_color=None, mode="RGBA", colormap=wc_cmap, prefer_horizontal=0.9, max_words=80).generate(text)
+    
     fig, ax = plt.subplots(figsize=(8, 4), dpi=150)
     ax.imshow(wordcloud, interpolation='bilinear')
     ax.axis("off")
@@ -717,11 +724,10 @@ with tab3:
                 sentiment = get_overall_sentiment(reviews, entity)
                 total_upvotes = sum(r['upvotes'] for r in reviews)
                 
-                # Formula: Reputation Credits = (Sentiment * 100) + Total Upvotes
                 credits = int((sentiment * 100) + total_upvotes)
                 
                 entities_data[entity] = {"Sentiment": sentiment, "Upvotes": total_upvotes, "Credits": credits, "Total Reviews": len(reviews)}
-                radar_metrics[entity] = analyze_course_aspects(reviews) # We run aspect extraction globally over all their reviews
+                radar_metrics[entity] = analyze_course_aspects(reviews) 
                 credit_scores[entity] = credits
                 
     else:
@@ -735,7 +741,7 @@ with tab3:
                 total_upvotes = sum(r['upvotes'] for r in reviews)
                 
                 credits = int((sentiment * 100) + total_upvotes)
-                display_name = entity.split(" ")[0] # Keep name short for charts
+                display_name = entity.split(" ")[0] 
                 
                 entities_data[display_name] = {"Sentiment": sentiment, "Upvotes": total_upvotes, "Credits": credits, "Total Reviews": len(reviews)}
                 radar_metrics[display_name] = analyze_course_aspects(reviews)
@@ -745,7 +751,6 @@ with tab3:
         st.info("📌 Select at least 2 entities from the dropdown above to start the comparison.")
     else:
         st.markdown("<br>", unsafe_allow_html=True)
-        # 1. Reputation Credits KPI Row
         cols = st.columns(len(entities_data))
         for i, (name, data) in enumerate(entities_data.items()):
             with cols[i]:
@@ -756,7 +761,6 @@ with tab3:
         
         st.divider()
         
-        # 2. Side-by-Side Visuals
         v_left, v_right = st.columns(2)
         with v_left:
             st.markdown(f"<h5 style='text-align: center; color: {chart_text_color};'>Overall Reputation Credits</h5>", unsafe_allow_html=True)
