@@ -2,8 +2,8 @@ import streamlit as st
 import sqlite3
 import pandas as pd
 from textblob import TextBlob
-import time
 import random
+import requests
 import plotly.graph_objects as go
 import plotly.express as px
 import re
@@ -13,29 +13,16 @@ from datetime import datetime, timedelta
 # --- UI CONFIGURATION ---
 st.set_page_config(page_title="KTU Insight Engine", page_icon="⚡", layout="wide")
 
-# --- 🕒 AUTO-ROTATION & SESSION STATE SETUP ---
-ROTATION_INTERVAL = 150  # 2.5 minutes in seconds
-
-if 'last_rotation_time' not in st.session_state:
-    st.session_state.last_rotation_time = time.time()
+# --- 🎲 RANDOMIZED PERSONA & SESSION STATE SETUP ---
+# Whenever a new user connects, the app rolls the dice for a totally random starting theme!
 if 'light_theme' not in st.session_state:
-    st.session_state.light_theme = False
+    st.session_state.light_theme = random.choice([True, False]) # 50/50 chance for Light or Dark
 if 'theme_cycle_idx' not in st.session_state:
-    st.session_state.theme_cycle_idx = 0 
+    st.session_state.theme_cycle_idx = random.randint(0, 3)     # Pick 1 of 4 Light Personas
 if 'dark_theme_cycle_idx' not in st.session_state:
-    st.session_state.dark_theme_cycle_idx = 0 
+    st.session_state.dark_theme_cycle_idx = random.randint(0, 3) # Pick 1 of 4 Dark Personas
 if 'upvoted_reviews' not in st.session_state:
     st.session_state.upvoted_reviews = set() 
-
-# 🤖 BACKGROUND HEARTBEAT: AUTO-ROTATE PERSONA
-current_time = time.time()
-if current_time - st.session_state.last_rotation_time > ROTATION_INTERVAL:
-    if st.session_state.light_theme:
-        st.session_state.theme_cycle_idx = (st.session_state.theme_cycle_idx + 1) % 4
-    else:
-        st.session_state.dark_theme_cycle_idx = (st.session_state.dark_theme_cycle_idx + 1) % 4
-    st.session_state.last_rotation_time = current_time
-    st.rerun()
 
 # 🔥 BRAND LOGO INJECTION 🔥
 st.sidebar.image("https://cdn-icons-png.flaticon.com/512/1162/1162803.png", width=55)
@@ -43,19 +30,19 @@ st.sidebar.markdown("## KTU Insight")
 st.sidebar.divider()
 
 st.sidebar.markdown("### 🌗 Appearance")
-theme_toggle = st.sidebar.toggle("Switch to Light Mode", value=st.session_state.light_theme)
+theme_toggle = st.sidebar.toggle("Switch to Light/Dark Mode", value=st.session_state.light_theme)
 
 # 🔥 MANUAL THEME ENGINE 🔥
+# If they manually click the toggle, it cycles to the next fresh persona
 if theme_toggle != st.session_state.light_theme:
     if theme_toggle == True:
         st.session_state.theme_cycle_idx = (st.session_state.theme_cycle_idx + 1) % 4
     else:
         st.session_state.dark_theme_cycle_idx = (st.session_state.dark_theme_cycle_idx + 1) % 4
     st.session_state.light_theme = theme_toggle
-    st.session_state.last_rotation_time = time.time()
     st.rerun()
 
-# --- 🪟 THEME DEFINITIONS (RESTORED COMP_COLORS) ---
+# --- 🪟 THEME DEFINITIONS (BENTO COLORS, FONTS, WEIGHTS) ---
 if st.session_state.light_theme:
     idx = st.session_state.theme_cycle_idx
     if idx == 0: # 🌸 Innocent
@@ -77,12 +64,13 @@ else:
     else: # 🔥 Forge Master
         t = {"app_bg": "radial-gradient(circle at top, #050505, #450A0A)", "text": "#FECACA", "hero": "linear-gradient(135deg, #450A0A 0%, #111111 100%)", "card_bg": "rgba(17, 17, 17, 0.6)", "card_border": "rgba(220, 38, 38, 0.3)", "glow": "#DC2626", "font": "'Teko', sans-serif", "weight": "600", "accent": "#DC2626", "sidebar": "rgba(17,17,17,0.8)", "comp_colors": ["#DC2626", "#991B1B", "#7F1D1D"]}
 
-# 🪄 INJECT 2026 GLASSMORPHISM, 3D PARALLAX & SQUISHY CSS
+# 🪄 INJECT 2026 CSS (GLASSMORPHISM, 3D PARALLAX, SQUISHY)
 st.markdown(f"""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Exo+2:wght@400;600&family=Montserrat:wght@400;600&family=Orbitron:wght@400;700&family=Playfair+Display:wght@400;700&family=Quicksand:wght@400;600&family=Rajdhani:wght@400;600&family=Teko:wght@400;600&display=swap');
     
-    .stApp, h1, h2, h3, h4, h5, h6, p, label, .stMarkdown, span, div {{ font-family: {t['font']} !important; font-weight: {t['weight']}; }}
+    .stApp, p, label, .stMarkdown, span, div {{ font-family: {t['font']} !important; }}
+    h1, h2, h3, h4, h5, h6, .hero-title {{ font-family: {t['font']} !important; font-weight: {t['weight']} !important; }}
     .stApp {{ background: {t['app_bg']} !important; background-attachment: fixed !important; color: {t['text']} !important; }}
     [data-testid="stSidebar"] {{ background-color: {t['sidebar']} !important; border-right: 1px solid {t['card_border']} !important; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }}
     
@@ -123,14 +111,14 @@ st.markdown(f"""
     .hero-container {{ background: {t['hero']}; color: #FFFFFF !important; padding: 3.5rem 2rem; border-radius: 1.5rem; text-align: center; margin-bottom: 2.5rem; margin-top: -2rem; box-shadow: 0 15px 30px -5px {t['glow']}66; border: 1px solid {t['glow']}88; }}
     .hero-title {{ font-size: 3.5rem; margin: 0; line-height: 1.2; color: #FFFFFF !important; }}
     .hero-subtitle {{ font-size: 1.15rem; margin-top: 1rem; color: rgba(255,255,255,0.9) !important; letter-spacing: 0.05em; text-transform: uppercase; }}
-    .tag-pill {{ background: rgba(255,255,255,0.1); color: {t['accent']}; padding: 0.25rem 0.8rem; border-radius: 9999px; font-size: 0.7rem; border: 1px solid {t['glow']}66; backdrop-filter: blur(5px); display: inline-block; margin-right: 0.5rem; }}
+    .tag-pill {{ background: rgba(255,255,255,0.1); color: {t['accent']}; padding: 0.25rem 0.8rem; border-radius: 9999px; font-size: 0.7rem; border: 1px solid {t['glow']}66; backdrop-filter: blur(5px); display: inline-block; margin-right: 0.5rem; font-weight: 600; }}
 </style>
 """, unsafe_allow_html=True)
 
 chart_text_color, gauge_bar, radar_grid = t['text'], t['accent'], t['card_border']
 avatar_style = "micah" if st.session_state.light_theme else "bottts"
 
-# --- 1. FULL DATA HIERARCHY ---
+# --- 1. FULL DATA HIERARCHY RESTORED ---
 standard_departments = {
     "Artificial Intelligence (AI & DS)": ["AD301: Deep Learning", "AD302: Reinforcement Learning", "AD303: Data Analytics", "AD304: Big Data Technologies", "AD305: Natural Language Processing", "AD307: Computer Vision"],
     "Electronics & Communication (ECE)": ["EC301: Digital Signal Processing", "EC302: VLSI Design", "EC303: Applied Electromagnetic Theory", "EC304: Control Systems", "EC305: Microprocessors & Microcontrollers", "EC307: Power Electronics"],
@@ -158,11 +146,11 @@ college_coords = {
     "University College of Engineering Thodupuzha (UCE)": (9.8450, 76.7450), "Model Engineering College (MEC)": (10.0284, 76.3285), "College of Engineering Trivandrum (CET)": (8.5456, 76.9063), "TKM College of Engineering, Kollam (TKM)": (8.9100, 76.6316), "Rajiv Gandhi Institute of Technology (RIT), Kottayam": (9.5534, 76.6179), "Government Engineering College, Thrissur (GEC)": (10.5540, 76.2230), "Muthoot Institute of Technology and Science (MITS)": (9.9482, 76.3980), "Rajagiri School of Engineering & Technology (RSET)": (10.0102, 76.3653), "Mar Athanasius College of Engineering (MACE)": (10.0543, 76.6186), "Federal Institute of Science and Technology (FISAT)": (10.2312, 76.4087)
 }
 
-# --- 2. DATABASE SETUP & ANTI-SPAM (WITH TIMEOUT FIX) ---
+# --- 2. DATABASE SETUP, MIGRATION & ANTI-SPAM ---
 DB_NAME = "ktu_reviews.db"
 
 def init_db():
-    conn = sqlite3.connect(DB_NAME, timeout=15)
+    conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS reviews (id INTEGER PRIMARY KEY AUTOINCREMENT, target_name TEXT, category TEXT, review_text TEXT, upvotes INTEGER DEFAULT 0, tags TEXT, created_at DATETIME DEFAULT CURRENT_TIMESTAMP)''')
     try: c.execute("ALTER TABLE reviews ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP")
@@ -193,7 +181,7 @@ def check_spam(text, target_name):
     if re.search(r'(http:\/\/|https:\/\/|www\.)', text): return True, "Spam Alert: Links are strictly prohibited."
     if re.search(r'(.)\1{5,}', text) or len(set(text)) < 4: return True, "Review rejected: Invalid characters detected."
     if any(bad in text.lower() for bad in ["fuck", "shit", "bitch", "asshole", "cunt", "slut", "dick", "pussy"]): return True, "Review rejected: Profanity detected."
-    conn = sqlite3.connect(DB_NAME, timeout=15)
+    conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
     c.execute("SELECT COUNT(*) FROM reviews WHERE target_name=? AND review_text=?", (target_name, text))
     is_dup = c.fetchone()[0] > 0
@@ -204,7 +192,7 @@ def check_spam(text, target_name):
 # 🚀 CACHED READ OPERATIONS
 @st.cache_data(ttl=60)
 def get_reviews_from_db(target_name, sort_by="Most Upvoted"):
-    conn = sqlite3.connect(DB_NAME, timeout=15)
+    conn = sqlite3.connect(DB_NAME)
     order = "ORDER BY id DESC" if sort_by == "Newest" else "ORDER BY upvotes DESC, id DESC"
     query = f"SELECT id, review_text, upvotes, tags, created_at FROM reviews WHERE target_name=? {order}"
     df = pd.read_sql_query(query, conn, params=(target_name,))
@@ -213,7 +201,7 @@ def get_reviews_from_db(target_name, sort_by="Most Upvoted"):
 
 @st.cache_data(ttl=60)
 def get_replies(review_id):
-    conn = sqlite3.connect(DB_NAME, timeout=15)
+    conn = sqlite3.connect(DB_NAME)
     query = "SELECT reply_text, created_at FROM replies WHERE review_id=? ORDER BY id ASC"
     df = pd.read_sql_query(query, conn, params=(review_id,))
     conn.close()
@@ -222,7 +210,7 @@ def get_replies(review_id):
 # 🧹 CACHE INVALIDATION FOR WRITES
 def add_review_to_db(target_name, category, review_text):
     tags = extract_tags(review_text, category)
-    conn = sqlite3.connect(DB_NAME, timeout=15)
+    conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
     c.execute("INSERT INTO reviews (target_name, category, review_text, upvotes, tags) VALUES (?, ?, ?, ?, ?)", (target_name, category, review_text, 0, tags))
     conn.commit()
@@ -232,7 +220,7 @@ def add_review_to_db(target_name, category, review_text):
 def add_reply_to_db(review_id, reply_text):
     safe_reply = html.escape(reply_text.strip())
     if len(safe_reply) < 3: return
-    conn = sqlite3.connect(DB_NAME, timeout=15)
+    conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
     c.execute("INSERT INTO replies (review_id, reply_text) VALUES (?, ?)", (review_id, safe_reply))
     conn.commit()
@@ -240,16 +228,16 @@ def add_reply_to_db(review_id, reply_text):
     get_replies.clear()
 
 def upvote_review(review_id):
-    conn = sqlite3.connect(DB_NAME, timeout=15)
+    conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
     c.execute("UPDATE reviews SET upvotes = upvotes + 1 WHERE id = ?", (review_id,))
     conn.commit()
     conn.close()
     get_reviews_from_db.clear()
 
-# --- FULL DATA SEEDING ---
+# --- FULL DATA SEEDING RESTORED ---
 def seed_initial_data():
-    conn = sqlite3.connect(DB_NAME, timeout=15)
+    conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
     c.execute("SELECT COUNT(*) FROM reviews")
     if c.fetchone()[0] == 0:
