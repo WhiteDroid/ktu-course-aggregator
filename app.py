@@ -27,7 +27,7 @@ if 'dark_theme_cycle_idx' not in st.session_state:
 if 'upvoted_reviews' not in st.session_state:
     st.session_state.upvoted_reviews = set() 
 
-# 🤖 BACKGROUND HEARTBEAT: AUTO-ROTATE PERSONA (Fixed data erasure bug)
+# 🤖 BACKGROUND HEARTBEAT: AUTO-ROTATE PERSONA
 current_time = time.time()
 if current_time - st.session_state.last_rotation_time > ROTATION_INTERVAL:
     if st.session_state.light_theme:
@@ -35,6 +35,7 @@ if current_time - st.session_state.last_rotation_time > ROTATION_INTERVAL:
     else:
         st.session_state.dark_theme_cycle_idx = (st.session_state.dark_theme_cycle_idx + 1) % 4
     st.session_state.last_rotation_time = current_time
+    st.rerun()
 
 # 🔥 BRAND LOGO INJECTION 🔥
 st.sidebar.image("https://cdn-icons-png.flaticon.com/512/1162/1162803.png", width=55)
@@ -54,35 +55,34 @@ if theme_toggle != st.session_state.light_theme:
     st.session_state.last_rotation_time = time.time()
     st.rerun()
 
-# --- 🪟 THEME DEFINITIONS (BENTO COLORS, FONTS, WEIGHTS) ---
+# --- 🪟 THEME DEFINITIONS (RESTORED COMP_COLORS) ---
 if st.session_state.light_theme:
     idx = st.session_state.theme_cycle_idx
     if idx == 0: # 🌸 Innocent
-        t = {"app_bg": "radial-gradient(circle at top left, #FFF8F9, #FFE4E1)", "text": "#5D4E52", "hero": "linear-gradient(135deg, #FFA9D1 0%, #FFB6C1 100%)", "card_bg": "rgba(255, 255, 255, 0.6)", "card_border": "rgba(255, 182, 193, 0.4)", "glow": "#FFB6C1", "font": "'Quicksand', sans-serif", "weight": "600", "accent": "#FF69B4", "sidebar": "rgba(255,255,255,0.7)"}
+        t = {"app_bg": "radial-gradient(circle at top left, #FFF8F9, #FFE4E1)", "text": "#5D4E52", "hero": "linear-gradient(135deg, #FFA9D1 0%, #FFB6C1 100%)", "card_bg": "rgba(255, 255, 255, 0.6)", "card_border": "rgba(255, 182, 193, 0.4)", "glow": "#FFB6C1", "font": "'Quicksand', sans-serif", "weight": "600", "accent": "#FF69B4", "sidebar": "rgba(255,255,255,0.7)", "comp_colors": ["#FF69B4", "#FFA9D1", "#FFDAC1"]}
     elif idx == 1: # 🍷 Elegant
-        t = {"app_bg": "radial-gradient(circle at top right, #FCF9F9, #EAD8DC)", "text": "#4A4040", "hero": "linear-gradient(135deg, #DCA7B8 0%, #CE8E9E 100%)", "card_bg": "rgba(255, 255, 255, 0.6)", "card_border": "rgba(212, 155, 170, 0.4)", "glow": "#D49BAA", "font": "'Playfair Display', serif", "weight": "600", "accent": "#9A7480", "sidebar": "rgba(255,255,255,0.7)"}
+        t = {"app_bg": "radial-gradient(circle at top right, #FCF9F9, #EAD8DC)", "text": "#4A4040", "hero": "linear-gradient(135deg, #DCA7B8 0%, #CE8E9E 100%)", "card_bg": "rgba(255, 255, 255, 0.6)", "card_border": "rgba(212, 155, 170, 0.4)", "glow": "#D49BAA", "font": "'Playfair Display', serif", "weight": "600", "accent": "#9A7480", "sidebar": "rgba(255,255,255,0.7)", "comp_colors": ["#D49BAA", "#A39BA8", "#E3B5A4"]}
     elif idx == 2: # 💋 Hot & Sexy
-        t = {"app_bg": "radial-gradient(circle at bottom left, #FFF5F7, #FFCCD5)", "text": "#4A1525", "hero": "linear-gradient(135deg, #FF0055 0%, #8A0030 100%)", "card_bg": "rgba(255, 255, 255, 0.7)", "card_border": "rgba(213, 0, 50, 0.3)", "glow": "#FF0055", "font": "'Montserrat', sans-serif", "weight": "600", "accent": "#D50032", "sidebar": "rgba(255,255,255,0.7)"}
+        t = {"app_bg": "radial-gradient(circle at bottom left, #FFF5F7, #FFCCD5)", "text": "#4A1525", "hero": "linear-gradient(135deg, #FF0055 0%, #8A0030 100%)", "card_bg": "rgba(255, 255, 255, 0.7)", "card_border": "rgba(213, 0, 50, 0.3)", "glow": "#FF0055", "font": "'Montserrat', sans-serif", "weight": "600", "accent": "#D50032", "sidebar": "rgba(255,255,255,0.7)", "comp_colors": ["#D50032", "#FF0055", "#8A0030"]}
     else: # 👑 Goddess
-        t = {"app_bg": "radial-gradient(circle at center, #FFF7F8, #FADADD)", "text": "#3A101E", "hero": "linear-gradient(135deg, #C70039 0%, #581845 100%)", "card_bg": "rgba(255, 255, 255, 0.7)", "card_border": "rgba(255, 195, 0, 0.4)", "glow": "#FFC300", "font": "'Cinzel', serif", "weight": "700", "accent": "#900C3F", "sidebar": "rgba(255,255,255,0.7)"}
+        t = {"app_bg": "radial-gradient(circle at center, #FFF7F8, #FADADD)", "text": "#3A101E", "hero": "linear-gradient(135deg, #C70039 0%, #581845 100%)", "card_bg": "rgba(255, 255, 255, 0.7)", "card_border": "rgba(255, 195, 0, 0.4)", "glow": "#FFC300", "font": "'Cinzel', serif", "weight": "700", "accent": "#900C3F", "sidebar": "rgba(255,255,255,0.7)", "comp_colors": ["#C70039", "#FFC300", "#900C3F"]}
 else:
     d_idx = st.session_state.dark_theme_cycle_idx
     if d_idx == 0: # 🕵️‍♂️ Cyberpunk
-        t = {"app_bg": "radial-gradient(circle at top left, #0B0F19, #022C22)", "text": "#F3F4F6", "hero": "linear-gradient(135deg, #022C22 0%, #111827 100%)", "card_bg": "rgba(17, 24, 39, 0.6)", "card_border": "rgba(16, 185, 129, 0.3)", "glow": "#10B981", "font": "'Orbitron', sans-serif", "weight": "500", "accent": "#10B981", "sidebar": "rgba(17,24,39,0.8)"}
+        t = {"app_bg": "radial-gradient(circle at top left, #0B0F19, #022C22)", "text": "#F3F4F6", "hero": "linear-gradient(135deg, #022C22 0%, #111827 100%)", "card_bg": "rgba(17, 24, 39, 0.6)", "card_border": "rgba(16, 185, 129, 0.3)", "glow": "#10B981", "font": "'Orbitron', sans-serif", "weight": "500", "accent": "#10B981", "sidebar": "rgba(17,24,39,0.8)", "comp_colors": ["#10B981", "#3B82F6", "#F43F5E"]}
     elif d_idx == 1: # 🥃 Stealth
-        t = {"app_bg": "radial-gradient(circle at bottom right, #0A0A0A, #451A03)", "text": "#E5E7EB", "hero": "linear-gradient(135deg, #451A03 0%, #121212 100%)", "card_bg": "rgba(18, 18, 18, 0.6)", "card_border": "rgba(245, 158, 11, 0.3)", "glow": "#F59E0B", "font": "'Rajdhani', sans-serif", "weight": "600", "accent": "#F59E0B", "sidebar": "rgba(18,18,18,0.8)"}
+        t = {"app_bg": "radial-gradient(circle at bottom right, #0A0A0A, #451A03)", "text": "#E5E7EB", "hero": "linear-gradient(135deg, #451A03 0%, #121212 100%)", "card_bg": "rgba(18, 18, 18, 0.6)", "card_border": "rgba(245, 158, 11, 0.3)", "glow": "#F59E0B", "font": "'Rajdhani', sans-serif", "weight": "600", "accent": "#F59E0B", "sidebar": "rgba(18,18,18,0.8)", "comp_colors": ["#F59E0B", "#B45309", "#78350F"]}
     elif d_idx == 2: # 🌊 Deep Sea
-        t = {"app_bg": "radial-gradient(circle at center, #020617, #082F49)", "text": "#E0F2FE", "hero": "linear-gradient(135deg, #082F49 0%, #0F172A 100%)", "card_bg": "rgba(15, 23, 42, 0.6)", "card_border": "rgba(14, 165, 233, 0.3)", "glow": "#0EA5E9", "font": "'Exo 2', sans-serif", "weight": "500", "accent": "#0EA5E9", "sidebar": "rgba(15,23,42,0.8)"}
+        t = {"app_bg": "radial-gradient(circle at center, #020617, #082F49)", "text": "#E0F2FE", "hero": "linear-gradient(135deg, #082F49 0%, #0F172A 100%)", "card_bg": "rgba(15, 23, 42, 0.6)", "card_border": "rgba(14, 165, 233, 0.3)", "glow": "#0EA5E9", "font": "'Exo 2', sans-serif", "weight": "500", "accent": "#0EA5E9", "sidebar": "rgba(15,23,42,0.8)", "comp_colors": ["#0EA5E9", "#0284C7", "#0369A1"]}
     else: # 🔥 Forge Master
-        t = {"app_bg": "radial-gradient(circle at top, #050505, #450A0A)", "text": "#FECACA", "hero": "linear-gradient(135deg, #450A0A 0%, #111111 100%)", "card_bg": "rgba(17, 17, 17, 0.6)", "card_border": "rgba(220, 38, 38, 0.3)", "glow": "#DC2626", "font": "'Teko', sans-serif", "weight": "600", "accent": "#DC2626", "sidebar": "rgba(17,17,17,0.8)"}
+        t = {"app_bg": "radial-gradient(circle at top, #050505, #450A0A)", "text": "#FECACA", "hero": "linear-gradient(135deg, #450A0A 0%, #111111 100%)", "card_bg": "rgba(17, 17, 17, 0.6)", "card_border": "rgba(220, 38, 38, 0.3)", "glow": "#DC2626", "font": "'Teko', sans-serif", "weight": "600", "accent": "#DC2626", "sidebar": "rgba(17,17,17,0.8)", "comp_colors": ["#DC2626", "#991B1B", "#7F1D1D"]}
 
 # 🪄 INJECT 2026 GLASSMORPHISM, 3D PARALLAX & SQUISHY CSS
 st.markdown(f"""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Exo+2:wght@400;600&family=Montserrat:wght@400;600&family=Orbitron:wght@400;700&family=Playfair+Display:wght@400;700&family=Quicksand:wght@400;600&family=Rajdhani:wght@400;600&family=Teko:wght@400;600&display=swap');
     
-    .stApp, p, label, .stMarkdown, span, div {{ font-family: {t['font']} !important; }}
-    h1, h2, h3, h4, h5, h6, .hero-title {{ font-family: {t['font']} !important; font-weight: {t['weight']} !important; }}
+    .stApp, h1, h2, h3, h4, h5, h6, p, label, .stMarkdown, span, div {{ font-family: {t['font']} !important; font-weight: {t['weight']}; }}
     .stApp {{ background: {t['app_bg']} !important; background-attachment: fixed !important; color: {t['text']} !important; }}
     [data-testid="stSidebar"] {{ background-color: {t['sidebar']} !important; border-right: 1px solid {t['card_border']} !important; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }}
     
@@ -123,14 +123,14 @@ st.markdown(f"""
     .hero-container {{ background: {t['hero']}; color: #FFFFFF !important; padding: 3.5rem 2rem; border-radius: 1.5rem; text-align: center; margin-bottom: 2.5rem; margin-top: -2rem; box-shadow: 0 15px 30px -5px {t['glow']}66; border: 1px solid {t['glow']}88; }}
     .hero-title {{ font-size: 3.5rem; margin: 0; line-height: 1.2; color: #FFFFFF !important; }}
     .hero-subtitle {{ font-size: 1.15rem; margin-top: 1rem; color: rgba(255,255,255,0.9) !important; letter-spacing: 0.05em; text-transform: uppercase; }}
-    .tag-pill {{ background: rgba(255,255,255,0.1); color: {t['accent']}; padding: 0.25rem 0.8rem; border-radius: 9999px; font-size: 0.7rem; border: 1px solid {t['glow']}66; backdrop-filter: blur(5px); display: inline-block; margin-right: 0.5rem; font-weight: 600; }}
+    .tag-pill {{ background: rgba(255,255,255,0.1); color: {t['accent']}; padding: 0.25rem 0.8rem; border-radius: 9999px; font-size: 0.7rem; border: 1px solid {t['glow']}66; backdrop-filter: blur(5px); display: inline-block; margin-right: 0.5rem; }}
 </style>
 """, unsafe_allow_html=True)
 
 chart_text_color, gauge_bar, radar_grid = t['text'], t['accent'], t['card_border']
 avatar_style = "micah" if st.session_state.light_theme else "bottts"
 
-# --- 1. FULL DATA HIERARCHY RESTORED ---
+# --- 1. FULL DATA HIERARCHY ---
 standard_departments = {
     "Artificial Intelligence (AI & DS)": ["AD301: Deep Learning", "AD302: Reinforcement Learning", "AD303: Data Analytics", "AD304: Big Data Technologies", "AD305: Natural Language Processing", "AD307: Computer Vision"],
     "Electronics & Communication (ECE)": ["EC301: Digital Signal Processing", "EC302: VLSI Design", "EC303: Applied Electromagnetic Theory", "EC304: Control Systems", "EC305: Microprocessors & Microcontrollers", "EC307: Power Electronics"],
@@ -158,11 +158,11 @@ college_coords = {
     "University College of Engineering Thodupuzha (UCE)": (9.8450, 76.7450), "Model Engineering College (MEC)": (10.0284, 76.3285), "College of Engineering Trivandrum (CET)": (8.5456, 76.9063), "TKM College of Engineering, Kollam (TKM)": (8.9100, 76.6316), "Rajiv Gandhi Institute of Technology (RIT), Kottayam": (9.5534, 76.6179), "Government Engineering College, Thrissur (GEC)": (10.5540, 76.2230), "Muthoot Institute of Technology and Science (MITS)": (9.9482, 76.3980), "Rajagiri School of Engineering & Technology (RSET)": (10.0102, 76.3653), "Mar Athanasius College of Engineering (MACE)": (10.0543, 76.6186), "Federal Institute of Science and Technology (FISAT)": (10.2312, 76.4087)
 }
 
-# --- 2. DATABASE SETUP, MIGRATION & ANTI-SPAM ---
+# --- 2. DATABASE SETUP & ANTI-SPAM (WITH TIMEOUT FIX) ---
 DB_NAME = "ktu_reviews.db"
 
 def init_db():
-    conn = sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(DB_NAME, timeout=15)
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS reviews (id INTEGER PRIMARY KEY AUTOINCREMENT, target_name TEXT, category TEXT, review_text TEXT, upvotes INTEGER DEFAULT 0, tags TEXT, created_at DATETIME DEFAULT CURRENT_TIMESTAMP)''')
     try: c.execute("ALTER TABLE reviews ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP")
@@ -193,7 +193,7 @@ def check_spam(text, target_name):
     if re.search(r'(http:\/\/|https:\/\/|www\.)', text): return True, "Spam Alert: Links are strictly prohibited."
     if re.search(r'(.)\1{5,}', text) or len(set(text)) < 4: return True, "Review rejected: Invalid characters detected."
     if any(bad in text.lower() for bad in ["fuck", "shit", "bitch", "asshole", "cunt", "slut", "dick", "pussy"]): return True, "Review rejected: Profanity detected."
-    conn = sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(DB_NAME, timeout=15)
     c = conn.cursor()
     c.execute("SELECT COUNT(*) FROM reviews WHERE target_name=? AND review_text=?", (target_name, text))
     is_dup = c.fetchone()[0] > 0
@@ -204,7 +204,7 @@ def check_spam(text, target_name):
 # 🚀 CACHED READ OPERATIONS
 @st.cache_data(ttl=60)
 def get_reviews_from_db(target_name, sort_by="Most Upvoted"):
-    conn = sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(DB_NAME, timeout=15)
     order = "ORDER BY id DESC" if sort_by == "Newest" else "ORDER BY upvotes DESC, id DESC"
     query = f"SELECT id, review_text, upvotes, tags, created_at FROM reviews WHERE target_name=? {order}"
     df = pd.read_sql_query(query, conn, params=(target_name,))
@@ -213,7 +213,7 @@ def get_reviews_from_db(target_name, sort_by="Most Upvoted"):
 
 @st.cache_data(ttl=60)
 def get_replies(review_id):
-    conn = sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(DB_NAME, timeout=15)
     query = "SELECT reply_text, created_at FROM replies WHERE review_id=? ORDER BY id ASC"
     df = pd.read_sql_query(query, conn, params=(review_id,))
     conn.close()
@@ -222,7 +222,7 @@ def get_replies(review_id):
 # 🧹 CACHE INVALIDATION FOR WRITES
 def add_review_to_db(target_name, category, review_text):
     tags = extract_tags(review_text, category)
-    conn = sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(DB_NAME, timeout=15)
     c = conn.cursor()
     c.execute("INSERT INTO reviews (target_name, category, review_text, upvotes, tags) VALUES (?, ?, ?, ?, ?)", (target_name, category, review_text, 0, tags))
     conn.commit()
@@ -232,7 +232,7 @@ def add_review_to_db(target_name, category, review_text):
 def add_reply_to_db(review_id, reply_text):
     safe_reply = html.escape(reply_text.strip())
     if len(safe_reply) < 3: return
-    conn = sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(DB_NAME, timeout=15)
     c = conn.cursor()
     c.execute("INSERT INTO replies (review_id, reply_text) VALUES (?, ?)", (review_id, safe_reply))
     conn.commit()
@@ -240,15 +240,16 @@ def add_reply_to_db(review_id, reply_text):
     get_replies.clear()
 
 def upvote_review(review_id):
-    conn = sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(DB_NAME, timeout=15)
     c = conn.cursor()
     c.execute("UPDATE reviews SET upvotes = upvotes + 1 WHERE id = ?", (review_id,))
     conn.commit()
     conn.close()
     get_reviews_from_db.clear()
 
+# --- FULL DATA SEEDING ---
 def seed_initial_data():
-    conn = sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(DB_NAME, timeout=15)
     c = conn.cursor()
     c.execute("SELECT COUNT(*) FROM reviews")
     if c.fetchone()[0] == 0:
@@ -379,10 +380,9 @@ def plot_geospatial_heatmap(colleges, is_light_theme):
         reviews = get_reviews_from_db(col)
         sentiment = get_overall_sentiment(reviews, col)
         lat, lon = college_coords.get(col, (10.0, 76.0))
-        # Fixed Plotly Crash: Ensures marker size is at least 1, avoiding size=0 errors.
-        map_data.append({"College": col, "Lat": lat, "Lon": lon, "Score": round(sentiment * 100, 1), "Marker Size": max(len(reviews), 1)})
+        map_data.append({"College": col, "Lat": lat, "Lon": lon, "Score": round(sentiment * 100, 1), "Reviews": len(reviews)})
     df = pd.DataFrame(map_data)
-    fig = px.scatter_mapbox(df, lat="Lat", lon="Lon", hover_name="College", hover_data={"Lat": False, "Lon": False, "Score": True, "Marker Size": False}, color="Score", size="Marker Size", color_continuous_scale="Inferno", size_max=20, zoom=6.5, center={"lat": 9.5, "lon": 76.5})
+    fig = px.scatter_mapbox(df, lat="Lat", lon="Lon", hover_name="College", hover_data={"Lat": False, "Lon": False, "Score": True, "Reviews": True}, color="Score", size="Score", color_continuous_scale="Inferno", size_max=20, zoom=6.5, center={"lat": 9.5, "lon": 76.5})
     mapbox_style = "carto-positron" if is_light_theme else "carto-darkmatter"
     fig.update_layout(mapbox_style=mapbox_style, margin={"r":0,"t":0,"l":0,"b":0}, paper_bgcolor="rgba(0,0,0,0)")
     st.plotly_chart(fig, use_container_width=True)
@@ -562,7 +562,6 @@ with tab3:
                         st.markdown(f"<h4 style='color:{t['accent']};'>{p.split()[0]}</h4>", unsafe_allow_html=True)
                         st.metric("Credits 🏅", f"{scr} pts")
             
-            # Fixed Plotly Error: Assigned the color mapping correctly to match the discrete sequence
             fig_bar = px.bar(x=list(c_data.keys()), y=list(c_data.values()), color=list(c_data.keys()), color_discrete_sequence=t['comp_colors'])
             fig_bar.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", showlegend=False)
             st.plotly_chart(fig_bar)
@@ -583,7 +582,6 @@ with tab3:
                         st.markdown(f"<h4 style='color:{t['accent']};'>{dn}</h4>", unsafe_allow_html=True)
                         st.metric("Credits 🏅", f"{scr} pts")
             
-            # Fixed Plotly Error: Assigned the color mapping correctly
             fig_bar = px.bar(x=list(d_data.keys()), y=list(d_data.values()), color=list(d_data.keys()), color_discrete_sequence=t['comp_colors'])
             fig_bar.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", showlegend=False)
             st.plotly_chart(fig_bar)
