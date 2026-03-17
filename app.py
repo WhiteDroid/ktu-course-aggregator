@@ -86,20 +86,30 @@ st.markdown(f"""
     .stApp {{ background: {t['app_bg']} !important; background-attachment: fixed !important; color: {t['text']} !important; }}
     [data-testid="stSidebar"] {{ background-color: {t['sidebar']} !important; border-right: 1px solid {t['card_border']} !important; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }}
     
-    /* 🍔 ULTIMATE HAMBURGER MENU FIX (Absolutely removes default arrows) */
-    [data-testid="collapsedControl"] svg, [data-testid="stSidebarCollapseButton"] svg {{
+    /* 🍔 CUSTOM HAMBURGER MENU OVERRIDE */
+    [data-testid="collapsedControl"] svg, 
+    [data-testid="stSidebarCollapseButton"] svg,
+    button[kind="headerNoPadding"] svg {{ 
         visibility: hidden !important;
         display: none !important;
+        opacity: 0 !important;
     }}
-    [data-testid="collapsedControl"], [data-testid="stSidebarCollapseButton"] {{
+    
+    [data-testid="collapsedControl"], 
+    [data-testid="stSidebarCollapseButton"],
+    button[kind="headerNoPadding"] {{
         color: transparent !important;
         position: relative !important;
+        background: transparent !important;
     }}
-    [data-testid="collapsedControl"]::after, [data-testid="stSidebarCollapseButton"]::after {{
-        content: "☰" !important;
-        font-size: 24px !important;
-        font-weight: bold !important;
-        color: {t['text']} !important;
+    
+    [data-testid="collapsedControl"]::after, 
+    [data-testid="stSidebarCollapseButton"]::after,
+    button[kind="headerNoPadding"]::after {{
+        content: "☰" !important; 
+        font-size: 24px !important; 
+        font-weight: bold !important; 
+        color: {t['text']} !important; 
         position: absolute !important;
         top: 50% !important;
         left: 50% !important;
