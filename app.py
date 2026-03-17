@@ -72,6 +72,12 @@ st.markdown(f"""
     .stApp {{ background: {t['app_bg']} !important; background-attachment: fixed !important; color: {t['text']} !important; }}
     [data-testid="stSidebar"] {{ background-color: {t['sidebar']} !important; border-right: 1px solid {t['card_border']} !important; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }}
     
+    /* 🍔 CUSTOM HAMBURGER MENU (Replaces Top-Left Double Arrow) */
+    [data-testid="collapsedControl"] svg, [data-testid="stSidebarCollapseButton"] svg {{ display: none !important; }}
+    [data-testid="collapsedControl"]::before, [data-testid="stSidebarCollapseButton"]::before {{
+        content: "☰" !important; font-size: 1.8rem !important; font-weight: bold !important; color: {t['text']} !important; line-height: 1;
+    }}
+
     /* 🍱 BENTO GLASS CARDS WITH LIGHT LEAK SHIMMER */
     div[data-testid="stForm"], [data-testid="stVerticalBlockBorderWrapper"] {{ 
         background: {t['card_bg']} !important; 
@@ -439,7 +445,7 @@ with tab1:
                 with st.expander(f"💬 Replies ({len(replies)})"):
                     for rep in replies:
                         rep_av = f"https://api.dicebear.com/7.x/{avatar_style}/svg?seed=rep_{rep['id']}"
-                        st.markdown(f"<div style='border-left: 2px solid {gauge_bar}; padding-left: 15px; margin-bottom: 10px; display: flex; align-items: center;'><img src='{rep_av}' style='width: 25px; height: 25px; border-radius: 50%; margin-right: 10px; background: rgba(255,255,255,0.1);'><small style='color: {chart_text_color};'><b>User:</b> ☰ {rep['reply_text']}</small></div>", unsafe_allow_html=True)
+                        st.markdown(f"<div style='border-left: 2px solid {gauge_bar}; padding-left: 15px; margin-bottom: 10px; display: flex; align-items: center;'><img src='{rep_av}' style='width: 25px; height: 25px; border-radius: 50%; margin-right: 10px; background: rgba(255,255,255,0.1);'><small style='color: {chart_text_color};'><b>User:</b> {rep['reply_text']}</small></div>", unsafe_allow_html=True)
                     rc1, rc2 = st.columns([4,1])
                     with rc1: rep_input = st.text_input("Reply...", key=f"r_in_{r['id']}", label_visibility="collapsed")
                     with rc2: 
@@ -504,7 +510,7 @@ with tab2:
                 
                 with st.expander(f"💬 Replies ({len(get_replies(r['id']))})"):
                     for rep in get_replies(r['id']):
-                        st.markdown(f"<div style='border-left: 2px solid {gauge_bar}; padding-left: 15px; margin-bottom: 10px;'><b>User:</b> ☰ {rep['reply_text']}</div>", unsafe_allow_html=True)
+                        st.markdown(f"<div style='border-left: 2px solid {gauge_bar}; padding-left: 15px; margin-bottom: 10px;'><b>User:</b> {rep['reply_text']}</div>", unsafe_allow_html=True)
                     rci1, rci2 = st.columns([4,1])
                     with rci1: ri = st.text_input("Reply...", key=f"ri_c_{r['id']}", label_visibility="collapsed")
                     with rci2: 
@@ -529,7 +535,6 @@ with tab3:
                         st.markdown(f"<h4 style='color:{t['accent']};'>{p.split()[0]}</h4>", unsafe_allow_html=True)
                         st.metric("Credits 🏅", f"{scr} pts")
             
-            # Robust Plotly DataFrame fix for cloud deployment
             df_arena = pd.DataFrame({"College": list(c_data.keys()), "Credits": list(c_data.values())})
             fig_bar = px.bar(df_arena, x="College", y="Credits", color="College", color_discrete_sequence=t['comp_colors'])
             fig_bar.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", showlegend=False)
@@ -551,7 +556,6 @@ with tab3:
                         st.markdown(f"<h4 style='color:{t['accent']};'>{dn}</h4>", unsafe_allow_html=True)
                         st.metric("Credits 🏅", f"{scr} pts")
             
-            # Robust Plotly DataFrame fix for cloud deployment
             df_arena_d = pd.DataFrame({"Dept": list(d_data.keys()), "Credits": list(d_data.values())})
             fig_bar = px.bar(df_arena_d, x="Dept", y="Credits", color="Dept", color_discrete_sequence=t['comp_colors'])
             fig_bar.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", showlegend=False)
