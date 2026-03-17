@@ -13,11 +13,7 @@ from datetime import datetime, timedelta
 # --- UI CONFIGURATION ---
 st.set_page_config(page_title="KTU Insight Engine", page_icon="⚡", layout="wide")
 
-# --- 🕒 AUTO-ROTATION & SESSION STATE SETUP ---
-ROTATION_INTERVAL = 150  # 2.5 minutes in seconds
-
-if 'last_rotation_time' not in st.session_state:
-    st.session_state.last_rotation_time = time.time()
+# --- 🎲 RANDOMIZED PERSONA & SESSION STATE SETUP ---
 if 'light_theme' not in st.session_state:
     st.session_state.light_theme = random.choice([True, False])
 if 'theme_cycle_idx' not in st.session_state:
@@ -29,6 +25,10 @@ if 'upvoted_reviews' not in st.session_state:
 
 # 🤖 BACKGROUND HEARTBEAT: AUTO-ROTATE PERSONA
 current_time = time.time()
+ROTATION_INTERVAL = 150  # 2.5 minutes
+if 'last_rotation_time' not in st.session_state:
+    st.session_state.last_rotation_time = current_time
+
 if current_time - st.session_state.last_rotation_time > ROTATION_INTERVAL:
     if st.session_state.light_theme:
         st.session_state.theme_cycle_idx = (st.session_state.theme_cycle_idx + 1) % 4
@@ -86,10 +86,26 @@ st.markdown(f"""
     .stApp {{ background: {t['app_bg']} !important; background-attachment: fixed !important; color: {t['text']} !important; }}
     [data-testid="stSidebar"] {{ background-color: {t['sidebar']} !important; border-right: 1px solid {t['card_border']} !important; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }}
     
-    /* 🍔 CUSTOM HAMBURGER MENU (Replaces Top-Left Double Arrow) */
-    [data-testid="collapsedControl"] svg, [data-testid="stSidebarCollapseButton"] svg {{ display: none !important; }}
-    [data-testid="collapsedControl"]::before, [data-testid="stSidebarCollapseButton"]::before {{
-        content: "☰" !important; font-size: 1.8rem !important; font-weight: bold !important; color: {t['text']} !important; line-height: 1;
+    /* 🍔 ULTIMATE HAMBURGER MENU FIX (Absolutely removes default arrows) */
+    [data-testid="collapsedControl"] svg, [data-testid="stSidebarCollapseButton"] svg {{
+        visibility: hidden !important;
+        display: none !important;
+    }}
+    [data-testid="collapsedControl"], [data-testid="stSidebarCollapseButton"] {{
+        color: transparent !important;
+        position: relative !important;
+    }}
+    [data-testid="collapsedControl"]::after, [data-testid="stSidebarCollapseButton"]::after {{
+        content: "☰" !important;
+        font-size: 24px !important;
+        font-weight: bold !important;
+        color: {t['text']} !important;
+        position: absolute !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        visibility: visible !important;
+        display: block !important;
     }}
 
     /* 🍱 BENTO GLASS CARDS WITH LIGHT LEAK SHIMMER */
@@ -373,7 +389,7 @@ def hex_to_rgba(hex_str, alpha=0.2):
 def plot_radar(metrics):
     df = pd.DataFrame(dict(r=list(metrics.values()), theta=list(metrics.keys())))
     fig = px.line_polar(df, r='r', theta='theta', line_close=True, range_r=[0, 1])
-    fill_c = hex_to_rgba(t['glow'], 0.2) # Uses the mathematical safe converter
+    fill_c = hex_to_rgba(t['glow'], 0.2) 
     fig.update_traces(fill='toself', fillcolor=fill_c, line_color=t['glow'], line_width=2.5, marker=dict(size=6), line_shape='spline')
     fig.update_layout(height=250, paper_bgcolor="rgba(0,0,0,0)", polar=dict(bgcolor="rgba(0,0,0,0)", radialaxis=dict(visible=True, showticklabels=False, gridcolor=radar_grid, linecolor=radar_grid), angularaxis=dict(tickfont=dict(color=chart_text_color, size=12), gridcolor=radar_grid, linecolor=radar_grid)), margin=dict(l=30, r=30, t=30, b=30))
     st.plotly_chart(fig, use_container_width=True)
