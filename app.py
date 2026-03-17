@@ -30,8 +30,6 @@ if 'dark_theme_cycle_idx' not in st.session_state:
     st.session_state.dark_theme_cycle_idx = 0 
 if 'upvoted_reviews' not in st.session_state:
     st.session_state.upvoted_reviews = set() 
-if 'last_submit_time' not in st.session_state:
-    st.session_state.last_submit_time = 0.0 
 
 # 🤖 BACKGROUND HEARTBEAT: AUTO-ROTATE PERSONA
 current_time = time.time()
@@ -184,7 +182,8 @@ def init_db():
     try: c.execute("ALTER TABLE reviews ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP")
     except: pass 
     c.execute('''CREATE TABLE IF NOT EXISTS replies (id INTEGER PRIMARY KEY AUTOINCREMENT, review_id INTEGER, reply_text TEXT, created_at DATETIME DEFAULT CURRENT_TIMESTAMP)''')
-    conn.commit(); conn.close()
+    conn.commit()
+    conn.close()
 
 def extract_tags(text, category):
     tags = []
@@ -221,7 +220,8 @@ def add_review_to_db(target_name, category, review_text):
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
     c.execute("INSERT INTO reviews (target_name, category, review_text, upvotes, tags) VALUES (?, ?, ?, ?, ?)", (target_name, category, review_text, 0, tags))
-    conn.commit(); conn.close()
+    conn.commit()
+    conn.close()
 
 def add_reply_to_db(review_id, reply_text):
     safe_reply = html.escape(reply_text.strip())
@@ -229,24 +229,30 @@ def add_reply_to_db(review_id, reply_text):
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
     c.execute("INSERT INTO replies (review_id, reply_text) VALUES (?, ?)", (review_id, safe_reply))
-    conn.commit(); conn.close()
+    conn.commit()
+    conn.close()
 
 def get_reviews_from_db(target_name, sort_by="Most Upvoted"):
     conn = sqlite3.connect(DB_NAME)
     order = "ORDER BY id DESC" if sort_by == "Newest" else "ORDER BY upvotes DESC, id DESC"
-    df = pd.read_sql_query(f"SELECT * FROM reviews WHERE target_name=? {order}", conn, params=(target_name,))
-    conn.close(); return df.to_dict('records')
+    query = f"SELECT id, review_text, upvotes, tags, created_at FROM reviews WHERE target_name=? {order}"
+    df = pd.read_sql_query(query, conn, params=(target_name,))
+    conn.close()
+    return df.to_dict('records')
 
 def get_replies(review_id):
     conn = sqlite3.connect(DB_NAME)
-    df = pd.read_sql_query("SELECT * FROM replies WHERE review_id=? ORDER BY id ASC", conn, params=(review_id,))
-    conn.close(); return df.to_dict('records')
+    query = "SELECT reply_text, created_at FROM replies WHERE review_id=? ORDER BY id ASC"
+    df = pd.read_sql_query(query, conn, params=(review_id,))
+    conn.close()
+    return df.to_dict('records')
 
 def upvote_review(review_id):
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
     c.execute("UPDATE reviews SET upvotes = upvotes + 1 WHERE id = ?", (review_id,))
-    conn.commit(); conn.close()
+    conn.commit()
+    conn.close()
 
 # --- FULL DATA SEEDING RESTORED ---
 def seed_initial_data():
@@ -254,44 +260,60 @@ def seed_initial_data():
     c = conn.cursor()
     c.execute("SELECT COUNT(*) FROM reviews")
     if c.fetchone()[0] == 0:
-        good_col = ["Good campus and nice placements.", "Faculty is experienced and helpful.", "Nice tech culture and okay college fests.", "Green campus, decent place to study."]
-        bad_col = ["Faculty is strict, feels like a school.", "Old blocks need serious renovation.", "Remote location makes commuting difficult.", "Hostel rules are too strict."]
-        good_crs = ["The faculty covered the syllabus well.", "Chill subject, easy to score.", "Labs make the theory easier.", "Relevant for industry placements."]
-        bad_crs = ["The syllabus is massive and tough to finish.", "Exams are very hard, strict evaluation.", "Lab sessions here are a nightmare.", "Teacher just reads from the slides."]
-        cyber_g = ["Ethical hacking labs are so much fun.", "Cryptography is math-heavy but interesting.", "Best hands-on security course."]
-        cyber_b = ["Too many complex algorithms in Cryptography.", "Setting up the VMs took hours.", "Heavy coding required, very tough."]
-        poly_g = ["Polymer chemistry is fascinating.", "Lab experiments with composites were practical.", "Great insights into material science."]
-        poly_b = ["Too many chemical reactions to memorize.", "Testing labs are tedious.", "Syllabus is dry and theoretical."]
-        uce_col = ["A very good college with supportive faculty and decent placements.", "Great campus life, buildings are a bit old."]
-        uce_crs = ["Good teaching, syllabus is manageable.", "Fairly easy to score if you study well. Great labs."]
+        good_college = ["Good campus and nice placements.", "Faculty is experienced and helpful.", "Nice tech culture and okay college fests.", "Green campus, decent place to study."]
+        bad_college = ["Faculty is strict, feels like a school.", "Old blocks need serious renovation.", "Remote location makes commuting difficult.", "Hostel rules are too strict."]
+        
+        good_course = ["The faculty covered the syllabus well.", "Chill subject, easy to score.", "Labs make the theory easier.", "Relevant for industry placements."]
+        bad_course = ["The syllabus is massive and tough to finish.", "Exams are very hard, strict evaluation.", "Lab sessions here are a nightmare.", "Teacher just reads from the slides."]
+
+        cyber_good = ["Ethical hacking labs are so much fun.", "Cryptography is math-heavy but the teacher made it interesting.", "Best hands-on security course.", "Great CTF challenges in the lab."]
+        cyber_bad = ["Too many complex algorithms in Cryptography.", "Setting up the VMs for malware analysis took hours.", "Heavy coding required, very tough.", "Forensics tools kept crashing."]
+        
+        polymer_good = ["Polymer chemistry is fascinating.", "Lab experiments with composites were really practical.", "Great insights into material science.", "Very scoring subject if you know the basics."]
+        polymer_bad = ["Too many chemical reactions to memorize.", "Testing labs are tedious.", "Syllabus is very dry and theoretical.", "Industrial processing module was way too long."]
+
+        uce_college = ["A very good college with supportive faculty and decent placements.", "Great campus life, though some buildings are a bit old.", "Good tech culture and amazing college fests. Really enjoyed my time here.", "Academics are strong, but hostel facilities could use slight improvements.", "Overall a great experience. The faculty is very good."]
+        uce_course = ["Good teaching, the syllabus is manageable.", "Fairly easy to score if you study well. Great labs.", "The faculty is good and notes are helpful.", "Some topics are a bit tough, but overall a very good subject.", "Interesting curriculum, though the final exam was slightly hard."]
 
         data = []
-        for col in colleges_list:
+        for college in colleges_list:
             for _ in range(random.randint(10, 15)):
-                txt = random.choice(uce_col) if col == "University College of Engineering Thodupuzha (UCE)" else random.choice(good_col if random.random() > 0.4 else bad_col)
-                ts = (datetime.now() - timedelta(days=random.randint(0, 365))).strftime("%Y-%m-%d %H:%M:%S")
-                data.append((col, "College", txt, random.randint(0, 50), extract_tags(txt, "College"), ts))
+                if college == "University College of Engineering Thodupuzha (UCE)":
+                    text = random.choice(uce_college)
+                else:
+                    text = random.choice(good_college if random.random() > 0.4 else bad_college)
+                
+                random_days = random.randint(0, 365)
+                ts = (datetime.now() - timedelta(days=random_days)).strftime("%Y-%m-%d %H:%M:%S")
+                data.append((college, "College", text, random.randint(0, 50), extract_tags(text, "College"), ts))
 
-        for col, depts in ktu_hierarchy.items():
-            for dept, subs in depts.items():
-                for sub in subs:
-                    t_name = f"{sub} @ {col}"
+        for college, depts in ktu_hierarchy.items():
+            for dept, subjects in depts.items():
+                for subject in subjects:
+                    target_name = f"{subject} @ {college}"
                     for _ in range(random.randint(6, 10)): 
-                        if col == "University College of Engineering Thodupuzha (UCE)": txt = random.choice(uce_crs)
+                        if college == "University College of Engineering Thodupuzha (UCE)":
+                            text = random.choice(uce_course)
                         else:
-                            is_g = random.random() > 0.5
-                            if "CY" in sub: pool = cyber_g + good_crs if is_g else cyber_b + bad_crs
-                            elif "PO" in sub: pool = poly_g + good_crs if is_g else poly_b + bad_crs
-                            else: pool = good_crs if is_g else bad_crs
-                            txt = random.choice(pool)
-                        ts = (datetime.now() - timedelta(days=random.randint(0, 365))).strftime("%Y-%m-%d %H:%M:%S")
-                        data.append((t_name, "Course", txt, random.randint(0, 30), extract_tags(txt, "Course"), ts))
+                            is_good = random.random() > 0.5
+                            if "CY" in subject:
+                                pool = cyber_good + good_course if is_good else cyber_bad + bad_course
+                            elif "PO" in subject:
+                                pool = polymer_good + good_course if is_good else polymer_bad + bad_course
+                            else:
+                                pool = good_course if is_good else bad_course
+                            text = random.choice(pool)
+                        
+                        random_days = random.randint(0, 365)
+                        ts = (datetime.now() - timedelta(days=random_days)).strftime("%Y-%m-%d %H:%M:%S")
+                        data.append((target_name, "Course", text, random.randint(0, 30), extract_tags(text, "Course"), ts))
 
         c.executemany("INSERT INTO reviews (target_name, category, review_text, upvotes, tags, created_at) VALUES (?, ?, ?, ?, ?, ?)", data)
         conn.commit()
     conn.close()
 
-init_db(); seed_initial_data()
+init_db()
+seed_initial_data()
 
 # --- 3. AI, VISUALIZATION, & RAG LOGIC ---
 def get_overall_sentiment(reviews_df, target_name=""):
@@ -318,7 +340,7 @@ def analyze_college_aspects(reviews_df):
     if any(x in text for x in ["nice placements", "strong placements", "job", "recruit"]): metrics["Placements"] = 0.9
     elif any(x in text for x in ["no placement", "poor placement", "lack of exposure"]): metrics["Placements"] = 0.3
     if any(x in text for x in ["green campus", "modern", "great labs", "nice hostel"]): metrics["Infrastructure"] = 0.9
-    elif any(x in text for x in ["old blocks", "bad hostel", "bad food"]): metrics["Infrastructure"] = 0.3
+    elif any(x in text for x in ["old blocks", "renovation", "bad hostel", "poor infrastructure", "bad food"]): metrics["Infrastructure"] = 0.3
     if any(x in text for x in ["supportive faculty", "fests", "tech culture"]): metrics["Culture"] = 0.9
     elif any(x in text for x in ["strict", "school", "toxic"]): metrics["Culture"] = 0.3
     return metrics
@@ -422,14 +444,13 @@ with tab1:
             st.markdown("#### ✍️ Add Insight")
             new_review = st.text_area("Share your experience...", max_chars=800)
             if st.form_submit_button("Submit Review"):
-                if time.time() - st.session_state.last_submit_time < 30: st.error("⏳ Rate Limit Exceeded.")
+                # RATE LIMIT REMOVED
+                is_spam, reason = check_spam(new_review, selected_college)
+                if is_spam: st.error(f"🚨 {reason}")
                 else:
-                    is_spam, reason = check_spam(new_review, selected_college)
-                    if is_spam: st.error(f"🚨 {reason}")
-                    else:
-                        add_review_to_db(selected_college, "College", new_review)
-                        st.session_state.last_submit_time = time.time()
-                        st.rerun()
+                    add_review_to_db(selected_college, "College", new_review)
+                    st.rerun()
+
     with c2:
         matched_reviews = [r for r in reviews if search_query.lower() in r['review_text'].lower()] if search_query else reviews
         for r in matched_reviews[:10]: 
@@ -459,7 +480,7 @@ with tab1:
                 with st.expander(f"💬 Replies ({len(replies)})"):
                     for rep in replies:
                         rep_av = f"https://api.dicebear.com/7.x/{avatar_style}/svg?seed=rep_{rep['id']}"
-                        st.markdown(f"<div style='border-left: 2px solid {gauge_bar}; padding-left: 15px; margin-bottom: 10px; display: flex; align-items: center;'><img src='{rep_av}' style='width: 25px; height: 25px; border-radius: 50%; margin-right: 10px; background: rgba(255,255,255,0.1);'><small style='color: {chart_text_color};'><b>User:</b> {rep['reply_text']}</small></div>", unsafe_allow_html=True)
+                        st.markdown(f"<div style='border-left: 2px solid {gauge_bar}; padding-left: 15px; margin-bottom: 10px; display: flex; align-items: center;'><img src='{rep_av}' style='width: 25px; height: 25px; border-radius: 50%; margin-right: 10px; background: rgba(255,255,255,0.1);'><small style='color: {chart_text_color};'><b>User:</b> ☰ {rep['reply_text']}</small></div>", unsafe_allow_html=True)
                     rc1, rc2 = st.columns([4,1])
                     with rc1: rep_input = st.text_input("Reply...", key=f"r_in_{r['id']}", label_visibility="collapsed")
                     with rc2: 
@@ -497,18 +518,17 @@ with tab2:
             st.markdown("#### ✍️ Add Insight")
             nc_rev = st.text_area("Share your experience...", max_chars=800)
             if st.form_submit_button("Submit Review"):
-                if time.time() - st.session_state.last_submit_time < 30: st.error("⏳ Rate Limit Active.")
-                else:
-                    is_s, rea = check_spam(nc_rev, course_target)
-                    if is_s: st.error(f"🚨 {rea}")
-                    else: add_review_to_db(course_target, "Course", nc_rev); st.session_state.last_submit_time = time.time(); st.rerun()
+                # RATE LIMIT REMOVED
+                is_s, rea = check_spam(nc_rev, course_target)
+                if is_s: st.error(f"🚨 {rea}")
+                else: add_review_to_db(course_target, "Course", nc_rev); st.rerun()
 
     with cx2:
         match_c = [r for r in c_revs if search_query.lower() in r['review_text'].lower()] if search_query else c_revs
         for r in match_c[:10]:
             with st.container(border=True):
                 safe_crs = html.escape(r['review_text'])
-                av_c = f"https://api.dicebear.com/7.x/{avatar_style}/svg?seed={r['id']}c"
+                av_c = f"https://api.dicebear.com/7.x/{avatar_style}/svg?seed={r['id']}c&backgroundColor=transparent"
                 st.markdown(f"""
                 <div style='display: flex; align-items: center; margin-bottom: 12px;'>
                     <img src='{av_c}' style='width: 45px; height: 45px; border-radius: 50%; border: 2px solid {gauge_bar}; background: rgba(255,255,255,0.1); margin-right: 12px;'>
@@ -526,7 +546,7 @@ with tab2:
                 
                 with st.expander(f"💬 Replies ({len(get_replies(r['id']))})"):
                     for rep in get_replies(r['id']):
-                        st.markdown(f"<div style='border-left: 2px solid {gauge_bar}; padding-left: 15px; margin-bottom: 10px;'><b>User:</b> {rep['reply_text']}</div>", unsafe_allow_html=True)
+                        st.markdown(f"<div style='border-left: 2px solid {gauge_bar}; padding-left: 15px; margin-bottom: 10px;'><b>User:</b> ☰ {rep['reply_text']}</div>", unsafe_allow_html=True)
                     rci1, rci2 = st.columns([4,1])
                     with rci1: ri = st.text_input("Reply...", key=f"ri_c_{r['id']}", label_visibility="collapsed")
                     with rci2: 
