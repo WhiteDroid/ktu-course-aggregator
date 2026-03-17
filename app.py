@@ -2,8 +2,8 @@ import streamlit as st
 import sqlite3
 import pandas as pd
 from textblob import TextBlob
+import time
 import random
-import requests
 import plotly.graph_objects as go
 import plotly.express as px
 import re
@@ -14,13 +14,12 @@ from datetime import datetime, timedelta
 st.set_page_config(page_title="KTU Insight Engine", page_icon="⚡", layout="wide")
 
 # --- 🎲 RANDOMIZED PERSONA & SESSION STATE SETUP ---
-# Whenever a new user connects, the app rolls the dice for a totally random starting theme!
 if 'light_theme' not in st.session_state:
-    st.session_state.light_theme = random.choice([True, False]) # 50/50 chance for Light or Dark
+    st.session_state.light_theme = random.choice([True, False])
 if 'theme_cycle_idx' not in st.session_state:
-    st.session_state.theme_cycle_idx = random.randint(0, 3)     # Pick 1 of 4 Light Personas
+    st.session_state.theme_cycle_idx = random.randint(0, 3)     
 if 'dark_theme_cycle_idx' not in st.session_state:
-    st.session_state.dark_theme_cycle_idx = random.randint(0, 3) # Pick 1 of 4 Dark Personas
+    st.session_state.dark_theme_cycle_idx = random.randint(0, 3) 
 if 'upvoted_reviews' not in st.session_state:
     st.session_state.upvoted_reviews = set() 
 
@@ -33,7 +32,6 @@ st.sidebar.markdown("### 🌗 Appearance")
 theme_toggle = st.sidebar.toggle("Switch to Light/Dark Mode", value=st.session_state.light_theme)
 
 # 🔥 MANUAL THEME ENGINE 🔥
-# If they manually click the toggle, it cycles to the next fresh persona
 if theme_toggle != st.session_state.light_theme:
     if theme_toggle == True:
         st.session_state.theme_cycle_idx = (st.session_state.theme_cycle_idx + 1) % 4
@@ -146,11 +144,11 @@ college_coords = {
     "University College of Engineering Thodupuzha (UCE)": (9.8450, 76.7450), "Model Engineering College (MEC)": (10.0284, 76.3285), "College of Engineering Trivandrum (CET)": (8.5456, 76.9063), "TKM College of Engineering, Kollam (TKM)": (8.9100, 76.6316), "Rajiv Gandhi Institute of Technology (RIT), Kottayam": (9.5534, 76.6179), "Government Engineering College, Thrissur (GEC)": (10.5540, 76.2230), "Muthoot Institute of Technology and Science (MITS)": (9.9482, 76.3980), "Rajagiri School of Engineering & Technology (RSET)": (10.0102, 76.3653), "Mar Athanasius College of Engineering (MACE)": (10.0543, 76.6186), "Federal Institute of Science and Technology (FISAT)": (10.2312, 76.4087)
 }
 
-# --- 2. DATABASE SETUP, MIGRATION & ANTI-SPAM ---
+# --- 2. CLOUD-SAFE DATABASE SETUP ---
 DB_NAME = "ktu_reviews.db"
 
 def init_db():
-    conn = sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(DB_NAME, check_same_thread=False, timeout=15)
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS reviews (id INTEGER PRIMARY KEY AUTOINCREMENT, target_name TEXT, category TEXT, review_text TEXT, upvotes INTEGER DEFAULT 0, tags TEXT, created_at DATETIME DEFAULT CURRENT_TIMESTAMP)''')
     try: c.execute("ALTER TABLE reviews ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP")
@@ -181,7 +179,7 @@ def check_spam(text, target_name):
     if re.search(r'(http:\/\/|https:\/\/|www\.)', text): return True, "Spam Alert: Links are strictly prohibited."
     if re.search(r'(.)\1{5,}', text) or len(set(text)) < 4: return True, "Review rejected: Invalid characters detected."
     if any(bad in text.lower() for bad in ["fuck", "shit", "bitch", "asshole", "cunt", "slut", "dick", "pussy"]): return True, "Review rejected: Profanity detected."
-    conn = sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(DB_NAME, check_same_thread=False, timeout=15)
     c = conn.cursor()
     c.execute("SELECT COUNT(*) FROM reviews WHERE target_name=? AND review_text=?", (target_name, text))
     is_dup = c.fetchone()[0] > 0
@@ -192,7 +190,7 @@ def check_spam(text, target_name):
 # 🚀 CACHED READ OPERATIONS
 @st.cache_data(ttl=60)
 def get_reviews_from_db(target_name, sort_by="Most Upvoted"):
-    conn = sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(DB_NAME, check_same_thread=False, timeout=15)
     order = "ORDER BY id DESC" if sort_by == "Newest" else "ORDER BY upvotes DESC, id DESC"
     query = f"SELECT id, review_text, upvotes, tags, created_at FROM reviews WHERE target_name=? {order}"
     df = pd.read_sql_query(query, conn, params=(target_name,))
@@ -201,7 +199,7 @@ def get_reviews_from_db(target_name, sort_by="Most Upvoted"):
 
 @st.cache_data(ttl=60)
 def get_replies(review_id):
-    conn = sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(DB_NAME, check_same_thread=False, timeout=15)
     query = "SELECT reply_text, created_at FROM replies WHERE review_id=? ORDER BY id ASC"
     df = pd.read_sql_query(query, conn, params=(review_id,))
     conn.close()
@@ -210,7 +208,7 @@ def get_replies(review_id):
 # 🧹 CACHE INVALIDATION FOR WRITES
 def add_review_to_db(target_name, category, review_text):
     tags = extract_tags(review_text, category)
-    conn = sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(DB_NAME, check_same_thread=False, timeout=15)
     c = conn.cursor()
     c.execute("INSERT INTO reviews (target_name, category, review_text, upvotes, tags) VALUES (?, ?, ?, ?, ?)", (target_name, category, review_text, 0, tags))
     conn.commit()
@@ -220,7 +218,7 @@ def add_review_to_db(target_name, category, review_text):
 def add_reply_to_db(review_id, reply_text):
     safe_reply = html.escape(reply_text.strip())
     if len(safe_reply) < 3: return
-    conn = sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(DB_NAME, check_same_thread=False, timeout=15)
     c = conn.cursor()
     c.execute("INSERT INTO replies (review_id, reply_text) VALUES (?, ?)", (review_id, safe_reply))
     conn.commit()
@@ -228,7 +226,7 @@ def add_reply_to_db(review_id, reply_text):
     get_replies.clear()
 
 def upvote_review(review_id):
-    conn = sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(DB_NAME, check_same_thread=False, timeout=15)
     c = conn.cursor()
     c.execute("UPDATE reviews SET upvotes = upvotes + 1 WHERE id = ?", (review_id,))
     conn.commit()
@@ -237,35 +235,26 @@ def upvote_review(review_id):
 
 # --- FULL DATA SEEDING RESTORED ---
 def seed_initial_data():
-    conn = sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(DB_NAME, check_same_thread=False, timeout=15)
     c = conn.cursor()
     c.execute("SELECT COUNT(*) FROM reviews")
     if c.fetchone()[0] == 0:
         good_college = ["Good campus and nice placements.", "Faculty is experienced and helpful.", "Nice tech culture and okay college fests.", "Green campus, decent place to study."]
         bad_college = ["Faculty is strict, feels like a school.", "Old blocks need serious renovation.", "Remote location makes commuting difficult.", "Hostel rules are too strict."]
-        
         good_course = ["The faculty covered the syllabus well.", "Chill subject, easy to score.", "Labs make the theory easier.", "Relevant for industry placements."]
         bad_course = ["The syllabus is massive and tough to finish.", "Exams are very hard, strict evaluation.", "Lab sessions here are a nightmare.", "Teacher just reads from the slides."]
-
         cyber_good = ["Ethical hacking labs are so much fun.", "Cryptography is math-heavy but the teacher made it interesting.", "Best hands-on security course.", "Great CTF challenges in the lab."]
         cyber_bad = ["Too many complex algorithms in Cryptography.", "Setting up the VMs for malware analysis took hours.", "Heavy coding required, very tough.", "Forensics tools kept crashing."]
-        
         polymer_good = ["Polymer chemistry is fascinating.", "Lab experiments with composites were really practical.", "Great insights into material science.", "Very scoring subject if you know the basics."]
         polymer_bad = ["Too many chemical reactions to memorize.", "Testing labs are tedious.", "Syllabus is very dry and theoretical.", "Industrial processing module was way too long."]
-
         uce_college = ["A very good college with supportive faculty and decent placements.", "Great campus life, though some buildings are a bit old.", "Good tech culture and amazing college fests. Really enjoyed my time here.", "Academics are strong, but hostel facilities could use slight improvements.", "Overall a great experience. The faculty is very good."]
         uce_course = ["Good teaching, the syllabus is manageable.", "Fairly easy to score if you study well. Great labs.", "The faculty is good and notes are helpful.", "Some topics are a bit tough, but overall a very good subject.", "Interesting curriculum, though the final exam was slightly hard."]
 
         data = []
         for college in colleges_list:
             for _ in range(random.randint(10, 15)):
-                if college == "University College of Engineering Thodupuzha (UCE)":
-                    text = random.choice(uce_college)
-                else:
-                    text = random.choice(good_college if random.random() > 0.4 else bad_college)
-                
-                random_days = random.randint(0, 365)
-                ts = (datetime.now() - timedelta(days=random_days)).strftime("%Y-%m-%d %H:%M:%S")
+                text = random.choice(uce_college) if college == "University College of Engineering Thodupuzha (UCE)" else random.choice(good_college if random.random() > 0.4 else bad_college)
+                ts = (datetime.now() - timedelta(days=random.randint(0, 365))).strftime("%Y-%m-%d %H:%M:%S")
                 data.append((college, "College", text, random.randint(0, 50), extract_tags(text, "College"), ts))
 
         for college, depts in ktu_hierarchy.items():
@@ -273,20 +262,12 @@ def seed_initial_data():
                 for subject in subjects:
                     target_name = f"{subject} @ {college}"
                     for _ in range(random.randint(6, 10)): 
-                        if college == "University College of Engineering Thodupuzha (UCE)":
-                            text = random.choice(uce_course)
-                        else:
-                            is_good = random.random() > 0.5
-                            if "CY" in subject:
-                                pool = cyber_good + good_course if is_good else cyber_bad + bad_course
-                            elif "PO" in subject:
-                                pool = polymer_good + good_course if is_good else polymer_bad + bad_course
-                            else:
-                                pool = good_course if is_good else bad_course
-                            text = random.choice(pool)
-                        
-                        random_days = random.randint(0, 365)
-                        ts = (datetime.now() - timedelta(days=random_days)).strftime("%Y-%m-%d %H:%M:%S")
+                        is_good = random.random() > 0.5
+                        if college == "University College of Engineering Thodupuzha (UCE)": text = random.choice(uce_course)
+                        elif "CY" in subject: text = random.choice(cyber_good + good_course if is_good else cyber_bad + bad_course)
+                        elif "PO" in subject: text = random.choice(polymer_good + good_course if is_good else polymer_bad + bad_course)
+                        else: text = random.choice(good_course if is_good else bad_course)
+                        ts = (datetime.now() - timedelta(days=random.randint(0, 365))).strftime("%Y-%m-%d %H:%M:%S")
                         data.append((target_name, "Course", text, random.randint(0, 30), extract_tags(text, "Course"), ts))
 
         c.executemany("INSERT INTO reviews (target_name, category, review_text, upvotes, tags, created_at) VALUES (?, ?, ?, ?, ?, ?)", data)
@@ -340,7 +321,7 @@ def plot_sentiment_timeline(reviews_df):
     if not reviews_df: return
     df = pd.DataFrame(reviews_df)
     if 'created_at' not in df.columns: return
-    df['Date'] = pd.to_datetime(df['created_at'])
+    df['Date'] = pd.to_datetime(df['created_at'], errors='coerce')
     df['Month'] = df['Date'].dt.to_period('M').dt.to_timestamp()
     df['Sentiment'] = df['review_text'].apply(lambda x: (TextBlob(x).sentiment.polarity + 1)/2 * 100)
     trend = df.groupby('Month')['Sentiment'].mean().reset_index()
@@ -368,9 +349,9 @@ def plot_geospatial_heatmap(colleges, is_light_theme):
         reviews = get_reviews_from_db(col)
         sentiment = get_overall_sentiment(reviews, col)
         lat, lon = college_coords.get(col, (10.0, 76.0))
-        map_data.append({"College": col, "Lat": lat, "Lon": lon, "Score": round(sentiment * 100, 1), "Reviews": len(reviews)})
+        map_data.append({"College": col, "Lat": lat, "Lon": lon, "Score": round(sentiment * 100, 1), "Size": max(len(reviews), 1)})
     df = pd.DataFrame(map_data)
-    fig = px.scatter_mapbox(df, lat="Lat", lon="Lon", hover_name="College", hover_data={"Lat": False, "Lon": False, "Score": True, "Reviews": True}, color="Score", size="Score", color_continuous_scale="Inferno", size_max=20, zoom=6.5, center={"lat": 9.5, "lon": 76.5})
+    fig = px.scatter_mapbox(df, lat="Lat", lon="Lon", hover_name="College", hover_data={"Lat": False, "Lon": False, "Score": True, "Size": False}, color="Score", size="Size", color_continuous_scale="Inferno", size_max=20, zoom=6.5, center={"lat": 9.5, "lon": 76.5})
     mapbox_style = "carto-positron" if is_light_theme else "carto-darkmatter"
     fig.update_layout(mapbox_style=mapbox_style, margin={"r":0,"t":0,"l":0,"b":0}, paper_bgcolor="rgba(0,0,0,0)")
     st.plotly_chart(fig, use_container_width=True)
@@ -406,11 +387,9 @@ with tab1:
     overall_sent = get_overall_sentiment(reviews, selected_college)
     
     with b1:
-        with st.container(border=True):
-            plot_gauge(overall_sent, "Vibe Meter")
+        with st.container(border=True): plot_gauge(overall_sent, "Vibe Meter")
     with b2:
-        with st.container(border=True):
-            plot_sentiment_timeline(reviews)
+        with st.container(border=True): plot_sentiment_timeline(reviews)
     with b3:
         with st.container(border=True):
             st.markdown(f"<div style='height:200px; display:flex; flex-direction:column; justify-content:center;'><h4>🤖 Chat with {selected_college.split()[0]}</h4>", unsafe_allow_html=True)
@@ -550,7 +529,9 @@ with tab3:
                         st.markdown(f"<h4 style='color:{t['accent']};'>{p.split()[0]}</h4>", unsafe_allow_html=True)
                         st.metric("Credits 🏅", f"{scr} pts")
             
-            fig_bar = px.bar(x=list(c_data.keys()), y=list(c_data.values()), color=list(c_data.keys()), color_discrete_sequence=t['comp_colors'])
+            # Robust Plotly DataFrame fix for cloud deployment
+            df_arena = pd.DataFrame({"College": list(c_data.keys()), "Credits": list(c_data.values())})
+            fig_bar = px.bar(df_arena, x="College", y="Credits", color="College", color_discrete_sequence=t['comp_colors'])
             fig_bar.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", showlegend=False)
             st.plotly_chart(fig_bar)
     else:
@@ -570,7 +551,9 @@ with tab3:
                         st.markdown(f"<h4 style='color:{t['accent']};'>{dn}</h4>", unsafe_allow_html=True)
                         st.metric("Credits 🏅", f"{scr} pts")
             
-            fig_bar = px.bar(x=list(d_data.keys()), y=list(d_data.values()), color=list(d_data.keys()), color_discrete_sequence=t['comp_colors'])
+            # Robust Plotly DataFrame fix for cloud deployment
+            df_arena_d = pd.DataFrame({"Dept": list(d_data.keys()), "Credits": list(d_data.values())})
+            fig_bar = px.bar(df_arena_d, x="Dept", y="Credits", color="Dept", color_discrete_sequence=t['comp_colors'])
             fig_bar.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", showlegend=False)
             st.plotly_chart(fig_bar)
 
