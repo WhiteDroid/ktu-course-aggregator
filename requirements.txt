@@ -6,4 +6,3 @@ plotly
 wordcloud
 matplotlib
 streamlit-lottie
-requests
