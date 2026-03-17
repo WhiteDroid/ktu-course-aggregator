@@ -13,7 +13,11 @@ from datetime import datetime, timedelta
 # --- UI CONFIGURATION ---
 st.set_page_config(page_title="KTU Insight Engine", page_icon="⚡", layout="wide")
 
-# --- 🎲 RANDOMIZED PERSONA & SESSION STATE SETUP ---
+# --- 🕒 AUTO-ROTATION & SESSION STATE SETUP ---
+ROTATION_INTERVAL = 150  # 2.5 minutes in seconds
+
+if 'last_rotation_time' not in st.session_state:
+    st.session_state.last_rotation_time = time.time()
 if 'light_theme' not in st.session_state:
     st.session_state.light_theme = random.choice([True, False])
 if 'theme_cycle_idx' not in st.session_state:
@@ -22,6 +26,15 @@ if 'dark_theme_cycle_idx' not in st.session_state:
     st.session_state.dark_theme_cycle_idx = random.randint(0, 3) 
 if 'upvoted_reviews' not in st.session_state:
     st.session_state.upvoted_reviews = set() 
+
+# 🤖 BACKGROUND HEARTBEAT: AUTO-ROTATE PERSONA
+current_time = time.time()
+if current_time - st.session_state.last_rotation_time > ROTATION_INTERVAL:
+    if st.session_state.light_theme:
+        st.session_state.theme_cycle_idx = (st.session_state.theme_cycle_idx + 1) % 4
+    else:
+        st.session_state.dark_theme_cycle_idx = (st.session_state.dark_theme_cycle_idx + 1) % 4
+    st.session_state.last_rotation_time = current_time
 
 # 🔥 BRAND LOGO INJECTION 🔥
 st.sidebar.image("https://cdn-icons-png.flaticon.com/512/1162/1162803.png", width=55)
@@ -38,6 +51,7 @@ if theme_toggle != st.session_state.light_theme:
     else:
         st.session_state.dark_theme_cycle_idx = (st.session_state.dark_theme_cycle_idx + 1) % 4
     st.session_state.light_theme = theme_toggle
+    st.session_state.last_rotation_time = time.time()
     st.rerun()
 
 # --- 🪟 THEME DEFINITIONS (BENTO COLORS, FONTS, WEIGHTS) ---
@@ -247,20 +261,29 @@ def seed_initial_data():
     if c.fetchone()[0] == 0:
         good_college = ["Good campus and nice placements.", "Faculty is experienced and helpful.", "Nice tech culture and okay college fests.", "Green campus, decent place to study."]
         bad_college = ["Faculty is strict, feels like a school.", "Old blocks need serious renovation.", "Remote location makes commuting difficult.", "Hostel rules are too strict."]
+        
         good_course = ["The faculty covered the syllabus well.", "Chill subject, easy to score.", "Labs make the theory easier.", "Relevant for industry placements."]
         bad_course = ["The syllabus is massive and tough to finish.", "Exams are very hard, strict evaluation.", "Lab sessions here are a nightmare.", "Teacher just reads from the slides."]
+
         cyber_good = ["Ethical hacking labs are so much fun.", "Cryptography is math-heavy but the teacher made it interesting.", "Best hands-on security course.", "Great CTF challenges in the lab."]
         cyber_bad = ["Too many complex algorithms in Cryptography.", "Setting up the VMs for malware analysis took hours.", "Heavy coding required, very tough.", "Forensics tools kept crashing."]
+        
         polymer_good = ["Polymer chemistry is fascinating.", "Lab experiments with composites were really practical.", "Great insights into material science.", "Very scoring subject if you know the basics."]
         polymer_bad = ["Too many chemical reactions to memorize.", "Testing labs are tedious.", "Syllabus is very dry and theoretical.", "Industrial processing module was way too long."]
+
         uce_college = ["A very good college with supportive faculty and decent placements.", "Great campus life, though some buildings are a bit old.", "Good tech culture and amazing college fests. Really enjoyed my time here.", "Academics are strong, but hostel facilities could use slight improvements.", "Overall a great experience. The faculty is very good."]
         uce_course = ["Good teaching, the syllabus is manageable.", "Fairly easy to score if you study well. Great labs.", "The faculty is good and notes are helpful.", "Some topics are a bit tough, but overall a very good subject.", "Interesting curriculum, though the final exam was slightly hard."]
 
         data = []
         for college in colleges_list:
             for _ in range(random.randint(10, 15)):
-                text = random.choice(uce_college) if college == "University College of Engineering Thodupuzha (UCE)" else random.choice(good_college if random.random() > 0.4 else bad_college)
-                ts = (datetime.now() - timedelta(days=random.randint(0, 365))).strftime("%Y-%m-%d %H:%M:%S")
+                if college == "University College of Engineering Thodupuzha (UCE)":
+                    text = random.choice(uce_college)
+                else:
+                    text = random.choice(good_college if random.random() > 0.4 else bad_college)
+                
+                random_days = random.randint(0, 365)
+                ts = (datetime.now() - timedelta(days=random_days)).strftime("%Y-%m-%d %H:%M:%S")
                 data.append((college, "College", text, random.randint(0, 50), extract_tags(text, "College"), ts))
 
         for college, depts in ktu_hierarchy.items():
@@ -342,10 +365,16 @@ def plot_gauge(score, title):
     fig.update_layout(height=200, margin=dict(l=10, r=10, t=30, b=10), paper_bgcolor="rgba(0,0,0,0)")
     st.plotly_chart(fig, use_container_width=True)
 
+# 🛠️ HEX TO RGBA HELPER TO FIX PLOTLY CLOUD CRASH
+def hex_to_rgba(hex_str, alpha=0.2):
+    hex_str = hex_str.lstrip('#')
+    return f"rgba({int(hex_str[0:2], 16)}, {int(hex_str[2:4], 16)}, {int(hex_str[4:6], 16)}, {alpha})"
+
 def plot_radar(metrics):
     df = pd.DataFrame(dict(r=list(metrics.values()), theta=list(metrics.keys())))
     fig = px.line_polar(df, r='r', theta='theta', line_close=True, range_r=[0, 1])
-    fig.update_traces(fill='toself', fillcolor=t['glow']+"33", line_color=t['glow'], line_width=2.5, marker=dict(size=6), line_shape='spline')
+    fill_c = hex_to_rgba(t['glow'], 0.2) # Uses the mathematical safe converter
+    fig.update_traces(fill='toself', fillcolor=fill_c, line_color=t['glow'], line_width=2.5, marker=dict(size=6), line_shape='spline')
     fig.update_layout(height=250, paper_bgcolor="rgba(0,0,0,0)", polar=dict(bgcolor="rgba(0,0,0,0)", radialaxis=dict(visible=True, showticklabels=False, gridcolor=radar_grid, linecolor=radar_grid), angularaxis=dict(tickfont=dict(color=chart_text_color, size=12), gridcolor=radar_grid, linecolor=radar_grid)), margin=dict(l=30, r=30, t=30, b=30))
     st.plotly_chart(fig, use_container_width=True)
 
@@ -445,7 +474,7 @@ with tab1:
                 with st.expander(f"💬 Replies ({len(replies)})"):
                     for rep in replies:
                         rep_av = f"https://api.dicebear.com/7.x/{avatar_style}/svg?seed=rep_{rep['id']}"
-                        st.markdown(f"<div style='border-left: 2px solid {gauge_bar}; padding-left: 15px; margin-bottom: 10px; display: flex; align-items: center;'><img src='{rep_av}' style='width: 25px; height: 25px; border-radius: 50%; margin-right: 10px; background: rgba(255,255,255,0.1);'><small style='color: {chart_text_color};'><b>User:</b> {rep['reply_text']}</small></div>", unsafe_allow_html=True)
+                        st.markdown(f"<div style='border-left: 2px solid {gauge_bar}; padding-left: 15px; margin-bottom: 10px; display: flex; align-items: center;'><img src='{rep_av}' style='width: 25px; height: 25px; border-radius: 50%; margin-right: 10px; background: rgba(255,255,255,0.1);'><small style='color: {chart_text_color};'><b>User:</b> ☰ {rep['reply_text']}</small></div>", unsafe_allow_html=True)
                     rc1, rc2 = st.columns([4,1])
                     with rc1: rep_input = st.text_input("Reply...", key=f"r_in_{r['id']}", label_visibility="collapsed")
                     with rc2: 
@@ -510,7 +539,7 @@ with tab2:
                 
                 with st.expander(f"💬 Replies ({len(get_replies(r['id']))})"):
                     for rep in get_replies(r['id']):
-                        st.markdown(f"<div style='border-left: 2px solid {gauge_bar}; padding-left: 15px; margin-bottom: 10px;'><b>User:</b> {rep['reply_text']}</div>", unsafe_allow_html=True)
+                        st.markdown(f"<div style='border-left: 2px solid {gauge_bar}; padding-left: 15px; margin-bottom: 10px;'><b>User:</b> ☰ {rep['reply_text']}</div>", unsafe_allow_html=True)
                     rci1, rci2 = st.columns([4,1])
                     with rci1: ri = st.text_input("Reply...", key=f"ri_c_{r['id']}", label_visibility="collapsed")
                     with rci2: 
